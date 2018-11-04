@@ -1,5 +1,5 @@
 /*
- *  Project:    moba-systemmanager
+ *  Project:    moba-edit
  *
  *  Copyright (C) 2016 Stefan Paproth <pappi-@gmx.de>
  *
@@ -61,7 +61,6 @@ FrmMain::FrmMain(moba::MsgEndpointPtr mhp) :
 
     set_border_width(10);
     set_size_request(600, 400);
-    set_resizable(false);
     set_position(Gtk::WIN_POS_CENTER);
 
     add(m_VBox);
@@ -77,8 +76,10 @@ FrmMain::FrmMain(moba::MsgEndpointPtr mhp) :
 
     m_VBox.pack_start(m_InfoBar, Gtk::PACK_SHRINK);
 
-    m_Notebook.set_border_width(10);
-    m_VBox.pack_start(m_Notebook);
+
+
+    m_VBox.pack_start(widget);
+    widget.show();
     m_VBox.pack_start(m_HBox, Gtk::PACK_SHRINK);
     m_HBox.pack_end(m_ButtonBox, Gtk::PACK_SHRINK);
 
@@ -102,6 +103,11 @@ FrmMain::FrmMain(moba::MsgEndpointPtr mhp) :
     m_Button_Emegerency.set_label("Nothalt");
 
     initAboutDialog();
+
+    // in the class constructor
+    signal_key_press_event().connect(sigc::mem_fun(*this, &FrmMain::on_key_press_event));
+    // We override the default event signal handler.
+    add_events(Gdk::KEY_PRESS_MASK);
 
     sysHandler.sendGetHardwareState();
     show_all_children();
@@ -205,6 +211,60 @@ bool FrmMain::on_timeout(int) {
 void FrmMain::on_infobar_response(int) {
     m_Label_InfoBarMessage.set_text("");
     m_InfoBar.hide();
+}
+
+bool FrmMain::on_key_press_event(GdkEventKey* key_event) {
+
+    switch(key_event->keyval) {
+        case GDK_KEY_KP_1:
+        case GDK_KEY_1:
+            widget.cursor_x--;
+
+        case GDK_KEY_KP_2:
+        case GDK_KEY_2:
+            widget.cursor_y++;
+            widget.maleneu();
+            return true;
+
+        case GDK_KEY_KP_3:
+        case GDK_KEY_3:
+            widget.cursor_x++;
+            widget.cursor_y++;
+            widget.maleneu();
+            return true;
+
+        case GDK_KEY_KP_4:
+        case GDK_KEY_4:
+            widget.cursor_x--;
+            widget.maleneu();
+            return true;
+
+        //case GDK_KEY_KP_5:
+        //case GDK_KEY_5:
+
+        case GDK_KEY_KP_7:
+        case GDK_KEY_7:
+            widget.cursor_x--;
+
+        case GDK_KEY_KP_8:
+        case GDK_KEY_8:
+            widget.cursor_y--;
+            widget.maleneu();
+            return true;
+
+        case GDK_KEY_KP_9:
+        case GDK_KEY_9:
+            widget.cursor_y--;
+
+        case GDK_KEY_KP_6:
+        case GDK_KEY_6:
+            widget.cursor_x++;
+            widget.maleneu();
+            return true;
+
+    }
+
+    return Gtk::Window::on_key_press_event(key_event);
 }
 
 void FrmMain::setSystemNotice(moba::JsonItemPtr data) {

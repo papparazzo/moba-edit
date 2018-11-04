@@ -1,5 +1,5 @@
 /*
- *  Project:    moba-systemmanager
+ *  Project:    moba-edit
  *
  *  Copyright (C) 2016 Stefan Paproth <pappi-@gmx.de>
  *
@@ -32,6 +32,8 @@
 #include <gtkmm/comboboxtext.h>
 #include <gtkmm/liststore.h>
 
+#include "layoutwidget.h"
+
 class FrmMain : public Gtk::Window {
     public:
         FrmMain(moba::MsgEndpointPtr mhp);
@@ -39,7 +41,6 @@ class FrmMain : public Gtk::Window {
         }
 
     protected:
-        Gtk::Notebook m_Notebook;
         Gtk::ButtonBox m_ButtonBox;
         Gtk::Button m_Button_Emegerency;
         Gtk::Box m_VBox;
@@ -64,6 +65,8 @@ class FrmMain : public Gtk::Window {
         std::chrono::time_point<std::chrono::system_clock> start;
         int pingctr;
 
+        LayoutWidget widget;
+
         // Signal handlers:
         bool on_timeout(int timer_number);
         void on_button_about_clicked();
@@ -75,6 +78,8 @@ class FrmMain : public Gtk::Window {
         void on_button_system_ping_clicked();
         void on_about_dialog_response(int response_id);
         void on_infobar_response(int response);
+
+        bool on_key_press_event(GdkEventKey *key_event);
 
         // msg-response
         void setServerInfoRes(moba::JsonItemPtr data);
