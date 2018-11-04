@@ -1,5 +1,5 @@
 /*
- *  Project:    moba-systemmanager
+ *  Project:    moba-edit
  *
  *  Copyright (C) 2016 Stefan Paproth <pappi-@gmx.de>
  *
@@ -27,6 +27,8 @@
 
 #include "frmmain.h"
 #include "config.h"
+
+#include "layoutwidget.h"
 
 namespace {
     moba::AppData appData = {
@@ -56,7 +58,6 @@ int main(int argc, char *argv[]) {
         );
     } catch(moba::MsgEndpointException &e) {
         std::cerr << e.what() << std::endl;
-        return (EXIT_FAILURE);
     }
 
     auto app = Gtk::Application::create(argc, argv, "org.moba.edit");
