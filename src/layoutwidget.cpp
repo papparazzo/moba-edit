@@ -26,14 +26,14 @@
 
 #include "layoutwidget.h"
 
-LayoutWidget::LayoutWidget() {
+LayoutWidget::LayoutWidget() : cursor_x{0}, cursor_y{0} {
 
 
 }
 
 bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 
-    Glib::RefPtr<Gdk::Pixbuf> image = Gdk::Pixbuf::create_from_file("/home/stefan/Documents/moba/quellcode/moba-edit/sources/0000.bmp");
+    Glib::RefPtr<Gdk::Pixbuf> image = Gdk::Pixbuf::create_from_file("./resources/68.bmp");
 
     // Draw the image at 110, 90, except for the outermost 10 pixels.
 
@@ -43,26 +43,15 @@ bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
         cr->fill();
 
     }
-    return true;
-
-    /**
-     *
-     * @param cr
-     * @return
-     */
-
-
-
-
 
     cr->set_line_width(1.0);
     cr->set_source_rgb(0.8, 0.0, 0.0);
 
-    cr->move_to(cursor_x * 25, cursor_y * 25);
-    cr->line_to(cursor_x * 25, (cursor_y +1) * 25);
-    cr->line_to((cursor_x +1) * 25, (cursor_y +1) * 25);
-    cr->line_to((cursor_x +1) * 25, cursor_y * 25);
-    cr->line_to(cursor_x * 25, cursor_y * 25);
+    cr->move_to(cursor_x * 23, cursor_y * 23);
+    cr->line_to(cursor_x * 23, (cursor_y +1) * 23);
+    cr->line_to((cursor_x +1) * 23, (cursor_y +1) * 23);
+    cr->line_to((cursor_x +1) * 23, cursor_y * 23);
+    cr->line_to(cursor_x * 23, cursor_y * 23);
     cr->stroke();
 
 

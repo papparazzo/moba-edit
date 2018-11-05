@@ -214,7 +214,6 @@ void FrmMain::on_infobar_response(int) {
 }
 
 bool FrmMain::on_key_press_event(GdkEventKey* key_event) {
-
     switch(key_event->keyval) {
         case GDK_KEY_KP_1:
         case GDK_KEY_1:
