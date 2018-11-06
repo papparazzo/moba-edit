@@ -42,6 +42,7 @@ public:
     };
 
     void addSymbol(size_t x, size_t y, size_t s);
+    void addSymbol(size_t s);
 
     void maleneu();
 
@@ -49,5 +50,7 @@ protected:
     //Override default signal handler:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
     std::vector<Item> items;
+
+    const int SYMBOL_WIDTH = 23;
 
 };

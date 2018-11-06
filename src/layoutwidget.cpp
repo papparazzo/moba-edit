@@ -27,35 +27,37 @@
 #include "layoutwidget.h"
 
 LayoutWidget::LayoutWidget() : cursor_x{0}, cursor_y{0} {
-
-
 }
 
 bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 
-    Glib::RefPtr<Gdk::Pixbuf> image = Gdk::Pixbuf::create_from_file("./resources/68.bmp");
+    for(auto item : items) {
+        std::stringstream ss;
+        ss << "./resources/" << item.s << ".bmp";
 
-    // Draw the image at 110, 90, except for the outermost 10 pixels.
+        Glib::RefPtr<Gdk::Pixbuf> image = Gdk::Pixbuf::create_from_file(ss.str());
 
-    for (int i = 0; i < 10; ++i) {
-        Gdk::Cairo::set_source_pixbuf(cr, image, (cursor_x + i) * 23, cursor_y * 23);
-        cr->rectangle((cursor_x + i) * 23, cursor_y * 23, image->get_width(), image->get_height());
+        Gdk::Cairo::set_source_pixbuf(cr, image, item.x * SYMBOL_WIDTH, item.y * SYMBOL_WIDTH);
+        cr->rectangle(item.x * SYMBOL_WIDTH, item.y * SYMBOL_WIDTH, image->get_width(), image->get_height());
         cr->fill();
-
     }
 
     cr->set_line_width(1.0);
     cr->set_source_rgb(0.8, 0.0, 0.0);
 
-    cr->move_to(cursor_x * 23, cursor_y * 23);
-    cr->line_to(cursor_x * 23, (cursor_y +1) * 23);
-    cr->line_to((cursor_x +1) * 23, (cursor_y +1) * 23);
-    cr->line_to((cursor_x +1) * 23, cursor_y * 23);
-    cr->line_to(cursor_x * 23, cursor_y * 23);
+    cr->move_to(cursor_x * SYMBOL_WIDTH, cursor_y * SYMBOL_WIDTH);
+    cr->line_to(cursor_x * SYMBOL_WIDTH, (cursor_y +1) * SYMBOL_WIDTH);
+    cr->line_to((cursor_x +1) * SYMBOL_WIDTH, (cursor_y +1) * SYMBOL_WIDTH);
+    cr->line_to((cursor_x +1) * SYMBOL_WIDTH, cursor_y * SYMBOL_WIDTH);
+    cr->line_to(cursor_x * SYMBOL_WIDTH, cursor_y * SYMBOL_WIDTH);
     cr->stroke();
 
 
     return true;
+}
+
+void LayoutWidget::addSymbol(size_t s) {
+    addSymbol(cursor_x, cursor_y, s);
 }
 
 void LayoutWidget::addSymbol(size_t x, size_t y, size_t s) {
@@ -64,6 +66,7 @@ void LayoutWidget::addSymbol(size_t x, size_t y, size_t s) {
     item.y = y;
     item.s = s;
     items.push_back(item);
+    maleneu();
 }
 
 

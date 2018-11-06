@@ -214,6 +214,7 @@ void FrmMain::on_infobar_response(int) {
 }
 
 bool FrmMain::on_key_press_event(GdkEventKey* key_event) {
+
     switch(key_event->keyval) {
         case GDK_KEY_KP_1:
         case GDK_KEY_1:
@@ -222,20 +223,20 @@ bool FrmMain::on_key_press_event(GdkEventKey* key_event) {
         case GDK_KEY_KP_2:
         case GDK_KEY_2:
             widget.cursor_y++;
-            widget.maleneu();
+            widget.addSymbol(68);
             return true;
 
         case GDK_KEY_KP_3:
         case GDK_KEY_3:
             widget.cursor_x++;
             widget.cursor_y++;
-            widget.maleneu();
+            widget.addSymbol(68);
             return true;
 
         case GDK_KEY_KP_4:
         case GDK_KEY_4:
             widget.cursor_x--;
-            widget.maleneu();
+            widget.addSymbol(68);
             return true;
 
         //case GDK_KEY_KP_5:
@@ -248,7 +249,7 @@ bool FrmMain::on_key_press_event(GdkEventKey* key_event) {
         case GDK_KEY_KP_8:
         case GDK_KEY_8:
             widget.cursor_y--;
-            widget.maleneu();
+            widget.addSymbol(68);
             return true;
 
         case GDK_KEY_KP_9:
@@ -258,7 +259,7 @@ bool FrmMain::on_key_press_event(GdkEventKey* key_event) {
         case GDK_KEY_KP_6:
         case GDK_KEY_6:
             widget.cursor_x++;
-            widget.maleneu();
+            widget.addSymbol(68);
             return true;
 
     }
