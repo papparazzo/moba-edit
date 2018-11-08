@@ -24,6 +24,7 @@
 #include <gdkmm/pixbuf.h>
 
 #include <vector>
+#include <map>
 
 class LayoutWidget : public Gtk::DrawingArea {
 public:
@@ -52,5 +53,8 @@ protected:
     std::vector<Item> items;
 
     const int SYMBOL_WIDTH = 23;
+
+    std::map<int, Glib::RefPtr<Gdk::Pixbuf> > images;
+    Glib::RefPtr<Gdk::Pixbuf> getImage(size_t i);
 
 };

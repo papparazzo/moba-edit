@@ -32,10 +32,7 @@ LayoutWidget::LayoutWidget() : cursor_x{0}, cursor_y{0} {
 bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 
     for(auto item : items) {
-        std::stringstream ss;
-        ss << "./resources/" << item.s << ".bmp";
-
-        Glib::RefPtr<Gdk::Pixbuf> image = Gdk::Pixbuf::create_from_file(ss.str());
+        auto image = getImage(item.s);
 
         Gdk::Cairo::set_source_pixbuf(cr, image, item.x * SYMBOL_WIDTH, item.y * SYMBOL_WIDTH);
         cr->rectangle(item.x * SYMBOL_WIDTH, item.y * SYMBOL_WIDTH, image->get_width(), image->get_height());
@@ -81,4 +78,17 @@ void LayoutWidget::maleneu() {
         );
         win->invalidate_rect(r, false);
     }
+}
+
+Glib::RefPtr<Gdk::Pixbuf> LayoutWidget::getImage(size_t i) {
+    auto iter = images.find(i);
+    if(iter != images.end()) {
+        return iter->second;
+    }
+
+    std::stringstream ss;
+    ss << "./resources/" << i << ".bmp";
+    auto image = Gdk::Pixbuf::create_from_file(ss.str());
+    images[i] = image;
+    return image;
 }
