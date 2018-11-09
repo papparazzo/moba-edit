@@ -20,6 +20,8 @@
 
 #include "frmselect.h"
 
+#include <string>
+
 FrmSelect::FrmSelect() {
 
     set_title("Gleisplan laden");
@@ -48,8 +50,8 @@ void FrmSelect::initListbox() {
     m_refTreeModel_Tracklayouts = Gtk::ListStore::create(m_Columns_Tracklayouts);
     m_TreeView_Tracklayouts.set_model(m_refTreeModel_Tracklayouts);
 
-    m_TreeView_Tracklayouts.append_column("Timestamp", m_Columns_Tracklayouts.m_col_timestamp);
     m_TreeView_Tracklayouts.append_column("ID",        m_Columns_Tracklayouts.m_col_id);
+    m_TreeView_Tracklayouts.append_column("Timestamp", m_Columns_Tracklayouts.m_col_timestamp);
     m_TreeView_Tracklayouts.append_column("Name",      m_Columns_Tracklayouts.m_col_name);
 
     m_VPaned_Tracklayouts.add2(m_ScrolledWindow_Descripton);
@@ -58,8 +60,28 @@ void FrmSelect::initListbox() {
     m_ScrolledWindow_Descripton.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
 
-//    Glib::RefPtr<Gtk::TreeSelection> refTreeSelection = m_TreeView_Incomming.get_selection();
-//    refTreeSelection->signal_changed().connect(sigc::mem_fun(*this, &FrmMain::on_selection_changed_incomming));
-//    m_Button_ClearIncomming.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_clear_incomming_clicked));
+    Glib::RefPtr<Gtk::TreeSelection> refTreeSelection = m_TreeView_Tracklayouts.get_selection();
+    refTreeSelection->signal_changed().connect(sigc::mem_fun(*this, &FrmSelect::on_selection_changed));
 
+}
+
+void FrmSelect::addTracklayout(const std::string &time, int id, const std::string &name, const std::string &description) {
+    Gtk::TreeModel::iterator iter = m_refTreeModel_Tracklayouts->append();
+    Gtk::TreeModel::Row row = *iter;
+    row[m_Columns_Tracklayouts.m_col_timestamp] = time;
+    row[m_Columns_Tracklayouts.m_col_id       ] = id;
+    row[m_Columns_Tracklayouts.m_col_name     ] = name;
+    row[m_Columns_Tracklayouts.m_col_data     ] = description;
+}
+
+void FrmSelect::on_selection_changed() {
+    Glib::RefPtr<Gtk::TreeSelection> selection = m_TreeView_Tracklayouts.get_selection();
+    Gtk::TreeModel::iterator iter = selection->get_selected();
+    if(!iter) {
+        return;
+    }
+
+    Gtk::TreeModel::Row row = *iter;
+
+    m_Label_Description.set_text((std::string)row[m_Columns_Tracklayouts.m_col_data]);
 }

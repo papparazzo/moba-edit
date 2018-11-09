@@ -29,12 +29,16 @@
 #include <gtkmm/comboboxtext.h>
 #include <gtkmm/liststore.h>
 
+#include <string>
+
 class FrmSelect : public Gtk::Dialog {
     public:
         FrmSelect();
         virtual ~FrmSelect() {
 
         }
+
+        void addTracklayout(const std::string &time, int id, const std::string &name, const std::string &description);
 
     protected:
         const static int BUTTON_ID_LOAD = 1;
@@ -67,4 +71,5 @@ class FrmSelect : public Gtk::Dialog {
         ModelColumnsTracklayouts m_Columns_Tracklayouts;
 
         void initListbox();
+        void on_selection_changed();
 };
