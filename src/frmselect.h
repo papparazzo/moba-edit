@@ -40,20 +40,20 @@ class FrmSelect : public Gtk::Dialog {
         const static int BUTTON_ID_LOAD = 1;
         const static int BUTTON_ID_CANCEL = 2;
 
+        Gtk::Paned                   m_VPaned_Tracklayouts{Gtk::ORIENTATION_VERTICAL};
+        Gtk::ScrolledWindow          m_ScrolledWindow_Tracklayouts;
 
+        Gtk::TreeView                m_TreeView_Tracklayouts;
+        Glib::RefPtr<Gtk::ListStore> m_refTreeModel_Tracklayouts;
 
-/*
+        Gtk::Label                   m_Label_Descripton;
+        Gtk::ScrolledWindow          m_ScrolledWindow_Descripton;
 
-        Gtk::Paned                   m_VPaned_Incomming{Gtk::ORIENTATION_VERTICAL};
-        Gtk::ScrolledWindow          m_ScrolledWindow_Incomming;
-        Gtk::TreeView                m_TreeView_Incomming;
-        Glib::RefPtr<Gtk::ListStore> m_refTreeModel_Incomming;
+        Gtk::Box                     m_VBox_Tracklayouts{Gtk::ORIENTATION_VERTICAL, 6};
 
-        void initLayoutSelect();
-
-        class ModelColumnsIncomming : public Gtk::TreeModel::ColumnRecord {
+        class ModelColumnsTracklayouts : public Gtk::TreeModel::ColumnRecord {
             public:
-                ModelColumnsIncomming() {
+                ModelColumnsTracklayouts() {
                     add(m_col_id);
                     add(m_col_timestamp);
                     add(m_col_name);
@@ -65,7 +65,8 @@ class FrmSelect : public Gtk::Dialog {
                 Gtk::TreeModelColumn<Glib::ustring> m_col_name;
                 Gtk::TreeModelColumn<std::string>   m_col_data;
         };
- */
+
+        ModelColumnsTracklayouts m_Columns_Tracklayouts;
+
+        void initListbox();
 };
-
-

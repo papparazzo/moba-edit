@@ -27,69 +27,40 @@ FrmSelect::FrmSelect() {
     set_size_request(600, 400);
     set_position(Gtk::WIN_POS_CENTER);
 
-
     //get_content_area();
     add_button("Gleisplan laden", BUTTON_ID_LOAD)->set_sensitive(false);
     add_button("Abbrechen", BUTTON_ID_CANCEL);
 
-
-
-
-    /*
-    add(m_VBox);
-
-    m_VBox.pack_end(m_ButtonBox, Gtk::PACK_SHRINK);
-
-    // Gleisplan laden
-    m_ButtonBox.pack_start(m_Button_Load, Gtk::PACK_EXPAND_WIDGET, 5);
-    //m_Button_Load.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_emegency_clicked));
-    m_Button_Load.set_label();
-    m_Button_Load.set_sensitive(false);
-
-    // Abbrechen
-    m_ButtonBox.pack_start(m_Button_Cancel, Gtk::PACK_EXPAND_WIDGET, 5);
-    m_ButtonBox.set_layout(Gtk::BUTTONBOX_END);
-
-    m_Button_Cancel.set_label("Abbrechen");
-    //m_Button_Cancel.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_about_clicked));
-*/
-}
-
-
-
-    /*
-void FrmSelect::initLayoutSelect() {
-
-    m_HPaned.add2(m_VPaned_Incomming);
-    m_VPaned_Incomming.set_position(150);
-    m_VPaned_Incomming.add1(m_VBox_Incomming);
-    m_VBox_Incomming.pack_start(m_ScrolledWindow_Incomming);
-    m_ScrolledWindow_Incomming.add(m_TreeView_Incomming);
-    m_ScrolledWindow_Incomming.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-
-    m_refTreeModel_Incomming = Gtk::ListStore::create(m_Columns_Incomming);
-    m_TreeView_Incomming.set_model(m_refTreeModel_Incomming);
-
-    m_TreeView_Incomming.append_column("Timestamp", m_Columns_Incomming.m_col_timestamp);
-    m_TreeView_Incomming.append_column("ID",        m_Columns_Incomming.m_col_id);
-    m_TreeView_Incomming.append_column("Name",      m_Columns_Incomming.m_col_name);
-
-    m_VPaned_Incomming.add2(m_ScrolledWindow_Data);
-
-    m_ScrolledWindow_Data.add(m_Label_Data);
-    m_ScrolledWindow_Data.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-
-    m_VBox_Incomming.pack_end(m_HBox_CheckRow, Gtk::PACK_SHRINK);
-    m_HBox_CheckRow.pack_start(m_Button_AutoCheckLast, Gtk::PACK_SHRINK);
-    m_HBox_CheckRow.pack_end(m_ButtonBox_Incomming, Gtk::PACK_SHRINK);
-    m_Button_AutoCheckLast.set_label("letzten Eintrag markieren");
-
-    m_ButtonBox_Incomming.pack_start(m_Button_ClearIncomming, Gtk::PACK_EXPAND_WIDGET, 5);
-    m_ButtonBox_Incomming.set_layout(Gtk::BUTTONBOX_END);
-
-    Glib::RefPtr<Gtk::TreeSelection> refTreeSelection = m_TreeView_Incomming.get_selection();
-    refTreeSelection->signal_changed().connect(sigc::mem_fun(*this, &FrmMain::on_selection_changed_incomming));
-    m_Button_ClearIncomming.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_clear_incomming_clicked));
+    initListbox();
+    show_all_children();
 
 }
-     *      */
+
+void FrmSelect::initListbox() {
+
+    get_content_area()->add(m_VPaned_Tracklayouts);
+    m_VPaned_Tracklayouts.set_position(150);
+    m_VPaned_Tracklayouts.add1(m_VBox_Tracklayouts);
+    m_VBox_Tracklayouts.pack_start(m_ScrolledWindow_Tracklayouts);
+
+    m_ScrolledWindow_Tracklayouts.add(m_TreeView_Tracklayouts);
+    m_ScrolledWindow_Tracklayouts.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+
+    m_refTreeModel_Tracklayouts = Gtk::ListStore::create(m_Columns_Tracklayouts);
+    m_TreeView_Tracklayouts.set_model(m_refTreeModel_Tracklayouts);
+
+    m_TreeView_Tracklayouts.append_column("Timestamp", m_Columns_Tracklayouts.m_col_timestamp);
+    m_TreeView_Tracklayouts.append_column("ID",        m_Columns_Tracklayouts.m_col_id);
+    m_TreeView_Tracklayouts.append_column("Name",      m_Columns_Tracklayouts.m_col_name);
+
+    m_VPaned_Tracklayouts.add2(m_ScrolledWindow_Descripton);
+
+    m_ScrolledWindow_Descripton.add(m_Label_Descripton);
+    m_ScrolledWindow_Descripton.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+
+
+//    Glib::RefPtr<Gtk::TreeSelection> refTreeSelection = m_TreeView_Incomming.get_selection();
+//    refTreeSelection->signal_changed().connect(sigc::mem_fun(*this, &FrmMain::on_selection_changed_incomming));
+//    m_Button_ClearIncomming.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_clear_incomming_clicked));
+
+}
