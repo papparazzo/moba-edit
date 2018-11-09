@@ -38,10 +38,9 @@ FrmSelect::FrmSelect() {
 
 void FrmSelect::initListbox() {
 
-    get_content_area()->add(m_VPaned_Tracklayouts);
+    get_content_area()->pack_start(m_VPaned_Tracklayouts);
     m_VPaned_Tracklayouts.set_position(150);
-    m_VPaned_Tracklayouts.add1(m_VBox_Tracklayouts);
-    m_VBox_Tracklayouts.pack_start(m_ScrolledWindow_Tracklayouts);
+    m_VPaned_Tracklayouts.add1(m_ScrolledWindow_Tracklayouts);
 
     m_ScrolledWindow_Tracklayouts.add(m_TreeView_Tracklayouts);
     m_ScrolledWindow_Tracklayouts.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
@@ -55,7 +54,7 @@ void FrmSelect::initListbox() {
 
     m_VPaned_Tracklayouts.add2(m_ScrolledWindow_Descripton);
 
-    m_ScrolledWindow_Descripton.add(m_Label_Descripton);
+    m_ScrolledWindow_Descripton.add(m_Label_Description);
     m_ScrolledWindow_Descripton.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
 

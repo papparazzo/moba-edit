@@ -46,10 +46,8 @@ class FrmSelect : public Gtk::Dialog {
         Gtk::TreeView                m_TreeView_Tracklayouts;
         Glib::RefPtr<Gtk::ListStore> m_refTreeModel_Tracklayouts;
 
-        Gtk::Label                   m_Label_Descripton;
+        Gtk::Label                   m_Label_Description;
         Gtk::ScrolledWindow          m_ScrolledWindow_Descripton;
-
-        Gtk::Box                     m_VBox_Tracklayouts{Gtk::ORIENTATION_VERTICAL, 6};
 
         class ModelColumnsTracklayouts : public Gtk::TreeModel::ColumnRecord {
             public:
