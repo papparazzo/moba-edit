@@ -38,7 +38,10 @@ class FrmSelect : public Gtk::Dialog {
 
         }
 
-        void addTracklayout(const std::string &time, int id, const std::string &name, const std::string &description);
+        void addTracklayout(int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, const std::string &description);
+        void updateTracklayout(int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, const std::string &description);
+        void deleteTracklayout(int id);
+        void setLockStatus(int id, bool locked);
 
     protected:
         const static int BUTTON_ID_LOAD = 1;
@@ -57,14 +60,18 @@ class FrmSelect : public Gtk::Dialog {
             public:
                 ModelColumnsTracklayouts() {
                     add(m_col_id);
-                    add(m_col_timestamp);
+                    add(m_col_created);
+                    add(m_col_modified);
                     add(m_col_name);
+                    add(m_col_locked);
                     add(m_col_data);
                 }
 
                 Gtk::TreeModelColumn<int>           m_col_id;
-                Gtk::TreeModelColumn<Glib::ustring> m_col_timestamp;
+                Gtk::TreeModelColumn<Glib::ustring> m_col_created;
+                Gtk::TreeModelColumn<Glib::ustring> m_col_modified;
                 Gtk::TreeModelColumn<Glib::ustring> m_col_name;
+                Gtk::TreeModelColumn<bool>          m_col_locked;
                 Gtk::TreeModelColumn<std::string>   m_col_data;
         };
 

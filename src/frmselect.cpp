@@ -35,7 +35,6 @@ FrmSelect::FrmSelect() {
 
     initListbox();
     show_all_children();
-
 }
 
 void FrmSelect::initListbox() {
@@ -50,9 +49,11 @@ void FrmSelect::initListbox() {
     m_refTreeModel_Tracklayouts = Gtk::ListStore::create(m_Columns_Tracklayouts);
     m_TreeView_Tracklayouts.set_model(m_refTreeModel_Tracklayouts);
 
-    m_TreeView_Tracklayouts.append_column("ID",        m_Columns_Tracklayouts.m_col_id);
-    m_TreeView_Tracklayouts.append_column("Timestamp", m_Columns_Tracklayouts.m_col_timestamp);
-    m_TreeView_Tracklayouts.append_column("Name",      m_Columns_Tracklayouts.m_col_name);
+    m_TreeView_Tracklayouts.append_column("ID",          m_Columns_Tracklayouts.m_col_id);
+    m_TreeView_Tracklayouts.append_column("Erstellt am", m_Columns_Tracklayouts.m_col_created);
+    m_TreeView_Tracklayouts.append_column("Geändert am", m_Columns_Tracklayouts.m_col_modified);
+    m_TreeView_Tracklayouts.append_column("Gesperrt",    m_Columns_Tracklayouts.m_col_locked);
+    m_TreeView_Tracklayouts.append_column("Name",        m_Columns_Tracklayouts.m_col_name);
 
     m_VPaned_Tracklayouts.add2(m_ScrolledWindow_Descripton);
 
@@ -65,13 +66,55 @@ void FrmSelect::initListbox() {
 
 }
 
-void FrmSelect::addTracklayout(const std::string &time, int id, const std::string &name, const std::string &description) {
-    Gtk::TreeModel::iterator iter = m_refTreeModel_Tracklayouts->append();
-    Gtk::TreeModel::Row row = *iter;
-    row[m_Columns_Tracklayouts.m_col_timestamp] = time;
-    row[m_Columns_Tracklayouts.m_col_id       ] = id;
-    row[m_Columns_Tracklayouts.m_col_name     ] = name;
-    row[m_Columns_Tracklayouts.m_col_data     ] = description;
+void FrmSelect::updateTracklayout(int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, const std::string &description) {
+    auto children = m_refTreeModel_Tracklayouts->children();
+    for(auto iter = children.begin(); iter != children.end(); ++iter) {
+        auto row = *iter;
+        if(row[m_Columns_Tracklayouts.m_col_id] != id) {
+            continue;
+        }
+        row[m_Columns_Tracklayouts.m_col_id      ] = id;
+        row[m_Columns_Tracklayouts.m_col_created ] = created;
+        row[m_Columns_Tracklayouts.m_col_modified] = modified;
+        row[m_Columns_Tracklayouts.m_col_name    ] = name;
+        row[m_Columns_Tracklayouts.m_col_locked  ] = locked;
+        row[m_Columns_Tracklayouts.m_col_data    ] = description;
+        return;
+    }
+}
+
+void FrmSelect::deleteTracklayout(int id) {
+    auto children = m_refTreeModel_Tracklayouts->children();
+    for(auto iter = children.begin(); iter != children.end(); ++iter) {
+        if((*iter)[m_Columns_Tracklayouts.m_col_id] != id) {
+            continue;
+        }
+        m_refTreeModel_Tracklayouts->erase(iter);
+        return;
+    }
+}
+
+void FrmSelect::setLockStatus(int id, bool locked) {
+    auto children = m_refTreeModel_Tracklayouts->children();
+    for(auto iter = children.begin(); iter != children.end(); ++iter) {
+        auto row = *iter;
+        if(row[m_Columns_Tracklayouts.m_col_id] != id) {
+            continue;
+        }
+        row[m_Columns_Tracklayouts.m_col_locked] = locked;
+        return;
+    }
+}
+
+void FrmSelect::addTracklayout(int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, const std::string &description) {
+    auto iter = m_refTreeModel_Tracklayouts->append();
+    auto row = *iter;
+    row[m_Columns_Tracklayouts.m_col_id      ] = id;
+    row[m_Columns_Tracklayouts.m_col_created ] = created;
+    row[m_Columns_Tracklayouts.m_col_modified] = modified;
+    row[m_Columns_Tracklayouts.m_col_name    ] = name;
+    row[m_Columns_Tracklayouts.m_col_locked  ] = locked;
+    row[m_Columns_Tracklayouts.m_col_data    ] = description;
 }
 
 void FrmSelect::on_selection_changed() {
