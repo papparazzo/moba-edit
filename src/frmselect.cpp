@@ -22,7 +22,7 @@
 
 #include <string>
 
-FrmSelect::FrmSelect() {
+FrmSelect::FrmSelect(moba::MsgEndpointPtr mhp) : msgEndpoint(mhp) {
 
     set_title("Gleisplan laden");
     set_border_width(10);

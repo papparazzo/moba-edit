@@ -33,7 +33,7 @@
 
 class FrmSelect : public Gtk::Dialog {
     public:
-        FrmSelect();
+        FrmSelect(moba::MsgEndpointPtr mhp);
         virtual ~FrmSelect() {
 
         }
@@ -76,6 +76,8 @@ class FrmSelect : public Gtk::Dialog {
         };
 
         ModelColumnsTracklayouts m_Columns_Tracklayouts;
+
+        moba::MsgEndpointPtr msgEndpoint;
 
         void initListbox();
         void on_selection_changed();
