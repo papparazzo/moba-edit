@@ -50,6 +50,8 @@ int main(int argc, char *argv[]) {
         moba::JsonArrayPtr groups(new moba::JsonArray());
         groups->push_back(moba::toJsonStringPtr("SERV"));
         groups->push_back(moba::toJsonStringPtr("SYSTEM"));
+        groups->push_back(moba::toJsonStringPtr("LAYOUTS"));
+        groups->push_back(moba::toJsonStringPtr("LAYOUT"));
 
         msgEndpoint->connect(
             appData.appName,
