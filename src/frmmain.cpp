@@ -18,12 +18,15 @@
  *
  */
 
+#include <boost/algorithm/string.hpp>
+
 #include <iostream>
 #include <exception>
 #include <algorithm>
 
 #include <ctime>
 #include <sys/timeb.h>
+#include <vector>
 
 #include "frmmain.h"
 #include "config.h"
@@ -46,18 +49,15 @@ namespace {
         "\n"
         "You should have received a copy of the GNU Affero General Public License\n"
         "along with this program. If not, see <http://www.gnu.org/licenses/agpl.txt>.";
-
 }
 
 FrmMain::FrmMain(moba::MsgEndpointPtr mhp) :
     msgEndpoint(mhp), sysHandler(mhp), cltHandler(mhp), m_VBox(Gtk::ORIENTATION_VERTICAL, 6),
-    m_Button_About("About..."), m_HBox(Gtk::ORIENTATION_HORIZONTAL, 6),
+    m_Button_About("About..."), m_HBox(Gtk::ORIENTATION_HORIZONTAL, 6), frmSelect(mhp),
     m_Label_Connectivity_HW(" \xe2\x96\x84"), m_Label_Connectivity_SW(" \xe2\x96\x84")
 {
     sigc::slot<bool> my_slot = sigc::bind(sigc::mem_fun(*this, &FrmMain::on_timeout), 1);
     sigc::connection conn = Glib::signal_timeout().connect(my_slot, 25); // 25 ms
-
-    set_title(PACKAGE_NAME);
 
     set_border_width(10);
     set_size_request(600, 400);
@@ -76,10 +76,8 @@ FrmMain::FrmMain(moba::MsgEndpointPtr mhp) :
 
     m_VBox.pack_start(m_InfoBar, Gtk::PACK_SHRINK);
 
-
-
     m_VBox.pack_start(widget);
-    widget.show();
+
     m_VBox.pack_start(m_HBox, Gtk::PACK_SHRINK);
     m_HBox.pack_end(m_ButtonBox, Gtk::PACK_SHRINK);
 
@@ -112,8 +110,14 @@ FrmMain::FrmMain(moba::MsgEndpointPtr mhp) :
     sysHandler.sendGetHardwareState();
     show_all_children();
     m_InfoBar.hide();
+    msgEndpoint->sendMsg(moba::Message::MT_GET_LAYOUTS_REQ);
 }
-
+/*
+void FrmMain::on_button_loadTracklayout() {
+    frmSelect.set_transient_for(*this);
+    frmSelect.run();
+}
+*/
 void FrmMain::initAboutDialog() {
     m_Dialog.set_transient_for(*this);
 
@@ -204,6 +208,19 @@ bool FrmMain::on_timeout(int) {
             setHardwareState(msg->getData());
             break;
 
+        case moba::Message::MT_GET_LAYOUTS_RES:
+            setTrackLayout(msg->getData());
+            break;
+
+        case moba::Message::MT_LAYOUT_DELETED:
+            deleteTrackLayout(msg->getData());
+            break;
+
+        case moba::Message::MT_LAYOUT_CREATED:
+            break;
+
+        case moba::Message::MT_LAYOUT_UNLOCKED:
+            break;
     }
     return true;
 }
@@ -337,4 +354,23 @@ void FrmMain::setHardwareState(moba::JsonItemPtr data) {
 
     std::stringstream ss;
     ss << "<b>Hardwarestatus:</b> " << moba::castToString(data);
+}
+
+void FrmMain::setTrackLayout(moba::JsonItemPtr data) {
+    auto a = boost::dynamic_pointer_cast<moba::JsonArray>(data);
+    for(auto iter = a->begin(); iter != a->end(); ++iter) {
+        auto o = boost::dynamic_pointer_cast<moba::JsonObject>(*iter);
+        frmSelect.addTracklayout(
+            moba::castToInt(o->at("id")),
+            moba::castToString(o->at("created")),
+            moba::castToString(o->at("modified")),
+            moba::castToString(o->at("name")),
+            moba::castToInt(o->at("locked")),
+            moba::castToString(o->at("description"))
+        );
+    }
+}
+
+void FrmMain::deleteTrackLayout(moba::JsonItemPtr data) {
+
 }

@@ -33,6 +33,7 @@
 #include <gtkmm/liststore.h>
 
 #include "layoutwidget.h"
+#include "frmselect.h"
 
 class FrmMain : public Gtk::Window {
     public:
@@ -55,6 +56,9 @@ class FrmMain : public Gtk::Window {
         // info-bar
         Gtk::InfoBar m_InfoBar;
         Gtk::Label m_Label_InfoBarMessage;
+
+        // load tracklayout
+        FrmSelect frmSelect;
 
         void initAboutDialog();
 
@@ -79,10 +83,14 @@ class FrmMain : public Gtk::Window {
         void on_about_dialog_response(int response_id);
         void on_infobar_response(int response);
 
+//        void on_button_loadTracklayout();
+
         bool on_key_press_event(GdkEventKey *key_event);
 
         // msg-response
         void setServerInfoRes(moba::JsonItemPtr data);
         void setSystemNotice(moba::JsonItemPtr data);
         void setHardwareState(moba::JsonItemPtr data);
+        void setTrackLayout(moba::JsonItemPtr data);
+        void deleteTrackLayout(moba::JsonItemPtr data);
 };
