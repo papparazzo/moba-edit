@@ -60,7 +60,6 @@ void FrmSelect::initListbox() {
     m_ScrolledWindow_Descripton.add(m_Label_Description);
     m_ScrolledWindow_Descripton.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
-
     Glib::RefPtr<Gtk::TreeSelection> refTreeSelection = m_TreeView_Tracklayouts.get_selection();
     refTreeSelection->signal_changed().connect(sigc::mem_fun(*this, &FrmSelect::on_selection_changed));
 
