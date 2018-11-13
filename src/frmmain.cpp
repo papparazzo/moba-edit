@@ -209,7 +209,7 @@ bool FrmMain::on_timeout(int) {
             break;
 
         case moba::Message::MT_GET_LAYOUTS_RES:
-            setTrackLayout(msg->getData());
+            setTrackLayouts(msg->getData());
             break;
 
         case moba::Message::MT_LAYOUT_DELETED:
@@ -217,9 +217,15 @@ bool FrmMain::on_timeout(int) {
             break;
 
         case moba::Message::MT_LAYOUT_CREATED:
+            setTrackLayout(msg->getData());
             break;
 
         case moba::Message::MT_LAYOUT_UNLOCKED:
+            setLockStateUnlocked(msg->getData());
+            break;
+
+        case moba::Message::MT_GET_LAYOUT_RES:
+            //setCurrentLayout(msg->getData());
             break;
     }
     return true;
@@ -231,56 +237,9 @@ void FrmMain::on_infobar_response(int) {
 }
 
 bool FrmMain::on_key_press_event(GdkEventKey* key_event) {
-
-    switch(key_event->keyval) {
-        case GDK_KEY_KP_1:
-        case GDK_KEY_1:
-            widget.cursor_x--;
-
-        case GDK_KEY_KP_2:
-        case GDK_KEY_2:
-            widget.cursor_y++;
-            widget.addSymbol(68);
-            return true;
-
-        case GDK_KEY_KP_3:
-        case GDK_KEY_3:
-            widget.cursor_x++;
-            widget.cursor_y++;
-            widget.addSymbol(68);
-            return true;
-
-        case GDK_KEY_KP_4:
-        case GDK_KEY_4:
-            widget.cursor_x--;
-            widget.addSymbol(68);
-            return true;
-
-        //case GDK_KEY_KP_5:
-        //case GDK_KEY_5:
-
-        case GDK_KEY_KP_7:
-        case GDK_KEY_7:
-            widget.cursor_x--;
-
-        case GDK_KEY_KP_8:
-        case GDK_KEY_8:
-            widget.cursor_y--;
-            widget.addSymbol(68);
-            return true;
-
-        case GDK_KEY_KP_9:
-        case GDK_KEY_9:
-            widget.cursor_y--;
-
-        case GDK_KEY_KP_6:
-        case GDK_KEY_6:
-            widget.cursor_x++;
-            widget.addSymbol(68);
-            return true;
-
-    }
-
+    if(widget.on_key_press_event(key_event)) {
+        return true;
+    };
     return Gtk::Window::on_key_press_event(key_event);
 }
 
@@ -356,21 +315,33 @@ void FrmMain::setHardwareState(moba::JsonItemPtr data) {
     ss << "<b>Hardwarestatus:</b> " << moba::castToString(data);
 }
 
-void FrmMain::setTrackLayout(moba::JsonItemPtr data) {
+void FrmMain::setTrackLayouts(moba::JsonItemPtr data) {
     auto a = boost::dynamic_pointer_cast<moba::JsonArray>(data);
     for(auto iter = a->begin(); iter != a->end(); ++iter) {
-        auto o = boost::dynamic_pointer_cast<moba::JsonObject>(*iter);
-        frmSelect.addTracklayout(
-            moba::castToInt(o->at("id")),
-            moba::castToString(o->at("created")),
-            moba::castToString(o->at("modified")),
-            moba::castToString(o->at("name")),
-            moba::castToInt(o->at("locked")),
-            moba::castToString(o->at("description"))
-        );
+        setTrackLayout(*iter);
     }
 }
 
 void FrmMain::deleteTrackLayout(moba::JsonItemPtr data) {
-
+    auto i = boost::dynamic_pointer_cast<moba::JsonNumber<long int>>(data);
+    frmSelect.deleteTracklayout(i->getVal());
 }
+
+void FrmMain::setTrackLayout(moba::JsonItemPtr data) {
+    auto o = boost::dynamic_pointer_cast<moba::JsonObject>(data);
+    frmSelect.addTracklayout(
+        moba::castToInt(o->at("id")),
+        moba::castToString(o->at("created")),
+        moba::castToString(o->at("modified")),
+        moba::castToString(o->at("name")),
+        moba::castToInt(o->at("locked")),
+        moba::castToString(o->at("description"))
+    );
+}
+
+void FrmMain::setLockStateUnlocked(moba::JsonItemPtr data) {
+    auto i = boost::dynamic_pointer_cast<moba::JsonNumber<long int>>(data);
+    frmSelect.setLockStatus(i->getVal(), false);
+}
+
+//setCurrentLayout(msg->getData());

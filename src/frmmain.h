@@ -90,7 +90,9 @@ class FrmMain : public Gtk::Window {
         // msg-response
         void setServerInfoRes(moba::JsonItemPtr data);
         void setSystemNotice(moba::JsonItemPtr data);
+        void setLockStateUnlocked(moba::JsonItemPtr data);
         void setHardwareState(moba::JsonItemPtr data);
         void setTrackLayout(moba::JsonItemPtr data);
+        void setTrackLayouts(moba::JsonItemPtr data);
         void deleteTrackLayout(moba::JsonItemPtr data);
 };
