@@ -47,6 +47,8 @@ public:
 
     void maleneu();
 
+    bool on_key_press_event(GdkEventKey* key_event);
+
 protected:
     //Override default signal handler:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;

@@ -68,6 +68,7 @@ void LayoutWidget::addSymbol(size_t x, size_t y, size_t s) {
 
 
 void LayoutWidget::maleneu() {
+    // TODO: Invalidate smaller area
     auto win = get_window();
     if(win) {
         Gdk::Rectangle r(
@@ -91,4 +92,58 @@ Glib::RefPtr<Gdk::Pixbuf> LayoutWidget::getImage(size_t i) {
     auto image = Gdk::Pixbuf::create_from_file(ss.str());
     images[i] = image;
     return image;
+}
+
+bool LayoutWidget::on_key_press_event(GdkEventKey* key_event) {
+    switch(key_event->keyval) {
+        case GDK_KEY_KP_1:
+        case GDK_KEY_1:
+            cursor_x--;
+
+        case GDK_KEY_KP_2:
+        case GDK_KEY_2:
+            cursor_y++;
+            break;
+
+        case GDK_KEY_KP_3:
+        case GDK_KEY_3:
+            cursor_x++;
+            cursor_y++;
+            break;
+
+        case GDK_KEY_KP_4:
+        case GDK_KEY_4:
+            cursor_x--;
+            break;
+
+        //case GDK_KEY_KP_5:
+        //case GDK_KEY_5:
+
+        case GDK_KEY_KP_7:
+        case GDK_KEY_7:
+            cursor_x--;
+
+        case GDK_KEY_KP_8:
+        case GDK_KEY_8:
+            cursor_y--;
+            break;
+
+        case GDK_KEY_KP_9:
+        case GDK_KEY_9:
+            cursor_y--;
+
+        case GDK_KEY_KP_6:
+        case GDK_KEY_6:
+            cursor_x++;
+            break;
+
+        default:
+            return false;
+
+    }
+
+    maleneu();
+    return true;
+    //return Gtk::Window::on_key_press_event(key_event);
+
 }
