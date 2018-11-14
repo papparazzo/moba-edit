@@ -5,7 +5,8 @@ moba_edit_SOURCES = \
     main.cpp \
     frmmain.cpp \
     layoutwidget.cpp \
-    frmselect.cpp
+    frmselect.cpp \
+    toolboxwidget.cpp
 
 moba_edit_LDADD = -lMoBaCommon $(GTKMM_LIBS)
 LDFLAGS += -L/usr/local/lib
