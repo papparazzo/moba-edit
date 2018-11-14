@@ -34,13 +34,14 @@ class ToolboxWidget : public Gtk::DrawingArea {
 
         }
     private:
-  void refresh();
+
+        void refresh();
         //Override default signal handler:
         bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
         const int SYMBOL_WIDTH = 30;
 
-        std::map<int, Glib::RefPtr<Gdk::Pixbuf> > images;
+        std::map<int, std::map<int, Glib::RefPtr<Gdk::Pixbuf> > >images;
 
         // Override mouse events
         bool on_button_press_event(GdkEventButton * event);

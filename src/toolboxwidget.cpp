@@ -29,25 +29,61 @@
 ToolboxWidget::ToolboxWidget() {
     // Set masks for mouse events
     add_events(Gdk::BUTTON_PRESS_MASK);
+                 // Prellböcke
 
-    for(auto i : {9, 17, 18, 33, 34, 36, 66, 68, 72, 132, 136, 144}) {
+    for(auto i : {9, 17, 18, 33, 34, 36, 66, 68, 72, 85, 132, 136, 144, 170}) {
         std::stringstream ss;
         ss << "./resources/" << i << ".bmp";
         auto image = Gdk::Pixbuf::create_from_file(ss.str());
-        images[i] = image;
+        images[0][i] = image;
+    }
+
+    for(auto i : {19, 25, 35, 38, 49, 50, 70, 76, 98, 100, 137, 140, 145, 152, 196, 200}) {
+        std::stringstream ss;
+        ss << "./resources/" << i << ".bmp";
+        auto image = Gdk::Pixbuf::create_from_file(ss.str());
+        images[1][i] = image;
+    }
+
+    for(auto i : {39, 51, 57, 78, 102, 114, 147, 153, 201, 204,228, 256}) {
+        std::stringstream ss;
+        ss << "./resources/" << i << ".bmp";
+        auto image = Gdk::Pixbuf::create_from_file(ss.str());
+        images[2][i] = image;
+    }
+
+    for(auto i : {1, 2, 4, 8, 16, 32, 64, 128}) {
+        std::stringstream ss;
+        ss << "./resources/" << i << ".bmp";
+        auto image = Gdk::Pixbuf::create_from_file(ss.str());
+        images[3][i] = image;
     }
 }
 
 bool ToolboxWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 
-    int x = 1;
+    int x_offset = 10;
+    int y_offset = -10;
+
+    int x;
+    int y = 0;
 
     for(auto iter = images.begin(); iter != images.end(); ++iter) {
-        auto image = iter->second;
-        Gdk::Cairo::set_source_pixbuf(cr, image, x * SYMBOL_WIDTH, 1 * SYMBOL_WIDTH);
-        cr->rectangle(x * SYMBOL_WIDTH, 1 * SYMBOL_WIDTH, image->get_width(), image->get_height());
-        cr->fill();
-        x++;
+        x = 0;
+        for(auto iter2 = iter->second.begin(); iter2 != iter->second.end(); ++iter2) {
+            if (!(x % 4)) {
+               y++;
+               x = 0;
+            }
+
+            auto image = iter2->second;
+
+            Gdk::Cairo::set_source_pixbuf(cr, image, x_offset + x * SYMBOL_WIDTH, y_offset + y * SYMBOL_WIDTH);
+            cr->rectangle(x_offset + x * SYMBOL_WIDTH, y_offset + y * SYMBOL_WIDTH, image->get_width(), image->get_height());
+            cr->fill();
+            x++;
+        }
+        y++;
     }
 
     return true;
