@@ -29,7 +29,26 @@
 LayoutWidget::LayoutWidget() : cursor_x{0}, cursor_y{0} {
 }
 
+void LayoutWidget::clear() {
+    items.clear();
+    refresh();
+}
+
+void LayoutWidget::setCursur(int x, int y) {
+    if(x < 0) {
+        x = 0;
+    }
+    if(y < 0) {
+        y = 0;
+    }
+    cursor_x = x;
+    cursor_y = y;
+}
+
 bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
+
+    cr->set_source_rgb(0.0, 0.0, 0.0);
+    cr->paint();
 
     for(auto item : items) {
         auto image = getImage(item.s);
@@ -49,7 +68,6 @@ bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     cr->line_to(cursor_x * SYMBOL_WIDTH, cursor_y * SYMBOL_WIDTH);
     cr->stroke();
 
-
     return true;
 }
 
@@ -57,28 +75,28 @@ void LayoutWidget::addSymbol(size_t s) {
     addSymbol(cursor_x, cursor_y, s);
 }
 
-void LayoutWidget::addSymbol(size_t x, size_t y, size_t s) {
+void LayoutWidget::addSymbol(size_t x, size_t y, size_t s, bool suppressRefresh) {
     Item item;
     item.x = x;
     item.y = y;
     item.s = s;
     items.push_back(item);
-    maleneu();
+    if(!suppressRefresh) {
+        refresh();
+    }
 }
 
+void LayoutWidget::removeSymbol(size_t x, size_t y) {
 
-void LayoutWidget::maleneu() {
-    // TODO: Invalidate smaller area
+}
+
+void LayoutWidget::refresh() {
     auto win = get_window();
-    if(win) {
-        Gdk::Rectangle r(
-            0,
-            0,
-            get_allocation().get_width(),
-            get_allocation().get_height()
-        );
-        win->invalidate_rect(r, false);
+    if(!win) {
+        return;
     }
+    Gdk::Rectangle r(0, 0, get_allocation().get_width(), get_allocation().get_height());
+    win->invalidate_rect(r, false);
 }
 
 Glib::RefPtr<Gdk::Pixbuf> LayoutWidget::getImage(size_t i) {
@@ -97,53 +115,42 @@ Glib::RefPtr<Gdk::Pixbuf> LayoutWidget::getImage(size_t i) {
 bool LayoutWidget::on_key_press_event(GdkEventKey* key_event) {
     switch(key_event->keyval) {
         case GDK_KEY_KP_1:
-        case GDK_KEY_1:
-            cursor_x--;
+            setCursur(cursor_x - 1, cursor_y + 1);
+            break;
 
         case GDK_KEY_KP_2:
-        case GDK_KEY_2:
-            cursor_y++;
+            setCursur(cursor_x, cursor_y + 1);
             break;
 
         case GDK_KEY_KP_3:
-        case GDK_KEY_3:
-            cursor_x++;
-            cursor_y++;
+            setCursur(cursor_x + 1, cursor_y + 1);
             break;
 
         case GDK_KEY_KP_4:
-        case GDK_KEY_4:
-            cursor_x--;
+            setCursur(cursor_x - 1, cursor_y);
             break;
 
-        //case GDK_KEY_KP_5:
-        //case GDK_KEY_5:
-
         case GDK_KEY_KP_7:
-        case GDK_KEY_7:
-            cursor_x--;
+            setCursur(cursor_x - 1, cursor_y - 1);
+            break;
 
         case GDK_KEY_KP_8:
-        case GDK_KEY_8:
-            cursor_y--;
+            setCursur(cursor_x, cursor_y - 1);
             break;
 
         case GDK_KEY_KP_9:
-        case GDK_KEY_9:
-            cursor_y--;
+            setCursur(cursor_x + 1, cursor_y - 1);
+            break;
 
         case GDK_KEY_KP_6:
-        case GDK_KEY_6:
-            cursor_x++;
+            setCursur(cursor_x + 1, cursor_y);
             break;
 
         default:
             return false;
 
     }
-
-    maleneu();
+    refresh();
     return true;
-    //return Gtk::Window::on_key_press_event(key_event);
 
 }

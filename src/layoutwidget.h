@@ -32,9 +32,28 @@ public:
     virtual ~LayoutWidget() {
 
     }
+
+    void clear();
+
+    void setCursur(int x, int y);
+
+    void addSymbol(size_t x, size_t y, size_t s, bool suppressRefresh = false);
+    void addSymbol(size_t s);
+
+    void removeSymbol(size_t x, size_t y);
+
+    void refresh();
+
+
+
+
+
+
+    bool on_key_press_event(GdkEventKey* key_event);
+
+protected:
     int cursor_x;
     int cursor_y;
-
 
     struct Item {
         size_t x;
@@ -42,14 +61,8 @@ public:
         size_t s;
     };
 
-    void addSymbol(size_t x, size_t y, size_t s);
-    void addSymbol(size_t s);
 
-    void maleneu();
 
-    bool on_key_press_event(GdkEventKey* key_event);
-
-protected:
     //Override default signal handler:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
     std::vector<Item> items;
