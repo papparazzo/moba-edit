@@ -33,6 +33,7 @@
 #include <gtkmm/liststore.h>
 
 #include "layoutwidget.h"
+#include "toolboxwidget.h"
 #include "frmselect.h"
 
 class FrmMain : public Gtk::Window {
@@ -60,6 +61,8 @@ class FrmMain : public Gtk::Window {
         // load tracklayout
         FrmSelect frmSelect;
 
+        Gtk::Paned m_VPaned_Container{Gtk::ORIENTATION_HORIZONTAL};
+
         void initAboutDialog();
 
         moba::MsgEndpointPtr   msgEndpoint;
@@ -70,6 +73,8 @@ class FrmMain : public Gtk::Window {
         int pingctr;
 
         LayoutWidget widget;
+
+        ToolboxWidget toolbox;
 
         // Signal handlers:
         bool on_timeout(int timer_number);
@@ -95,4 +100,5 @@ class FrmMain : public Gtk::Window {
         void setTrackLayout(moba::JsonItemPtr data);
         void setTrackLayouts(moba::JsonItemPtr data);
         void deleteTrackLayout(moba::JsonItemPtr data);
+        void setCurrentLayout(moba::JsonItemPtr data);
 };

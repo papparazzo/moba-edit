@@ -75,8 +75,9 @@ FrmMain::FrmMain(moba::MsgEndpointPtr mhp) :
     m_InfoBar.add_button("_OK", 0);
 
     m_VBox.pack_start(m_InfoBar, Gtk::PACK_SHRINK);
-
-    m_VBox.pack_start(widget);
+    m_VBox.pack_start(m_VPaned_Container);
+    m_VPaned_Container.add1(widget);
+    m_VPaned_Container.add2(toolbox);
 
     m_VBox.pack_start(m_HBox, Gtk::PACK_SHRINK);
     m_HBox.pack_end(m_ButtonBox, Gtk::PACK_SHRINK);
@@ -137,6 +138,15 @@ void FrmMain::initAboutDialog() {
     m_Dialog.signal_response().connect(sigc::mem_fun(*this, &FrmMain::on_about_dialog_response));
 
     m_Button_About.grab_focus();
+
+    widget.addSymbol(0, 0, 4);
+    widget.addSymbol(1, 0, 68);
+    widget.addSymbol(2, 0, 68);
+    widget.addSymbol(3, 0, 68);
+    widget.addSymbol(4, 0, 72);
+    widget.addSymbol(5, 1, 136);
+
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -225,7 +235,7 @@ bool FrmMain::on_timeout(int) {
             break;
 
         case moba::Message::MT_GET_LAYOUT_RES:
-            //setCurrentLayout(msg->getData());
+            setCurrentLayout(msg->getData());
             break;
     }
     return true;
@@ -344,4 +354,11 @@ void FrmMain::setLockStateUnlocked(moba::JsonItemPtr data) {
     frmSelect.setLockStatus(i->getVal(), false);
 }
 
-//setCurrentLayout(msg->getData());
+void FrmMain::setCurrentLayout(moba::JsonItemPtr data) {
+    widget.addSymbol(0, 0, 4);
+    widget.addSymbol(1, 0, 68);
+    widget.addSymbol(2, 0, 68);
+    widget.addSymbol(3, 0, 68);
+    widget.addSymbol(4, 0, 72);
+    widget.addSymbol(5, 1, 136);
+}
