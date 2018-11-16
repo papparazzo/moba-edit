@@ -69,11 +69,7 @@ class FrmMain : public Gtk::Window {
         moba::MsgSystemHandler sysHandler;
         moba::MsgClientHandler cltHandler;
 
-        std::chrono::time_point<std::chrono::system_clock> start;
-        int pingctr;
-
         LayoutWidget widget;
-
         ToolboxWidget toolbox;
 
         // Signal handlers:
