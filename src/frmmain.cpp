@@ -30,6 +30,7 @@
 
 #include "frmmain.h"
 #include "config.h"
+#include <gtkmm.h>
 
 namespace {
     const char license[] =
@@ -78,6 +79,7 @@ FrmMain::FrmMain(moba::MsgEndpointPtr mhp) :
     m_VBox.pack_start(m_VPaned_Container);
     m_VPaned_Container.add1(widget);
     m_VPaned_Container.add2(toolbox);
+    m_VPaned_Container.set_position(450);
 
     m_VBox.pack_start(m_HBox, Gtk::PACK_SHRINK);
     m_HBox.pack_end(m_ButtonBox, Gtk::PACK_SHRINK);
@@ -145,8 +147,6 @@ void FrmMain::initAboutDialog() {
     widget.addSymbol(3, 0, 68);
     widget.addSymbol(4, 0, 72);
     widget.addSymbol(5, 1, 136);
-
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
