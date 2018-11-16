@@ -102,9 +102,12 @@ bool ToolboxWidget::on_button_press_event(GdkEventButton *event)
 {
     // Check if the event is a left(1) button click.
     if((event->type == GDK_BUTTON_PRESS) && (event->button == 1)) {
+        int x_offset = -10;
+        int y_offset = 10;
+
         std::cout <<
-            " x: " << event->x << " xr: " << event->x_root <<
-            " y: " << event->y << " yr: " << event->y_root << std::endl;
+            " x: " << static_cast<int>((x_offset + event->x) / SYMBOL_WIDTH) <<
+            " y: " << static_cast<int>((y_offset + event->y) / SYMBOL_WIDTH) << std::endl;
     }
     // The event has been handled.
     return true;
