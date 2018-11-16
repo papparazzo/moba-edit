@@ -45,11 +45,14 @@ public:
     void refresh();
 
 
+        // Override mouse events
+        bool on_button_press_event(GdkEventButton * event) override;
+    bool on_key_press_event(GdkEventKey* key_event) override;
+    bool on_key_release_event(GdkEventKey* event) override;
 
 
 
 
-    bool on_key_press_event(GdkEventKey* key_event);
 
 protected:
     int cursor_x;

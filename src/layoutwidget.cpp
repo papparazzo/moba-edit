@@ -46,7 +46,6 @@ void LayoutWidget::setCursur(int x, int y) {
 }
 
 bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
-
     cr->set_source_rgb(0.0, 0.0, 0.0);
     cr->paint();
 
@@ -153,4 +152,16 @@ bool LayoutWidget::on_key_press_event(GdkEventKey* key_event) {
     refresh();
     return true;
 
+}
+
+bool LayoutWidget::on_button_press_event(GdkEventButton *event)
+{
+    // Check if the event is a left(1) button click.
+    if((event->type == GDK_BUTTON_PRESS) && (event->button == 1)) {
+        std::cout <<
+            " x: " << event->x << " xr: " << event->x_root <<
+            " y: " << event->y << " yr: " << event->y_root << std::endl;
+    }
+    // The event has been handled.
+    return true;
 }
