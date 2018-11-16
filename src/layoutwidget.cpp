@@ -46,6 +46,10 @@ void LayoutWidget::setCursur(int x, int y) {
     cursor_y = y;
 }
 
+void LayoutWidget::setCursurRel(int x, int y) {
+     setCursur(cursor_x + x, cursor_y + y);
+}
+
 bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     cr->set_source_rgb(0.0, 0.0, 0.0);
     cr->paint();
@@ -110,49 +114,6 @@ Glib::RefPtr<Gdk::Pixbuf> LayoutWidget::getImage(size_t i) {
     auto image = Gdk::Pixbuf::create_from_file(ss.str());
     images[i] = image;
     return image;
-}
-
-bool LayoutWidget::on_key_press_event(GdkEventKey* key_event) {
-    switch(key_event->keyval) {
-        case GDK_KEY_KP_1:
-            setCursur(cursor_x - 1, cursor_y + 1);
-            break;
-
-        case GDK_KEY_KP_2:
-            setCursur(cursor_x, cursor_y + 1);
-            break;
-
-        case GDK_KEY_KP_3:
-            setCursur(cursor_x + 1, cursor_y + 1);
-            break;
-
-        case GDK_KEY_KP_4:
-            setCursur(cursor_x - 1, cursor_y);
-            break;
-
-        case GDK_KEY_KP_7:
-            setCursur(cursor_x - 1, cursor_y - 1);
-            break;
-
-        case GDK_KEY_KP_8:
-            setCursur(cursor_x, cursor_y - 1);
-            break;
-
-        case GDK_KEY_KP_9:
-            setCursur(cursor_x + 1, cursor_y - 1);
-            break;
-
-        case GDK_KEY_KP_6:
-            setCursur(cursor_x + 1, cursor_y);
-            break;
-
-        default:
-            return false;
-
-    }
-    refresh();
-    return true;
-
 }
 
 bool LayoutWidget::on_button_press_event(GdkEventButton *event)

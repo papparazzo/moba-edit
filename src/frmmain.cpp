@@ -106,9 +106,9 @@ FrmMain::FrmMain(moba::MsgEndpointPtr mhp) :
     initAboutDialog();
 
     // in the class constructor
-    signal_key_press_event().connect(sigc::mem_fun(*this, &FrmMain::on_key_press_event));
+    //signal_key_press_event().connect(sigc::mem_fun(*this, &FrmMain::on_key_press_event));
     // We override the default event signal handler.
-    add_events(Gdk::KEY_PRESS_MASK);
+    //add_events(Gdk::KEY_PRESS_MASK);
 
     sysHandler.sendGetHardwareState();
     show_all_children();
@@ -247,10 +247,45 @@ void FrmMain::on_infobar_response(int) {
 }
 
 bool FrmMain::on_key_press_event(GdkEventKey* key_event) {
-    if(widget.on_key_press_event(key_event)) {
-        return true;
-    };
-    return Gtk::Window::on_key_press_event(key_event);
+    switch(key_event->keyval) {
+        case GDK_KEY_KP_1:
+            widget.setCursurRel(-1, +1);
+            break;
+
+        case GDK_KEY_KP_2:
+            widget.setCursurRel(0, +1);
+            break;
+
+        case GDK_KEY_KP_3:
+            widget.setCursurRel(+1, +1);
+            break;
+
+        case GDK_KEY_KP_4:
+            widget.setCursurRel(-1, 0);
+            break;
+
+        case GDK_KEY_KP_7:
+            widget.setCursurRel(-1, -1);
+            break;
+
+        case GDK_KEY_KP_8:
+            widget.setCursurRel(0, -1);
+            break;
+
+        case GDK_KEY_KP_9:
+            widget.setCursurRel(+1, -1);
+            break;
+
+        case GDK_KEY_KP_6:
+            widget.setCursurRel(+1, 0);
+            break;
+
+        default:
+            return Gtk::Window::on_key_press_event(key_event);
+
+    }
+    widget.refresh();
+    return true;
 }
 
 void FrmMain::setSystemNotice(moba::JsonItemPtr data) {

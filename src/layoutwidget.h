@@ -27,7 +27,7 @@
 #include <map>
 
 class LayoutWidget : public Gtk::DrawingArea {
-public:
+    public:
     LayoutWidget();
     virtual ~LayoutWidget() {
 
@@ -36,6 +36,7 @@ public:
     void clear();
 
     void setCursur(int x, int y);
+    void setCursurRel(int x, int y);
 
     void addSymbol(size_t x, size_t y, size_t s, bool suppressRefresh = false);
     void addSymbol(size_t s);
@@ -43,12 +44,6 @@ public:
     void removeSymbol(size_t x, size_t y);
 
     void refresh();
-
-
-        // Override mouse events
-    bool on_button_press_event(GdkEventButton * event) override;
-    bool on_key_press_event(GdkEventKey* key_event) override;
-
 
 protected:
     int cursor_x;
@@ -60,9 +55,8 @@ protected:
         size_t s;
     };
 
-
-
     //Override default signal handler:
+    bool on_button_press_event(GdkEventButton * event);
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
     std::vector<Item> items;
 
