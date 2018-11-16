@@ -26,7 +26,8 @@
 
 #include "layoutwidget.h"
 
-LayoutWidget::LayoutWidget() : cursor_x{0}, cursor_y{0} {
+LayoutWidget::LayoutWidget() {
+    add_events(Gdk::BUTTON_PRESS_MASK);
 }
 
 void LayoutWidget::clear() {
@@ -158,9 +159,11 @@ bool LayoutWidget::on_button_press_event(GdkEventButton *event)
 {
     // Check if the event is a left(1) button click.
     if((event->type == GDK_BUTTON_PRESS) && (event->button == 1)) {
-        std::cout <<
-            " x: " << event->x << " xr: " << event->x_root <<
-            " y: " << event->y << " yr: " << event->y_root << std::endl;
+        setCursur(
+            static_cast<int>(event->x / SYMBOL_WIDTH),
+            static_cast<int>(event->y / SYMBOL_WIDTH)
+        );
+        refresh();
     }
     // The event has been handled.
     return true;
