@@ -55,8 +55,9 @@ namespace {
 FrmMain::FrmMain(moba::MsgEndpointPtr mhp) :
     msgEndpoint(mhp), sysHandler(mhp), cltHandler(mhp), m_VBox(Gtk::ORIENTATION_VERTICAL, 6),
     m_Button_About("About..."), m_HBox(Gtk::ORIENTATION_HORIZONTAL, 6), frmSelect(mhp),
-    m_Label_Connectivity_HW(" \xe2\x96\x84"), m_Label_Connectivity_SW(" \xe2\x96\x84")
-{
+    m_Label_Connectivity_HW(" \xe2\x96\x84"), m_Label_Connectivity_SW(" \xe2\x96\x84"),
+    m_VBox_Toolbox(Gtk::ORIENTATION_VERTICAL, 6), m_Button_New("Neu..."),
+    m_Button_Load("Laden..."), m_Button_Delete("Löschen...") {
     sigc::slot<bool> my_slot = sigc::bind(sigc::mem_fun(*this, &FrmMain::on_timeout), 1);
     sigc::connection conn = Glib::signal_timeout().connect(my_slot, 25); // 25 ms
 
@@ -78,7 +79,13 @@ FrmMain::FrmMain(moba::MsgEndpointPtr mhp) :
     m_VBox.pack_start(m_InfoBar, Gtk::PACK_SHRINK);
     m_VBox.pack_start(m_VPaned_Container);
     m_VPaned_Container.add1(widget);
-    m_VPaned_Container.add2(toolbox);
+
+    m_VBox_Toolbox.pack_start(toolbox);
+    m_VBox_Toolbox.pack_end(m_Button_New, Gtk::PACK_SHRINK);
+    m_VBox_Toolbox.pack_end(m_Button_Load, Gtk::PACK_SHRINK);
+    m_VBox_Toolbox.pack_end(m_Button_Delete, Gtk::PACK_SHRINK);
+
+    m_VPaned_Container.add2(m_VBox_Toolbox);
     m_VPaned_Container.set_position(450);
 
     m_VBox.pack_start(m_HBox, Gtk::PACK_SHRINK);
@@ -103,24 +110,21 @@ FrmMain::FrmMain(moba::MsgEndpointPtr mhp) :
     m_Button_Emegerency.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_emegency_clicked));
     m_Button_Emegerency.set_label("Nothalt");
 
-    initAboutDialog();
+    m_Button_Load.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_loadTracklayout));
 
-    // in the class constructor
-    //signal_key_press_event().connect(sigc::mem_fun(*this, &FrmMain::on_key_press_event));
-    // We override the default event signal handler.
-    //add_events(Gdk::KEY_PRESS_MASK);
+    initAboutDialog();
 
     sysHandler.sendGetHardwareState();
     show_all_children();
     m_InfoBar.hide();
     msgEndpoint->sendMsg(moba::Message::MT_GET_LAYOUTS_REQ);
 }
-/*
+
 void FrmMain::on_button_loadTracklayout() {
     frmSelect.set_transient_for(*this);
     frmSelect.run();
 }
-*/
+
 void FrmMain::initAboutDialog() {
     m_Dialog.set_transient_for(*this);
 

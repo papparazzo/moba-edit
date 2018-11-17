@@ -47,6 +47,12 @@ class FrmMain : public Gtk::Window {
         Gtk::Button m_Button_Emegerency;
         Gtk::Box m_VBox;
         Gtk::Box m_HBox;
+
+        Gtk::Box m_VBox_Toolbox;
+        Gtk::Button m_Button_New;
+        Gtk::Button m_Button_Load;
+        Gtk::Button m_Button_Delete;
+
         Gtk::Label m_Label_Connectivity_HW;
         Gtk::Label m_Label_Connectivity_SW;
 
@@ -84,7 +90,7 @@ class FrmMain : public Gtk::Window {
         void on_about_dialog_response(int response_id);
         void on_infobar_response(int response);
 
-//        void on_button_loadTracklayout();
+        void on_button_loadTracklayout();
 
         bool on_key_press_event(GdkEventKey *key_event);
 
