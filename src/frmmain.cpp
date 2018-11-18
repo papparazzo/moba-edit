@@ -30,7 +30,6 @@
 
 #include "frmmain.h"
 #include "config.h"
-#include <gtkmm.h>
 
 namespace {
     const char license[] =
@@ -122,7 +121,8 @@ FrmMain::FrmMain(moba::MsgEndpointPtr mhp) :
 
 void FrmMain::on_button_loadTracklayout() {
     frmSelect.set_transient_for(*this);
-    frmSelect.run();
+    frmSelect.show();
+    frmSelect.present();
 }
 
 void FrmMain::initAboutDialog() {
@@ -144,13 +144,6 @@ void FrmMain::initAboutDialog() {
     m_Dialog.signal_response().connect(sigc::mem_fun(*this, &FrmMain::on_about_dialog_response));
 
     m_Button_About.grab_focus();
-
-    widget.addSymbol(0, 0, 4);
-    widget.addSymbol(1, 0, 68);
-    widget.addSymbol(2, 0, 68);
-    widget.addSymbol(3, 0, 68);
-    widget.addSymbol(4, 0, 72);
-    widget.addSymbol(5, 1, 136);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -394,10 +387,4 @@ void FrmMain::setLockStateUnlocked(moba::JsonItemPtr data) {
 }
 
 void FrmMain::setCurrentLayout(moba::JsonItemPtr data) {
-    widget.addSymbol(0, 0, 4);
-    widget.addSymbol(1, 0, 68);
-    widget.addSymbol(2, 0, 68);
-    widget.addSymbol(3, 0, 68);
-    widget.addSymbol(4, 0, 72);
-    widget.addSymbol(5, 1, 136);
 }
