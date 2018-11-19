@@ -122,8 +122,11 @@ void FrmSelect::on_selection_changed() {
     if(!iter) {
         return;
     }
-
     Gtk::TreeModel::Row row = *iter;
-
+    msgEndpoint->sendMsg(
+        moba::Message::MT_GET_LAYOUT_REQ,
+        moba::toJsonNumberPtr((int)row[m_Columns_Tracklayouts.m_col_id])
+    );
     m_Label_Description.set_text((std::string)row[m_Columns_Tracklayouts.m_col_data]);
+    get_widget_for_response(BUTTON_ID_LOAD)->set_sensitive(true);
 }
