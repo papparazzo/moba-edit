@@ -1,3 +1,5 @@
+SUBDIRS = ../modules/lib-tracklayout
+
 AUTOMAKE_OPTIONS = subdir-objects
 bin_PROGRAMS = \
     moba-edit
@@ -8,9 +10,9 @@ moba_edit_SOURCES = \
     frmselect.cpp \
     toolboxwidget.cpp
 
-moba_edit_LDADD = -lMoBaCommon $(GTKMM_LIBS)
+moba_edit_LDADD = -lMoBaCommon $(GTKMM_LIBS) modules/lib-tracklayout/src/libtracklayout.a
 LDFLAGS += -L/usr/local/lib
 
-AM_CPPFLAGS = $(GTKMM_CFLAGS)
+AM_CPPFLAGS = -Imodules/lib-tracklayout/src $(GTKMM_CFLAGS)
 
 CLEANFILES = *~
