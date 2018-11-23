@@ -11,6 +11,8 @@ AM_INIT_AUTOMAKE([foreign])
 # Checks for programs.
 AC_PROG_CXX
 
+AC_CONFIG_MACRO_DIR([m4])
+
 PKG_CHECK_MODULES([GTKMM], [gtkmm-3.0])
 
 AX_CXX_COMPILE_STDCXX_11()
