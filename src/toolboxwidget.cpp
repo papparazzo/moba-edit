@@ -18,6 +18,8 @@
  *
  */
 
+#include <cstdint>
+
 #include <cairomm/context.h>
 #include <giomm/resource.h>
 #include <gdkmm/general.h> // set_source_pixbuf()
@@ -31,32 +33,44 @@ ToolboxWidget::ToolboxWidget() {
     add_events(Gdk::BUTTON_PRESS_MASK);
                  // Prellböcke
 
+    int x = 0;
+    int y = 0;
     for(auto i : {9, 17, 18, 33, 34, 36, 66, 68, 72, 85, 132, 136, 144, 170}) {
         std::stringstream ss;
         ss << "./resources/" << i << ".bmp";
         auto image = Gdk::Pixbuf::create_from_file(ss.str());
-        images[0][i] = image;
+        images[y][i] = image;
+        symbol[y][x++] = Symbol{static_cast<std::uint8_t>(i)};
     }
 
+    x = 0;
+    y++;
     for(auto i : {19, 25, 35, 38, 49, 50, 70, 76, 98, 100, 137, 140, 145, 152, 196, 200}) {
         std::stringstream ss;
         ss << "./resources/" << i << ".bmp";
         auto image = Gdk::Pixbuf::create_from_file(ss.str());
-        images[1][i] = image;
+        images[y][i] = image;
+        symbol[y][x++] = Symbol{static_cast<std::uint8_t>(i)};
     }
 
+    x = 0;
+    y++;
     for(auto i : {39, 51, 57, 78, 102, 114, 147, 153, 201, 204,228, 256}) {
         std::stringstream ss;
         ss << "./resources/" << i << ".bmp";
         auto image = Gdk::Pixbuf::create_from_file(ss.str());
-        images[2][i] = image;
+        images[y][i] = image;
+        symbol[y][x++] = Symbol{static_cast<std::uint8_t>(i)};
     }
 
+    x = 0;
+    y++;
     for(auto i : {1, 2, 4, 8, 16, 32, 64, 128}) {
         std::stringstream ss;
         ss << "./resources/" << i << ".bmp";
         auto image = Gdk::Pixbuf::create_from_file(ss.str());
-        images[3][i] = image;
+        images[y][i] = image;
+        symbol[y][x++] = Symbol{static_cast<std::uint8_t>(i)};
     }
 }
 

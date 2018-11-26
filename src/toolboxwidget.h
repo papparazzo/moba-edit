@@ -23,6 +23,8 @@
 #include <gtkmm/drawingarea.h>
 #include <gdkmm/pixbuf.h>
 
+#include <modules/lib-tracklayout/src/symbol.h>
+
 #include <map>
 
 
@@ -41,7 +43,9 @@ class ToolboxWidget : public Gtk::DrawingArea {
 
         const int SYMBOL_WIDTH = 30;
 
-        std::map<int, std::map<int, Glib::RefPtr<Gdk::Pixbuf> > >images;
+        std::map<int, std::map<int, Glib::RefPtr<Gdk::Pixbuf>>>images;
+
+        std::map<int, std::map<int, Symbol> > symbol;
 
         // Override mouse events
         bool on_button_press_event(GdkEventButton * event);
