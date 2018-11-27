@@ -27,9 +27,13 @@
 #include <ctime>
 #include <sys/timeb.h>
 #include <vector>
+#include <functional>
 
 #include "frmmain.h"
 #include "config.h"
+
+#include <modules/lib-tracklayout/src/direction.h>
+#include <modules/lib-tracklayout/src/position.h>
 
 namespace {
     const char license[] =
@@ -77,9 +81,11 @@ FrmMain::FrmMain(moba::MsgEndpointPtr mhp) :
 
     m_VBox.pack_start(m_InfoBar, Gtk::PACK_SHRINK);
     m_VBox.pack_start(m_VPaned_Container);
-    m_VPaned_Container.add1(widget);
+    m_VPaned_Container.add1(layoutWidget);
 
-    m_VBox_Toolbox.pack_start(toolbox);
+    toolboxWidget.addCallbackHandler(std::bind(&FrmMain::addSymbol, this, std::placeholders::_1));
+
+    m_VBox_Toolbox.pack_start(toolboxWidget);
     m_VBox_Toolbox.pack_end(m_Button_New, Gtk::PACK_SHRINK);
     m_VBox_Toolbox.pack_end(m_Button_Load, Gtk::PACK_SHRINK);
     m_VBox_Toolbox.pack_end(m_Button_Delete, Gtk::PACK_SHRINK);
@@ -246,42 +252,42 @@ void FrmMain::on_infobar_response(int) {
 bool FrmMain::on_key_press_event(GdkEventKey* key_event) {
     switch(key_event->keyval) {
         case GDK_KEY_KP_1:
-            widget.setCursurRel(-1, +1);
+            layoutWidget.setCursorRel(-1, +1);
             break;
 
         case GDK_KEY_KP_2:
-            widget.setCursurRel(0, +1);
+            layoutWidget.setCursorRel(0, +1);
             break;
 
         case GDK_KEY_KP_3:
-            widget.setCursurRel(+1, +1);
+            layoutWidget.setCursorRel(+1, +1);
             break;
 
         case GDK_KEY_KP_4:
-            widget.setCursurRel(-1, 0);
+            layoutWidget.setCursorRel(-1, 0);
             break;
 
         case GDK_KEY_KP_7:
-            widget.setCursurRel(-1, -1);
+            layoutWidget.setCursorRel(-1, -1);
             break;
 
         case GDK_KEY_KP_8:
-            widget.setCursurRel(0, -1);
+            layoutWidget.setCursorRel(0, -1);
             break;
 
         case GDK_KEY_KP_9:
-            widget.setCursurRel(+1, -1);
+            layoutWidget.setCursorRel(+1, -1);
             break;
 
         case GDK_KEY_KP_6:
-            widget.setCursurRel(+1, 0);
+            layoutWidget.setCursorRel(+1, 0);
             break;
 
         default:
             return Gtk::Window::on_key_press_event(key_event);
 
     }
-    widget.refresh();
+    layoutWidget.refresh();
     return true;
 }
 
@@ -387,4 +393,11 @@ void FrmMain::setLockStateUnlocked(moba::JsonItemPtr data) {
 }
 
 void FrmMain::setCurrentLayout(moba::JsonItemPtr data) {
+}
+
+void FrmMain::addSymbol(Symbol symbol) {
+    layoutWidget.addSymbol(symbol);
+
+    Position pos{symbol.getNextJunktion()};
+    layoutWidget.setCursorRel(pos);
 }

@@ -36,11 +36,15 @@
 #include "toolboxwidget.h"
 #include "frmselect.h"
 
+#include <modules/lib-tracklayout/src/symbol.h>
+
 class FrmMain : public Gtk::Window {
     public:
         FrmMain(moba::MsgEndpointPtr mhp);
         virtual ~FrmMain() {
         }
+
+        void addSymbol(Symbol symbol);
 
     protected:
         Gtk::ButtonBox m_ButtonBox;
@@ -75,8 +79,8 @@ class FrmMain : public Gtk::Window {
         moba::MsgSystemHandler sysHandler;
         moba::MsgClientHandler cltHandler;
 
-        LayoutWidget widget;
-        ToolboxWidget toolbox;
+        LayoutWidget layoutWidget;
+        ToolboxWidget toolboxWidget;
 
         // Signal handlers:
         bool on_timeout(int timer_number);
