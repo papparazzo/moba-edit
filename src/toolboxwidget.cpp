@@ -36,42 +36,34 @@ ToolboxWidget::ToolboxWidget() {
     int x = 0;
     int y = 0;
     for(auto i : {9, 17, 18, 33, 34, 36, 66, 68, 72, 85, 132, 136, 144, 170}) {
-        std::stringstream ss;
-        ss << "./resources/" << i << ".bmp";
-        auto image = Gdk::Pixbuf::create_from_file(ss.str());
-        images[y][i] = image;
-        symbol[y][x++] = Symbol{static_cast<std::uint8_t>(i)};
+        loadSymbols(i, x++, y);
     }
 
     x = 0;
     y++;
     for(auto i : {19, 25, 35, 38, 49, 50, 70, 76, 98, 100, 137, 140, 145, 152, 196, 200}) {
-        std::stringstream ss;
-        ss << "./resources/" << i << ".bmp";
-        auto image = Gdk::Pixbuf::create_from_file(ss.str());
-        images[y][i] = image;
-        symbol[y][x++] = Symbol{static_cast<std::uint8_t>(i)};
+        loadSymbols(i, x++, y);
     }
 
     x = 0;
     y++;
     for(auto i : {39, 51, 57, 78, 102, 114, 147, 153, 201, 204,228, 256}) {
-        std::stringstream ss;
-        ss << "./resources/" << i << ".bmp";
-        auto image = Gdk::Pixbuf::create_from_file(ss.str());
-        images[y][i] = image;
-        symbol[y][x++] = Symbol{static_cast<std::uint8_t>(i)};
+        loadSymbols(i, x++, y);
     }
 
     x = 0;
     y++;
     for(auto i : {1, 2, 4, 8, 16, 32, 64, 128}) {
-        std::stringstream ss;
-        ss << "./resources/" << i << ".bmp";
-        auto image = Gdk::Pixbuf::create_from_file(ss.str());
-        images[y][i] = image;
-        symbol[y][x++] = Symbol{static_cast<std::uint8_t>(i)};
+        loadSymbols(i, x++, y);
     }
+}
+
+void ToolboxWidget::loadSymbols(int i, int x, int y) {
+    std::stringstream ss;
+    ss << "./resources/" << i << ".bmp";
+    auto image = Gdk::Pixbuf::create_from_file(ss.str());
+    images[y][i] = image;
+    symbol[y][x] = Symbol{static_cast<std::uint8_t>(i)};
 }
 
 bool ToolboxWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
@@ -112,8 +104,7 @@ void ToolboxWidget::refresh() {
     win->invalidate_rect(r, false);
 }
 
-bool ToolboxWidget::on_button_press_event(GdkEventButton *event)
-{
+bool ToolboxWidget::on_button_press_event(GdkEventButton *event) {
     // Check if the event is a left(1) button click.
     if((event->type == GDK_BUTTON_PRESS) && (event->button == 1)) {
         int x_offset = -10;

@@ -50,5 +50,6 @@ class ToolboxWidget : public Gtk::DrawingArea {
         // Override mouse events
         bool on_button_press_event(GdkEventButton * event);
 
+        void loadSymbols(int i, int x, int y);
 };
 
