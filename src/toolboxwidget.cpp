@@ -31,39 +31,32 @@
 ToolboxWidget::ToolboxWidget() {
     // Set masks for mouse events
     add_events(Gdk::BUTTON_PRESS_MASK);
-                 // Prellböcke
 
-    int x = 0;
-    int y = 0;
     for(auto i : {9, 17, 18, 33, 34, 36, 66, 68, 72, 85, 132, 136, 144, 170}) {
-        loadSymbols(i, x++, y);
+        loadSymbol(i);
     }
 
-    x = 0;
-    y++;
     for(auto i : {19, 25, 35, 38, 49, 50, 70, 76, 98, 100, 137, 140, 145, 152, 196, 200}) {
-        loadSymbols(i, x++, y);
+        loadSymbol(i);
     }
 
-    x = 0;
-    y++;
     for(auto i : {39, 51, 57, 78, 102, 114, 147, 153, 201, 204,228, 256}) {
-        loadSymbols(i, x++, y);
+        loadSymbol(i);
     }
 
-    x = 0;
-    y++;
     for(auto i : {1, 2, 4, 8, 16, 32, 64, 128}) {
-        loadSymbols(i, x++, y);
+        loadSymbol(i);
     }
 }
 
-void ToolboxWidget::loadSymbols(int i, int x, int y) {
+void ToolboxWidget::loadSymbol(int symbol) {
     std::stringstream ss;
-    ss << "./resources/" << i << ".bmp";
-    auto image = Gdk::Pixbuf::create_from_file(ss.str());
-    images[y][i] = image;
-    symbol[y][x] = Symbol{static_cast<std::uint8_t>(i)};
+    ss << "./resources/" << symbol << ".bmp";
+    Element element;
+
+    element.image = Gdk::Pixbuf::create_from_file(ss.str());
+    element.symbol = Symbol{static_cast<std::uint8_t>(symbol)};
+    symbols.push_back(element);
 }
 
 bool ToolboxWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
@@ -71,25 +64,20 @@ bool ToolboxWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     int x_offset = 10;
     int y_offset = -10;
 
-    int x;
+    int x = 0;
     int y = 0;
+    symbolsPerRow = this->get_width() / SYMBOL_WIDTH;
 
-    for(auto iter = images.begin(); iter != images.end(); ++iter) {
-        x = 0;
-        for(auto iter2 = iter->second.begin(); iter2 != iter->second.end(); ++iter2) {
-            if (!(x % 4)) {
-               y++;
-               x = 0;
-            }
-
-            auto image = iter2->second;
-
-            Gdk::Cairo::set_source_pixbuf(cr, image, x_offset + x * SYMBOL_WIDTH, y_offset + y * SYMBOL_WIDTH);
-            cr->rectangle(x_offset + x * SYMBOL_WIDTH, y_offset + y * SYMBOL_WIDTH, image->get_width(), image->get_height());
-            cr->fill();
-            x++;
+    for(auto iter = symbols.begin(); iter != symbols.end(); ++iter) {
+        if (!(x % symbolsPerRow)) {
+           y++;
+           x = 0;
         }
-        y++;
+
+        Gdk::Cairo::set_source_pixbuf(cr, iter->image, x_offset + x * SYMBOL_WIDTH, y_offset + y * SYMBOL_WIDTH);
+        cr->rectangle(x_offset + x * SYMBOL_WIDTH, y_offset + y * SYMBOL_WIDTH, iter->image->get_width(), iter->image->get_height());
+        cr->fill();
+        x++;
     }
 
     return true;
@@ -106,14 +94,23 @@ void ToolboxWidget::refresh() {
 
 bool ToolboxWidget::on_button_press_event(GdkEventButton *event) {
     // Check if the event is a left(1) button click.
-    if((event->type == GDK_BUTTON_PRESS) && (event->button == 1)) {
-        int x_offset = -10;
-        int y_offset = 10;
-
-        std::cout <<
-            " x: " << static_cast<int>((x_offset + event->x) / SYMBOL_WIDTH) <<
-            " y: " << static_cast<int>((y_offset + event->y) / SYMBOL_WIDTH) << std::endl;
+    if((event->type != GDK_BUTTON_PRESS) || (event->button != 1)) {
+        return true;
     }
-    // The event has been handled.
+
+    int x_offset = -10;
+    int y_offset = 10;
+
+    int x = static_cast<int>((x_offset + event->x) / SYMBOL_WIDTH);
+    int y = static_cast<int>((y_offset + event->y) / SYMBOL_WIDTH);
+    int s = (y - 1) * symbolsPerRow + x;
+
+
+    if(symbols.size() <= static_cast<unsigned long>(s)) {
+        return true;
+    }
+
+    std::cout << (int)symbols[s].symbol.getType() << std::endl;
+
     return true;
 }

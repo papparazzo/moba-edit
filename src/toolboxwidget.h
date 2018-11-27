@@ -25,7 +25,7 @@
 
 #include <modules/lib-tracklayout/src/symbol.h>
 
-#include <map>
+#include <vector>
 
 
 class ToolboxWidget : public Gtk::DrawingArea {
@@ -43,13 +43,18 @@ class ToolboxWidget : public Gtk::DrawingArea {
 
         const int SYMBOL_WIDTH = 30;
 
-        std::map<int, std::map<int, Glib::RefPtr<Gdk::Pixbuf>>>images;
+        struct Element {
+            Glib::RefPtr<Gdk::Pixbuf> image;
+            Symbol symbol;
+        };
 
-        std::map<int, std::map<int, Symbol> > symbol;
+        std::vector<Element> symbols;
+
+        int symbolsPerRow;
 
         // Override mouse events
         bool on_button_press_event(GdkEventButton * event);
 
-        void loadSymbols(int i, int x, int y);
+        void loadSymbol(int symbol);
 };
 
