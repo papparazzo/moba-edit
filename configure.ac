@@ -20,8 +20,8 @@ AX_CXX_COMPILE_STDCXX_11()
 AC_CHECK_LIB([MoBaCommon], [main])
 
 AC_CONFIG_FILES([
-Makefile
-src/Makefile
+    Makefile
+    src/Makefile
 ])
 
 AC_OUTPUT
