@@ -35,6 +35,11 @@ class ToolboxWidget : public Gtk::DrawingArea {
         virtual ~ToolboxWidget() {
 
         }
+
+        void addCallbackHandler(std::function<void(Symbol)> callback) {
+            this->callback = callback;
+        }
+
     private:
 
         void refresh();
@@ -56,5 +61,7 @@ class ToolboxWidget : public Gtk::DrawingArea {
         bool on_button_press_event(GdkEventButton * event);
 
         void loadSymbol(int symbol);
+
+        std::function<void(Symbol)> callback;
 };
 

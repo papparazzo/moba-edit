@@ -110,7 +110,9 @@ bool ToolboxWidget::on_button_press_event(GdkEventButton *event) {
         return true;
     }
 
-    std::cout << (int)symbols[s].symbol.getType() << std::endl;
+    if(callback) {
+        callback(symbols[s].symbol);
+    }
 
     return true;
 }
