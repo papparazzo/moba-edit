@@ -35,7 +35,7 @@ void LayoutWidget::clear() {
     refresh();
 }
 
-void LayoutWidget::setCursur(int x, int y) {
+void LayoutWidget::setCursorAbs(int x, int y) {
     if(x < 0) {
         x = 0;
     }
@@ -46,8 +46,8 @@ void LayoutWidget::setCursur(int x, int y) {
     cursor_y = y;
 }
 
-void LayoutWidget::setCursurRel(int x, int y) {
-     setCursur(cursor_x + x, cursor_y + y);
+void LayoutWidget::setCursorRel(int x, int y) {
+     setCursorAbs(cursor_x + x, cursor_y + y);
 }
 
 bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
@@ -55,7 +55,7 @@ bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     cr->paint();
 
     for(auto item : items) {
-        auto image = getImage(item.s);
+        auto image = getImage(static_cast<int>(item.s.getType()));
 
         Gdk::Cairo::set_source_pixbuf(cr, image, item.x * SYMBOL_WIDTH, item.y * SYMBOL_WIDTH);
         cr->rectangle(item.x * SYMBOL_WIDTH, item.y * SYMBOL_WIDTH, image->get_width(), image->get_height());
@@ -75,11 +75,11 @@ bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     return true;
 }
 
-void LayoutWidget::addSymbol(size_t s) {
+void LayoutWidget::addSymbol(Symbol s) {
     addSymbol(cursor_x, cursor_y, s);
 }
 
-void LayoutWidget::addSymbol(size_t x, size_t y, size_t s, bool suppressRefresh) {
+void LayoutWidget::addSymbol(size_t x, size_t y, Symbol s, bool suppressRefresh) {
     Item item;
     item.x = x;
     item.y = y;
@@ -120,7 +120,7 @@ bool LayoutWidget::on_button_press_event(GdkEventButton *event)
 {
     // Check if the event is a left(1) button click.
     if((event->type == GDK_BUTTON_PRESS) && (event->button == 1)) {
-        setCursur(
+        setCursorAbs(
             static_cast<int>(event->x / SYMBOL_WIDTH),
             static_cast<int>(event->y / SYMBOL_WIDTH)
         );

@@ -26,6 +26,9 @@
 #include <vector>
 #include <map>
 
+#include <modules/lib-tracklayout/src/position.h>
+#include <modules/lib-tracklayout/src/symbol.h>
+
 class LayoutWidget : public Gtk::DrawingArea {
     public:
     LayoutWidget();
@@ -35,11 +38,18 @@ class LayoutWidget : public Gtk::DrawingArea {
 
     void clear();
 
-    void setCursur(int x, int y);
-    void setCursurRel(int x, int y);
+    void setCursorAbs(int x, int y);
+    void setCursorRel(int x, int y);
 
-    void addSymbol(size_t x, size_t y, size_t s, bool suppressRefresh = false);
-    void addSymbol(size_t s);
+    void setCursorAbs(Position pos) {
+        setCursorAbs(pos.x, pos.y);
+    }
+    void setCursorRel(Position pos) {
+        setCursorRel(pos.x, pos.y);
+    }
+
+    void addSymbol(size_t x, size_t y, Symbol s, bool suppressRefresh = false);
+    void addSymbol(Symbol s);
 
     void removeSymbol(size_t x, size_t y);
 
@@ -52,7 +62,7 @@ protected:
     struct Item {
         size_t x;
         size_t y;
-        size_t s;
+        Symbol s;
     };
 
     //Override default signal handler:
