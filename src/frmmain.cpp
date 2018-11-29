@@ -251,11 +251,21 @@ void FrmMain::on_infobar_response(int) {
 
 bool FrmMain::on_key_press_event(GdkEventKey* key_event) {
     switch(key_event->keyval) {
+        case GDK_KEY_Delete:
+            layoutWidget.removeSymbol();
+            break;
+
+        case GDK_KEY_BackSpace:
+            layoutWidget.removeSymbol();
+            layoutWidget.setCursorRel(-1, 0);
+            break;
+
         case GDK_KEY_KP_1:
             layoutWidget.setCursorRel(-1, +1);
             break;
 
         case GDK_KEY_KP_2:
+        case GDK_KEY_Down:
             layoutWidget.setCursorRel(0, +1);
             break;
 
@@ -264,6 +274,7 @@ bool FrmMain::on_key_press_event(GdkEventKey* key_event) {
             break;
 
         case GDK_KEY_KP_4:
+        case GDK_KEY_Left:
             layoutWidget.setCursorRel(-1, 0);
             break;
 
@@ -272,6 +283,7 @@ bool FrmMain::on_key_press_event(GdkEventKey* key_event) {
             break;
 
         case GDK_KEY_KP_8:
+        case GDK_KEY_Up:
             layoutWidget.setCursorRel(0, -1);
             break;
 
@@ -280,6 +292,7 @@ bool FrmMain::on_key_press_event(GdkEventKey* key_event) {
             break;
 
         case GDK_KEY_KP_6:
+        case GDK_KEY_Right:
             layoutWidget.setCursorRel(+1, 0);
             break;
 
