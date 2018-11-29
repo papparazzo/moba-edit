@@ -23,8 +23,8 @@
 #include <gtkmm/drawingarea.h>
 #include <gdkmm/pixbuf.h>
 
-#include <vector>
-#include <map>
+#include <unordered_map>
+#include <utility>
 
 #include <modules/lib-tracklayout/src/position.h>
 #include <modules/lib-tracklayout/src/symbol.h>
@@ -32,7 +32,7 @@
 class LayoutWidget : public Gtk::DrawingArea {
     public:
     LayoutWidget();
-    virtual ~LayoutWidget() {
+    virtual ~LayoutWidget() noexcept {
 
     }
 
@@ -59,20 +59,25 @@ protected:
     int cursor_x;
     int cursor_y;
 
-    struct Item {
-        size_t x;
-        size_t y;
-        Symbol s;
-    };
-
     //Override default signal handler:
     bool on_button_press_event(GdkEventButton * event);
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
-    std::vector<Item> items;
+
+    // Thanks to https://stackoverflow.com/a/45395204
+    using IntPair = std::pair<int, int>;
+
+    struct IntPairHash {
+        static_assert(sizeof(int) * 2 == sizeof(size_t));
+        std::size_t operator()(const IntPair &p) const noexcept {
+            return size_t(p.first) << 32 | p.second;
+        }
+    };
+
+    std::unordered_map<IntPair, Symbol, IntPairHash> symbols;
 
     const int SYMBOL_WIDTH = 23;
 
-    std::map<int, Glib::RefPtr<Gdk::Pixbuf> > images;
+    std::unordered_map<int, Glib::RefPtr<Gdk::Pixbuf> > images;
     Glib::RefPtr<Gdk::Pixbuf> getImage(size_t i);
 
 };

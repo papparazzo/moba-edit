@@ -26,12 +26,12 @@
 
 #include "layoutwidget.h"
 
-LayoutWidget::LayoutWidget() {
+LayoutWidget::LayoutWidget() : cursor_x{0}, cursor_y{0} {
     add_events(Gdk::BUTTON_PRESS_MASK);
 }
 
 void LayoutWidget::clear() {
-    items.clear();
+    symbols.clear();
     refresh();
 }
 
@@ -54,11 +54,11 @@ bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     cr->set_source_rgb(0.0, 0.0, 0.0);
     cr->paint();
 
-    for(auto item : items) {
-        auto image = getImage(static_cast<int>(item.s.getType()));
+    for(const auto& symbol : symbols) {
+        auto image = getImage(static_cast<int>(symbol.second.getType()));
 
-        Gdk::Cairo::set_source_pixbuf(cr, image, item.x * SYMBOL_WIDTH, item.y * SYMBOL_WIDTH);
-        cr->rectangle(item.x * SYMBOL_WIDTH, item.y * SYMBOL_WIDTH, image->get_width(), image->get_height());
+        Gdk::Cairo::set_source_pixbuf(cr, image, symbol.first.first * SYMBOL_WIDTH, symbol.first.second * SYMBOL_WIDTH);
+        cr->rectangle(symbol.first.first * SYMBOL_WIDTH, symbol.first.second * SYMBOL_WIDTH, image->get_width(), image->get_height());
         cr->fill();
     }
 
@@ -80,11 +80,7 @@ void LayoutWidget::addSymbol(Symbol s) {
 }
 
 void LayoutWidget::addSymbol(size_t x, size_t y, Symbol s, bool suppressRefresh) {
-    Item item;
-    item.x = x;
-    item.y = y;
-    item.s = s;
-    items.push_back(item);
+    symbols[{x, y}] = std::move(s);
     if(!suppressRefresh) {
         refresh();
     }
