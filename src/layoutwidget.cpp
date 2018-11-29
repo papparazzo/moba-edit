@@ -57,26 +57,22 @@ bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     for(const auto& symbol : symbols) {
         auto image = getImage(static_cast<int>(symbol.second.getType()));
 
-        Gdk::Cairo::set_source_pixbuf(cr, image, symbol.first.first * SYMBOL_WIDTH, symbol.first.second * SYMBOL_WIDTH);
-        cr->rectangle(symbol.first.first * SYMBOL_WIDTH, symbol.first.second * SYMBOL_WIDTH, image->get_width(), image->get_height());
+        Gdk::Cairo::set_source_pixbuf(cr, image, symbol.first.first * SYMBOL_SIZE, symbol.first.second * SYMBOL_SIZE);
+        cr->rectangle(symbol.first.first * SYMBOL_SIZE, symbol.first.second * SYMBOL_SIZE, image->get_width(), image->get_height());
         cr->fill();
     }
 
     cr->set_line_width(1.0);
     cr->set_source_rgb(0.8, 0.0, 0.0);
 
-    cr->move_to(cursor_x * SYMBOL_WIDTH, cursor_y * SYMBOL_WIDTH);
-    cr->line_to(cursor_x * SYMBOL_WIDTH, (cursor_y +1) * SYMBOL_WIDTH);
-    cr->line_to((cursor_x +1) * SYMBOL_WIDTH, (cursor_y +1) * SYMBOL_WIDTH);
-    cr->line_to((cursor_x +1) * SYMBOL_WIDTH, cursor_y * SYMBOL_WIDTH);
-    cr->line_to(cursor_x * SYMBOL_WIDTH, cursor_y * SYMBOL_WIDTH);
+    cr->move_to(cursor_x * SYMBOL_SIZE, cursor_y * SYMBOL_SIZE);
+    cr->line_to(cursor_x * SYMBOL_SIZE, (cursor_y +1) * SYMBOL_SIZE);
+    cr->line_to((cursor_x +1) * SYMBOL_SIZE, (cursor_y +1) * SYMBOL_SIZE);
+    cr->line_to((cursor_x +1) * SYMBOL_SIZE, cursor_y * SYMBOL_SIZE);
+    cr->line_to(cursor_x * SYMBOL_SIZE, cursor_y * SYMBOL_SIZE);
     cr->stroke();
 
     return true;
-}
-
-void LayoutWidget::addSymbol(Symbol s) {
-    addSymbol(cursor_x, cursor_y, s);
 }
 
 void LayoutWidget::addSymbol(size_t x, size_t y, Symbol s, bool suppressRefresh) {
@@ -86,8 +82,19 @@ void LayoutWidget::addSymbol(size_t x, size_t y, Symbol s, bool suppressRefresh)
     }
 }
 
-void LayoutWidget::removeSymbol(size_t x, size_t y) {
+void LayoutWidget::addSymbol(Symbol s) {
+    addSymbol(cursor_x, cursor_y, s);
+}
 
+void LayoutWidget::removeSymbol(size_t x, size_t y, bool suppressRefresh) {
+    symbols.erase({x, y});
+    if(!suppressRefresh) {
+        refresh();
+    }
+}
+
+void LayoutWidget::removeSymbol() {
+    removeSymbol(cursor_x, cursor_y);
 }
 
 void LayoutWidget::refresh() {
@@ -117,8 +124,8 @@ bool LayoutWidget::on_button_press_event(GdkEventButton *event)
     // Check if the event is a left(1) button click.
     if((event->type == GDK_BUTTON_PRESS) && (event->button == 1)) {
         setCursorAbs(
-            static_cast<int>(event->x / SYMBOL_WIDTH),
-            static_cast<int>(event->y / SYMBOL_WIDTH)
+            static_cast<int>(event->x / SYMBOL_SIZE),
+            static_cast<int>(event->y / SYMBOL_SIZE)
         );
         refresh();
     }

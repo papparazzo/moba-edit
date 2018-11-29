@@ -51,7 +51,8 @@ class LayoutWidget : public Gtk::DrawingArea {
     void addSymbol(size_t x, size_t y, Symbol s, bool suppressRefresh = false);
     void addSymbol(Symbol s);
 
-    void removeSymbol(size_t x, size_t y);
+    void removeSymbol(size_t x, size_t y, bool suppressRefresh = false);
+    void removeSymbol();
 
     void refresh();
 
@@ -75,7 +76,7 @@ protected:
 
     std::unordered_map<IntPair, Symbol, IntPairHash> symbols;
 
-    const int SYMBOL_WIDTH = 23;
+    const int SYMBOL_SIZE = 23;
 
     std::unordered_map<int, Glib::RefPtr<Gdk::Pixbuf> > images;
     Glib::RefPtr<Gdk::Pixbuf> getImage(size_t i);
