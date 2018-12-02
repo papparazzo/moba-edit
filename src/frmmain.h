@@ -86,11 +86,6 @@ class FrmMain : public Gtk::Window {
         bool on_timeout(int timer_number);
         void on_button_about_clicked();
         void on_button_emegency_clicked();
-        void on_button_system_shutdown_clicked();
-        void on_button_system_reset_clicked();
-        void on_button_system_automatic_clicked();
-        void on_button_system_standby_clicked();
-        void on_button_system_ping_clicked();
         void on_about_dialog_response(int response_id);
         void on_infobar_response(int response);
 
