@@ -56,6 +56,7 @@ class FrmMain : public Gtk::Window {
         Gtk::Button m_Button_New;
         Gtk::Button m_Button_Load;
         Gtk::Button m_Button_Delete;
+        Gtk::Button m_Button_Save;
 
         Gtk::Label m_Label_Connectivity_HW;
         Gtk::Label m_Label_Connectivity_SW;
@@ -90,6 +91,7 @@ class FrmMain : public Gtk::Window {
         void on_infobar_response(int response);
 
         void on_button_loadTracklayout();
+        void on_button_saveTracklayout();
 
         bool on_key_press_event(GdkEventKey *key_event);
 

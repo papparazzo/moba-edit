@@ -60,7 +60,7 @@ FrmMain::FrmMain(moba::MsgEndpointPtr mhp) :
     m_Button_About("About..."), m_HBox(Gtk::ORIENTATION_HORIZONTAL, 6), frmSelect(mhp),
     m_Label_Connectivity_HW(" \xe2\x96\x84"), m_Label_Connectivity_SW(" \xe2\x96\x84"),
     m_VBox_Toolbox(Gtk::ORIENTATION_VERTICAL, 6), m_Button_New("Neu..."),
-    m_Button_Load("Laden..."), m_Button_Delete("Löschen...") {
+    m_Button_Load("Laden..."), m_Button_Delete("Löschen..."), m_Button_Save{"Speichern.."} {
     sigc::slot<bool> my_slot = sigc::bind(sigc::mem_fun(*this, &FrmMain::on_timeout), 1);
     sigc::connection conn = Glib::signal_timeout().connect(my_slot, 25); // 25 ms
 
@@ -89,6 +89,7 @@ FrmMain::FrmMain(moba::MsgEndpointPtr mhp) :
     m_VBox_Toolbox.pack_end(m_Button_New, Gtk::PACK_SHRINK);
     m_VBox_Toolbox.pack_end(m_Button_Load, Gtk::PACK_SHRINK);
     m_VBox_Toolbox.pack_end(m_Button_Delete, Gtk::PACK_SHRINK);
+    m_VBox_Toolbox.pack_end(m_Button_Save, Gtk::PACK_SHRINK);
 
     m_VPaned_Container.add2(m_VBox_Toolbox);
     m_VPaned_Container.set_position(450);
@@ -116,6 +117,7 @@ FrmMain::FrmMain(moba::MsgEndpointPtr mhp) :
     m_Button_Emegerency.set_label("Nothalt");
 
     m_Button_Load.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_loadTracklayout));
+    m_Button_Save.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_saveTracklayout));
 
     initAboutDialog();
 
@@ -129,6 +131,10 @@ void FrmMain::on_button_loadTracklayout() {
     frmSelect.set_transient_for(*this);
     frmSelect.show();
     frmSelect.present();
+}
+
+void FrmMain::on_button_saveTracklayout() {
+    
 }
 
 void FrmMain::initAboutDialog() {
@@ -253,6 +259,7 @@ bool FrmMain::on_key_press_event(GdkEventKey* key_event) {
     switch(key_event->keyval) {
         case GDK_KEY_Delete:
             layoutWidget.removeSymbol();
+            layoutWidget.setCursorRel(1, 0);
             break;
 
         case GDK_KEY_BackSpace:
@@ -406,6 +413,16 @@ void FrmMain::setLockStateUnlocked(moba::JsonItemPtr data) {
 }
 
 void FrmMain::setCurrentLayout(moba::JsonItemPtr data) {
+    auto o = boost::dynamic_pointer_cast<moba::JsonObject>(data);
+    auto a = boost::dynamic_pointer_cast<moba::JsonArray>(o->at("symbols"));
+    for(auto iter = a->begin(); iter != a->end(); ++iter) {
+        auto x = boost::dynamic_pointer_cast<moba::JsonObject>(*iter);
+        layoutWidget.addSymbol(
+            moba::castToInt(x->at("xPos")),
+            moba::castToInt(x->at("yPos")),
+            Symbol(moba::castToInt(x->at("symbol")))
+        );
+    }
 }
 
 void FrmMain::addSymbol(Symbol symbol) {
