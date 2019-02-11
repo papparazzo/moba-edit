@@ -23,10 +23,11 @@
 
 #include <chrono>
 
-#include <moba/msgendpoint.h>
-#include <moba/msgsystemhandler.h>
-#include <moba/msgclienthandler.h>
 #include <moba/jsonabstractitem.h>
+
+#include "moba/registry.h"
+#include "moba/guihandler.h"
+#include "moba/systemhandler.h"
 
 #include <gtkmm/window.h>
 #include <gtkmm/comboboxtext.h>
@@ -36,11 +37,14 @@
 #include "toolboxwidget.h"
 #include "frmselect.h"
 
-#include <modules/lib-tracklayout/src/symbol.h>
+#include "moba/symbol.h"
+#include "moba/endpoint.h"
+#include "moba/layouthandler.h"
+#include "moba/layoutshandler.h"
 
 class FrmMain : public Gtk::Window {
     public:
-        FrmMain(moba::MsgEndpointPtr mhp);
+        FrmMain(EndpointPtr mhp);
         virtual ~FrmMain() {
         }
 
@@ -76,9 +80,8 @@ class FrmMain : public Gtk::Window {
 
         void initAboutDialog();
 
-        moba::MsgEndpointPtr   msgEndpoint;
-        moba::MsgSystemHandler sysHandler;
-        moba::MsgClientHandler cltHandler;
+        EndpointPtr   msgEndpoint;
+        Registry    registry;
 
         LayoutWidget layoutWidget;
         ToolboxWidget toolboxWidget;
@@ -96,12 +99,11 @@ class FrmMain : public Gtk::Window {
         bool on_key_press_event(GdkEventKey *key_event);
 
         // msg-response
-        void setServerInfoRes(moba::JsonItemPtr data);
-        void setSystemNotice(moba::JsonItemPtr data);
+        void setSystemNotice(const GuiSystemNotice &data);
         void setLockStateUnlocked(moba::JsonItemPtr data);
-        void setHardwareState(moba::JsonItemPtr data);
+        void setHardwareState(const SystemHardwareStateChanged &data);
         void setTrackLayout(moba::JsonItemPtr data);
-        void setTrackLayouts(moba::JsonItemPtr data);
+        void setTrackLayouts(const LayoutsGetLayoutsRes &data);
         void deleteTrackLayout(moba::JsonItemPtr data);
         void setCurrentLayout(moba::JsonItemPtr data);
 };

@@ -26,8 +26,8 @@
 #include <unordered_map>
 #include <utility>
 
-#include <modules/lib-tracklayout/src/position.h>
-#include <modules/lib-tracklayout/src/symbol.h>
+#include "moba/position.h"
+#include "moba/symbol.h"
 
 class LayoutWidget : public Gtk::DrawingArea {
     public:

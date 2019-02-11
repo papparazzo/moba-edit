@@ -20,13 +20,12 @@
 
 #pragma once
 
+#include <vector>
+
 #include <gtkmm/drawingarea.h>
 #include <gdkmm/pixbuf.h>
 
-#include <modules/lib-tracklayout/src/symbol.h>
-
-#include <vector>
-
+#include "moba/symbol.h"
 
 class ToolboxWidget : public Gtk::DrawingArea {
     public:

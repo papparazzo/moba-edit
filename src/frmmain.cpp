@@ -23,17 +23,17 @@
 #include <iostream>
 #include <exception>
 #include <algorithm>
+#include <functional>
 
 #include <ctime>
 #include <sys/timeb.h>
 #include <vector>
-#include <functional>
 
 #include "frmmain.h"
 #include "config.h"
 
-#include <modules/lib-tracklayout/src/direction.h>
-#include <modules/lib-tracklayout/src/position.h>
+#include "moba/direction.h"
+#include "moba/position.h"
 
 namespace {
     const char license[] =
@@ -55,8 +55,8 @@ namespace {
         "along with this program. If not, see <http://www.gnu.org/licenses/agpl.txt>.";
 }
 
-FrmMain::FrmMain(moba::MsgEndpointPtr mhp) :
-    msgEndpoint(mhp), sysHandler(mhp), cltHandler(mhp), m_VBox(Gtk::ORIENTATION_VERTICAL, 6),
+FrmMain::FrmMain(EndpointPtr mhp) :
+    msgEndpoint(mhp), m_VBox(Gtk::ORIENTATION_VERTICAL, 6),
     m_Button_About("About..."), m_HBox(Gtk::ORIENTATION_HORIZONTAL, 6), frmSelect(mhp),
     m_Label_Connectivity_HW(" \xe2\x96\x84"), m_Label_Connectivity_SW(" \xe2\x96\x84"),
     m_VBox_Toolbox(Gtk::ORIENTATION_VERTICAL, 6), m_Button_New("Neu..."),
@@ -121,10 +121,42 @@ FrmMain::FrmMain(moba::MsgEndpointPtr mhp) :
 
     initAboutDialog();
 
-    sysHandler.sendGetHardwareState();
+    registry.registerHandler<GuiSystemNotice>(std::bind(&FrmMain::setSystemNotice, this, std::placeholders::_1));
+    registry.registerHandler<SystemHardwareStateChanged>(std::bind(&FrmMain::setHardwareState, this, std::placeholders::_1));
+    registry.registerHandler<LayoutsGetLayoutsRes>(std::bind(&FrmMain::setTrackLayouts, this, std::placeholders::_1));
+    /*
+        case moba::Message::MT_LAYOUT_DELETED:
+            deleteTrackLayout(msg->getData());
+            break;
+
+        case moba::Message::MT_LAYOUT_CREATED:
+            setTrackLayout(msg->getData());
+            break;
+
+        case moba::Message::MT_LAYOUT_UNLOCKED:
+            setLockStateUnlocked(msg->getData());
+            break;
+
+        case moba::Message::MT_GET_LAYOUT_RES:
+            setCurrentLayout(msg->getData());
+            break;
+    }
+    return true;
+*
+     *
+    registry.registerHandler<ServerInfoRes>(std::bind(&FrmMain::setServerInfoRes, this, std::placeholders::_1));
+    registry.registerHandler<ServerConClientsRes>(std::bind(&FrmMain::setConClientsRes, this, std::placeholders::_1));
+    registry.registerHandler<ClientError>(std::bind(&FrmMain::setErrorNotice, this, std::placeholders::_1));
+    registry.registerHandler<ClientEchoRes>(std::bind(&FrmMain::setPingResult, this, std::placeholders::_1));
+    registry.registerHandler<ServerNewClientStarted>(std::bind(&FrmMain::setNewClient, this, std::placeholders::_1));
+
+    registry.registerHandler<ServerClientClosed>(std::bind(&FrmMain::setRemoveClient, this, std::placeholders::_1));
+     */
+
+    msgEndpoint->sendMsg(SystemGetHardwareState{});
     show_all_children();
     m_InfoBar.hide();
-    msgEndpoint->sendMsg(moba::Message::MT_GET_LAYOUTS_REQ);
+    msgEndpoint->sendMsg(LayoutsGetLayoutsReq{});
 }
 
 void FrmMain::on_button_loadTracklayout() {
@@ -134,7 +166,7 @@ void FrmMain::on_button_loadTracklayout() {
 }
 
 void FrmMain::on_button_saveTracklayout() {
-    
+
 }
 
 void FrmMain::initAboutDialog() {
@@ -168,9 +200,9 @@ void FrmMain::on_button_about_clicked() {
 
 void FrmMain::on_button_emegency_clicked() {
     if(m_Button_Emegerency.get_label() == "Nothalt") {
-        sysHandler.sendSetEmergencyStop(true);
+        msgEndpoint->sendMsg(SystemSetEmergencyStop{true});
     } else {
-        sysHandler.sendSetEmergencyStop(false);
+        msgEndpoint->sendMsg(SystemSetEmergencyStop{false});
     }
 }
 
@@ -180,7 +212,6 @@ void FrmMain::on_about_dialog_response(int) {
 
 bool FrmMain::on_timeout(int) {
     static bool connected = true;
-    moba::MessagePtr msg;
 
     try {
         if(!connected) {
@@ -189,11 +220,12 @@ bool FrmMain::on_timeout(int) {
             m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
             m_Label_Connectivity_SW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
             m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
-            sysHandler.sendGetHardwareState();
+            msgEndpoint->sendMsg(SystemGetHardwareState{});
             connected = true;
             return true;
         }
-        msg = msgEndpoint->recieveMsg();
+        registry.handleMsg(msgEndpoint->recieveMsg());
+
     } catch(std::exception &e) {
         if(connected) {
             m_Label_Connectivity_HW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
@@ -211,41 +243,6 @@ bool FrmMain::on_timeout(int) {
             dialog.run();
             connected = false;
         }
-        return true;
-    }
-
-    if(!msg) {
-        return true;
-    }
-
-    switch(msg->getMsgType()) {
-        case moba::Message::MT_SYSTEM_NOTICE:
-            setSystemNotice(msg->getData());
-            break;
-
-        case moba::Message::MT_HARDWARE_STATE_CHANGED:
-            setHardwareState(msg->getData());
-            break;
-
-        case moba::Message::MT_GET_LAYOUTS_RES:
-            setTrackLayouts(msg->getData());
-            break;
-
-        case moba::Message::MT_LAYOUT_DELETED:
-            deleteTrackLayout(msg->getData());
-            break;
-
-        case moba::Message::MT_LAYOUT_CREATED:
-            setTrackLayout(msg->getData());
-            break;
-
-        case moba::Message::MT_LAYOUT_UNLOCKED:
-            setLockStateUnlocked(msg->getData());
-            break;
-
-        case moba::Message::MT_GET_LAYOUT_RES:
-            setCurrentLayout(msg->getData());
-            break;
     }
     return true;
 }
@@ -311,21 +308,23 @@ bool FrmMain::on_key_press_event(GdkEventKey* key_event) {
     return true;
 }
 
-void FrmMain::setSystemNotice(moba::JsonItemPtr data) {
-    moba::JsonObjectPtr o = boost::dynamic_pointer_cast<moba::JsonObject>(data);
-    std::string type = moba::castToString(o->at("type"));
-    std::string caption = moba::castToString(o->at("caption"));
-    std::string text = moba::castToString(o->at("text"));
+void FrmMain::setSystemNotice(const GuiSystemNotice &data) {
+    switch(data.noticeType) {
+        case GuiSystemNotice::NoticeType::INFO:
+            m_InfoBar.set_message_type(Gtk::MESSAGE_INFO);
+            break;
 
-    if(type == "INFO") {
-        m_InfoBar.set_message_type(Gtk::MESSAGE_INFO);
+        case GuiSystemNotice::NoticeType::WARNING:
+            m_InfoBar.set_message_type(Gtk::MESSAGE_WARNING);
+            break;
+
+        case GuiSystemNotice::NoticeType::ERROR:
+            m_InfoBar.set_message_type(Gtk::MESSAGE_ERROR);
+            break;
     }
-    if(type == "WARNING") {
-        m_InfoBar.set_message_type(Gtk::MESSAGE_WARNING);
-    }
-    if(type == "ERROR") {
-        m_InfoBar.set_message_type(Gtk::MESSAGE_ERROR);
-    }
+
+    std::string caption = data.caption;
+    std::string text = data.text;
 
     std::replace(caption.begin(), caption.end(), '<', '"');
     std::replace(caption.begin(), caption.end(), '>', '"');
@@ -339,9 +338,8 @@ void FrmMain::setSystemNotice(moba::JsonItemPtr data) {
     m_InfoBar.show();
 }
 
-void FrmMain::setHardwareState(moba::JsonItemPtr data) {
-    std::string status = moba::castToString(data);
-    if(status == "ERROR") {
+void FrmMain::setHardwareState(const SystemHardwareStateChanged &data) {
+    if(data.hardwareState == SystemHardwareStateChanged::HardwareState::ERROR) {
         m_Label_Connectivity_HW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
         m_Label_Connectivity_SW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
         m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
@@ -350,7 +348,7 @@ void FrmMain::setHardwareState(moba::JsonItemPtr data) {
         return;
     }
     m_Button_Emegerency.set_sensitive(true);
-    if(status == "EMERGENCY_STOP") {
+    if(data.hardwareState == SystemHardwareStateChanged::HardwareState::EMERGENCY_STOP) {
         m_Label_Connectivity_HW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
         m_Label_Connectivity_SW.override_color(Gdk::RGBA("gold"), Gtk::STATE_FLAG_NORMAL);
         m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Nohalt ausgelöst");
@@ -359,7 +357,7 @@ void FrmMain::setHardwareState(moba::JsonItemPtr data) {
         return;
     }
     m_Button_Emegerency.set_label("Nothalt");
-    if(status == "STANDBY") {
+    if(data.hardwareState == SystemHardwareStateChanged::HardwareState::STANDBY) {
         m_Label_Connectivity_HW.override_color(Gdk::RGBA("gold"), Gtk::STATE_FLAG_NORMAL);
         m_Label_Connectivity_SW.override_color(Gdk::RGBA("gold"), Gtk::STATE_FLAG_NORMAL);
         m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Energiesparmodus");
@@ -367,27 +365,24 @@ void FrmMain::setHardwareState(moba::JsonItemPtr data) {
         m_Button_Emegerency.set_sensitive(false);
         return;
     }
-    if(status == "MANUEL") {
+    if(data.hardwareState == SystemHardwareStateChanged::HardwareState::MANUEL) {
         m_Label_Connectivity_HW.override_color(Gdk::RGBA("green"), Gtk::STATE_FLAG_NORMAL);
         m_Label_Connectivity_SW.override_color(Gdk::RGBA("gold"), Gtk::STATE_FLAG_NORMAL);
         m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> manuell");
         m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> manuell");
-    } else if(status == "AUTOMATIC") {
+    } else if(data.hardwareState == SystemHardwareStateChanged::HardwareState::AUTOMATIC) {
         m_Label_Connectivity_HW.override_color(Gdk::RGBA("green"), Gtk::STATE_FLAG_NORMAL);
         m_Label_Connectivity_SW.override_color(Gdk::RGBA("green"), Gtk::STATE_FLAG_NORMAL);
         m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> automatisch");
         m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> automatisch");
     }
-
-    std::stringstream ss;
-    ss << "<b>Hardwarestatus:</b> " << moba::castToString(data);
 }
 
-void FrmMain::setTrackLayouts(moba::JsonItemPtr data) {
-    auto a = boost::dynamic_pointer_cast<moba::JsonArray>(data);
+void FrmMain::setTrackLayouts(const LayoutsGetLayoutsRes &data) {
+    /*auto a = boost::dynamic_pointer_cast<moba::JsonArray>(data);
     for(auto iter = a->begin(); iter != a->end(); ++iter) {
         setTrackLayout(*iter);
-    }
+    }*/
 }
 
 void FrmMain::deleteTrackLayout(moba::JsonItemPtr data) {

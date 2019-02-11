@@ -22,8 +22,7 @@
 
 #include <gtkmm.h>
 
-#include <moba/msgendpoint.h>
-#include <moba/msgsystemhandler.h>
+#include "moba/endpoint.h"
 
 #include <gtkmm/window.h>
 #include <gtkmm/comboboxtext.h>
@@ -33,7 +32,7 @@
 
 class FrmSelect : public Gtk::Dialog {
     public:
-        FrmSelect(moba::MsgEndpointPtr mhp);
+        FrmSelect(EndpointPtr mhp);
         virtual ~FrmSelect() {
 
         }
@@ -77,7 +76,7 @@ class FrmSelect : public Gtk::Dialog {
 
         ModelColumnsTracklayouts m_Columns_Tracklayouts;
 
-        moba::MsgEndpointPtr msgEndpoint;
+        EndpointPtr msgEndpoint;
 
         void initListbox();
         void on_selection_changed();
