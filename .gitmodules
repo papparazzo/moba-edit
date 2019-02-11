@@ -1,3 +1,6 @@
 [submodule "modules/lib-tracklayout"]
 	path = modules/lib-tracklayout
 	url = https://github.com/papparazzo/moba-lib-tracklayout.git
+[submodule "modules/lib-msghandling"]
+	path = modules/lib-msghandling
+	url = https://github.com/papparazzo/moba-lib-msghandling.git
