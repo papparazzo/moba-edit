@@ -124,34 +124,10 @@ FrmMain::FrmMain(EndpointPtr mhp) :
     registry.registerHandler<GuiSystemNotice>(std::bind(&FrmMain::setSystemNotice, this, std::placeholders::_1));
     registry.registerHandler<SystemHardwareStateChanged>(std::bind(&FrmMain::setHardwareState, this, std::placeholders::_1));
     registry.registerHandler<LayoutsGetLayoutsRes>(std::bind(&FrmMain::setTrackLayouts, this, std::placeholders::_1));
-    /*
-        case moba::Message::MT_LAYOUT_DELETED:
-            deleteTrackLayout(msg->getData());
-            break;
-
-        case moba::Message::MT_LAYOUT_CREATED:
-            setTrackLayout(msg->getData());
-            break;
-
-        case moba::Message::MT_LAYOUT_UNLOCKED:
-            setLockStateUnlocked(msg->getData());
-            break;
-
-        case moba::Message::MT_GET_LAYOUT_RES:
-            setCurrentLayout(msg->getData());
-            break;
-    }
-    return true;
-*
-     *
-    registry.registerHandler<ServerInfoRes>(std::bind(&FrmMain::setServerInfoRes, this, std::placeholders::_1));
-    registry.registerHandler<ServerConClientsRes>(std::bind(&FrmMain::setConClientsRes, this, std::placeholders::_1));
-    registry.registerHandler<ClientError>(std::bind(&FrmMain::setErrorNotice, this, std::placeholders::_1));
-    registry.registerHandler<ClientEchoRes>(std::bind(&FrmMain::setPingResult, this, std::placeholders::_1));
-    registry.registerHandler<ServerNewClientStarted>(std::bind(&FrmMain::setNewClient, this, std::placeholders::_1));
-
-    registry.registerHandler<ServerClientClosed>(std::bind(&FrmMain::setRemoveClient, this, std::placeholders::_1));
-     */
+    registry.registerHandler<LayoutsLayoutDeleted>(std::bind(&FrmMain::deleteTrackLayout, this, std::placeholders::_1));
+    registry.registerHandler<LayoutsLayoutUnlocked>(std::bind(&FrmMain::setLockStateUnlocked, this, std::placeholders::_1));
+    registry.registerHandler<LayoutsLayoutCreated>(std::bind(&FrmMain::setTrackLayout, this, std::placeholders::_1));
+    registry.registerHandler<LayoutGetLayoutRes>(std::bind(&FrmMain::setCurrentLayout, this, std::placeholders::_1));
 
     msgEndpoint->sendMsg(SystemGetHardwareState{});
     show_all_children();
@@ -385,29 +361,26 @@ void FrmMain::setTrackLayouts(const LayoutsGetLayoutsRes &data) {
     }*/
 }
 
-void FrmMain::deleteTrackLayout(moba::JsonItemPtr data) {
-    auto i = boost::dynamic_pointer_cast<moba::JsonNumber<long int>>(data);
-    frmSelect.deleteTracklayout(i->getVal());
+void FrmMain::deleteTrackLayout(const LayoutsLayoutDeleted &data) {
+    frmSelect.deleteTracklayout(data.layoutId);
 }
 
-void FrmMain::setTrackLayout(moba::JsonItemPtr data) {
-    auto o = boost::dynamic_pointer_cast<moba::JsonObject>(data);
+void FrmMain::setTrackLayout(const LayoutsLayoutCreated &data) {
     frmSelect.addTracklayout(
-        moba::castToInt(o->at("id")),
-        moba::castToString(o->at("created")),
-        moba::castToString(o->at("modified")),
-        moba::castToString(o->at("name")),
-        moba::castToInt(o->at("locked")),
-        moba::castToString(o->at("description"))
+        data.tracklayout.id,
+        data.tracklayout.created,
+        data.tracklayout.modified,
+        data.tracklayout.name,
+        data.tracklayout.locked,
+        data.tracklayout.description
     );
 }
-
-void FrmMain::setLockStateUnlocked(moba::JsonItemPtr data) {
-    auto i = boost::dynamic_pointer_cast<moba::JsonNumber<long int>>(data);
-    frmSelect.setLockStatus(i->getVal(), false);
+void FrmMain::setLockStateUnlocked(const LayoutsLayoutUnlocked &data) {
+    frmSelect.setLockStatus(data.layoutId, false);
 }
 
-void FrmMain::setCurrentLayout(moba::JsonItemPtr data) {
+void FrmMain::setCurrentLayout(const LayoutGetLayoutRes &data) {
+    /*
     auto o = boost::dynamic_pointer_cast<moba::JsonObject>(data);
     auto a = boost::dynamic_pointer_cast<moba::JsonArray>(o->at("symbols"));
     for(auto iter = a->begin(); iter != a->end(); ++iter) {
@@ -418,6 +391,7 @@ void FrmMain::setCurrentLayout(moba::JsonItemPtr data) {
             Symbol(moba::castToInt(x->at("symbol")))
         );
     }
+     * */
 }
 
 void FrmMain::addSymbol(Symbol symbol) {

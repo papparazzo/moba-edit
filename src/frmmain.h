@@ -100,10 +100,10 @@ class FrmMain : public Gtk::Window {
 
         // msg-response
         void setSystemNotice(const GuiSystemNotice &data);
-        void setLockStateUnlocked(moba::JsonItemPtr data);
         void setHardwareState(const SystemHardwareStateChanged &data);
-        void setTrackLayout(moba::JsonItemPtr data);
         void setTrackLayouts(const LayoutsGetLayoutsRes &data);
-        void deleteTrackLayout(moba::JsonItemPtr data);
-        void setCurrentLayout(moba::JsonItemPtr data);
+        void deleteTrackLayout(const LayoutsLayoutDeleted &data);
+        void setTrackLayout(const LayoutsLayoutCreated &data);
+        void setLockStateUnlocked(const LayoutsLayoutUnlocked &data);
+        void setCurrentLayout(const LayoutGetLayoutRes &data);
 };
