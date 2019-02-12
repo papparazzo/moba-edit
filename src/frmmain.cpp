@@ -355,10 +355,11 @@ void FrmMain::setHardwareState(const SystemHardwareStateChanged &data) {
 }
 
 void FrmMain::setTrackLayouts(const LayoutsGetLayoutsRes &data) {
-    /*auto a = boost::dynamic_pointer_cast<moba::JsonArray>(data);
-    for(auto iter = a->begin(); iter != a->end(); ++iter) {
-        setTrackLayout(*iter);
-    }*/
+    for(auto iter : data.layouts) {
+        frmSelect.addTracklayout(
+            iter.id, iter.created, iter.modified, iter.name, iter.locked, iter.description
+        );
+    }
 }
 
 void FrmMain::deleteTrackLayout(const LayoutsLayoutDeleted &data) {
