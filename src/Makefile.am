@@ -19,6 +19,7 @@ LDFLAGS += -L/usr/local/lib
 AM_CPPFLAGS = \
     $(GTKMM_CFLAGS) \
     -I$(srcdir)/../modules/lib-tracklayout/src \
-    -I$(srcdir)/../modules/lib-msghandling/src
+    -I$(srcdir)/../modules/lib-msghandling/src \
+    -g3 -g -ggdb -O3 -Wall
 
 CLEANFILES = *~
