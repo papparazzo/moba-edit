@@ -56,11 +56,11 @@ namespace {
 }
 
 FrmMain::FrmMain(EndpointPtr mhp) :
-    msgEndpoint(mhp), m_VBox(Gtk::ORIENTATION_VERTICAL, 6),
-    m_Button_About("About..."), m_HBox(Gtk::ORIENTATION_HORIZONTAL, 6), frmSelect(mhp),
+    msgEndpoint(mhp), m_VBox(Gtk::ORIENTATION_VERTICAL, 6), m_HBox(Gtk::ORIENTATION_HORIZONTAL, 6),
+    m_VBox_Toolbox(Gtk::ORIENTATION_VERTICAL, 6), m_Button_New("Neu..."), m_Button_Load("Laden..."),
+    m_Button_Delete("Löschen..."), m_Button_Save{"Speichern.."},
     m_Label_Connectivity_HW(" \xe2\x96\x84"), m_Label_Connectivity_SW(" \xe2\x96\x84"),
-    m_VBox_Toolbox(Gtk::ORIENTATION_VERTICAL, 6), m_Button_New("Neu..."),
-    m_Button_Load("Laden..."), m_Button_Delete("Löschen..."), m_Button_Save{"Speichern.."} {
+    m_Button_About("About..."), frmSelect(mhp) {
     sigc::slot<bool> my_slot = sigc::bind(sigc::mem_fun(*this, &FrmMain::on_timeout), 1);
     sigc::connection conn = Glib::signal_timeout().connect(my_slot, 25); // 25 ms
 
@@ -381,18 +381,13 @@ void FrmMain::setLockStateUnlocked(const LayoutsLayoutUnlocked &data) {
 }
 
 void FrmMain::setCurrentLayout(const LayoutGetLayoutRes &data) {
-    /*
-    auto o = boost::dynamic_pointer_cast<moba::JsonObject>(data);
-    auto a = boost::dynamic_pointer_cast<moba::JsonArray>(o->at("symbols"));
-    for(auto iter = a->begin(); iter != a->end(); ++iter) {
-        auto x = boost::dynamic_pointer_cast<moba::JsonObject>(*iter);
+    for(auto iter : data.layoutData.symbols) {
         layoutWidget.addSymbol(
-            moba::castToInt(x->at("xPos")),
-            moba::castToInt(x->at("yPos")),
-            Symbol(moba::castToInt(x->at("symbol")))
+            iter.position.x,
+            iter.position.y,
+            iter.symbol
         );
     }
-     * */
 }
 
 void FrmMain::addSymbol(Symbol symbol) {

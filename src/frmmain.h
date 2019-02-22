@@ -51,6 +51,12 @@ class FrmMain : public Gtk::Window {
         void addSymbol(Symbol symbol);
 
     protected:
+        EndpointPtr msgEndpoint;
+        Registry registry;
+
+        LayoutWidget layoutWidget;
+        ToolboxWidget toolboxWidget;
+
         Gtk::ButtonBox m_ButtonBox;
         Gtk::Button m_Button_Emegerency;
         Gtk::Box m_VBox;
@@ -79,12 +85,6 @@ class FrmMain : public Gtk::Window {
         Gtk::Paned m_VPaned_Container{Gtk::ORIENTATION_HORIZONTAL};
 
         void initAboutDialog();
-
-        EndpointPtr   msgEndpoint;
-        Registry    registry;
-
-        LayoutWidget layoutWidget;
-        ToolboxWidget toolboxWidget;
 
         // Signal handlers:
         bool on_timeout(int timer_number);
