@@ -37,7 +37,7 @@ namespace {
         moba::Version(PACKAGE_VERSION),
         __DATE__,
         __TIME__,
-        "localhost",
+        "::1",
         7000
     };
 }
@@ -45,24 +45,16 @@ namespace {
 int main(int argc, char *argv[]) {
     moba::setCoreFileSizeToULimit();
 
-    SocketPtr   socket(new Socket{appData.host, appData.port});
-    EndpointPtr endpoint(new Endpoint{socket});
+    auto groups = std::make_shared<moba::JsonArray>();
+    groups->push_back(moba::toJsonStringPtr("SERV"));
+    groups->push_back(moba::toJsonStringPtr("SYSTEM"));
+    groups->push_back(moba::toJsonStringPtr("LAYOUTS"));
+    groups->push_back(moba::toJsonStringPtr("LAYOUT"));
 
-    try {
-        moba::JsonArrayPtr groups(new moba::JsonArray());
-        groups->push_back(moba::toJsonStringPtr("SERV"));
-        groups->push_back(moba::toJsonStringPtr("SYSTEM"));
-        groups->push_back(moba::toJsonStringPtr("LAYOUTS"));
-        groups->push_back(moba::toJsonStringPtr("LAYOUT"));
+    auto socket = std::make_shared<Socket>(appData.host, appData.port);
+    auto endpoint = std::make_shared<Endpoint>(socket, appData.appName, appData.version, groups);
 
-        endpoint->connect(
-            appData.appName,
-            appData.version,
-            groups
-        );
-    } catch(SocketException &e) {
-        std::cerr << e.what() << std::endl;
-    }
+    endpoint->connect();
 
     auto app = Gtk::Application::create(argc, argv, "org.moba.edit");
 
