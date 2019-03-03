@@ -383,8 +383,8 @@ void FrmMain::setLockStateUnlocked(const LayoutsLayoutUnlocked &data) {
 void FrmMain::setCurrentLayout(const LayoutGetLayoutRes &data) {
     for(auto iter : data.layoutData.symbols) {
         layoutWidget.addSymbol(
-            iter.position.x,
-            iter.position.y,
+            iter.xPos,
+            iter.yPos,
             iter.symbol
         );
     }
