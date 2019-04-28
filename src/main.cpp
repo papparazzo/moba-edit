@@ -45,12 +45,7 @@ namespace {
 int main(int argc, char *argv[]) {
     moba::setCoreFileSizeToULimit();
 
-    auto groups = std::make_shared<moba::JsonArray>();
-    groups->push_back(moba::toJsonStringPtr("SERV"));
-    groups->push_back(moba::toJsonStringPtr("SYSTEM"));
-    groups->push_back(moba::toJsonStringPtr("LAYOUTS"));
-    groups->push_back(moba::toJsonStringPtr("LAYOUT"));
-
+    auto groups = Groups::SERVER | Groups::SYSTEM | Groups::LAYOUT;
     auto socket = std::make_shared<Socket>(appData.host, appData.port);
     auto endpoint = std::make_shared<Endpoint>(socket, appData.appName, appData.version, groups);
 
