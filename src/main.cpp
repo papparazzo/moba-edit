@@ -45,12 +45,9 @@ namespace {
 int main(int argc, char *argv[]) {
     moba::setCoreFileSizeToULimit();
 
-    auto groups = Groups::SERVER | Groups::SYSTEM | Groups::LAYOUT;
+    auto groups = Groups::CLIENT | Groups::SERVER | Groups::SYSTEM | Groups::LAYOUT;
     auto socket = std::make_shared<Socket>(appData.host, appData.port);
     auto endpoint = std::make_shared<Endpoint>(socket, appData.appName, appData.version, groups);
-
-    endpoint->connect();
-
     auto app = Gtk::Application::create(argc, argv, "org.moba.edit");
 
     FrmMain frmMain{endpoint};
