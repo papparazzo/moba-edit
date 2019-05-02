@@ -128,11 +128,9 @@ FrmMain::FrmMain(EndpointPtr mhp) :
     registry.registerHandler<LayoutsLayoutUnlocked>(std::bind(&FrmMain::setLockStateUnlocked, this, std::placeholders::_1));
     registry.registerHandler<LayoutsLayoutCreated>(std::bind(&FrmMain::setTrackLayout, this, std::placeholders::_1));
     registry.registerHandler<LayoutGetLayoutRes>(std::bind(&FrmMain::setCurrentLayout, this, std::placeholders::_1));
-
-    msgEndpoint->sendMsg(SystemGetHardwareState{});
+    registry.registerHandler<ClientError>(std::bind(&FrmMain::displayError, this, std::placeholders::_1));
     show_all_children();
     m_InfoBar.hide();
-    msgEndpoint->sendMsg(LayoutsGetLayoutsReq{});
 }
 
 void FrmMain::on_button_loadTracklayout() {
@@ -143,6 +141,17 @@ void FrmMain::on_button_loadTracklayout() {
 
 void FrmMain::on_button_saveTracklayout() {
 
+}
+
+std::string FrmMain::getDisplayMessage(std::string caption, std::string text) {
+    std::replace(caption.begin(), caption.end(), '<', '"');
+    std::replace(caption.begin(), caption.end(), '>', '"');
+    std::replace(text.begin(), text.end(), '<', '"');
+    std::replace(text.begin(), text.end(), '>', '"');
+
+    std::stringstream ss;
+    ss << "<b>" << caption << "!</b>\n" << text;
+    return std::move(ss.str());
 }
 
 void FrmMain::initAboutDialog() {
@@ -187,7 +196,7 @@ void FrmMain::on_about_dialog_response(int) {
 }
 
 bool FrmMain::on_timeout(int) {
-    static bool connected = true;
+    static bool connected = false;
 
     try {
         if(!connected) {
@@ -197,6 +206,8 @@ bool FrmMain::on_timeout(int) {
             m_Label_Connectivity_SW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
             m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
             msgEndpoint->sendMsg(SystemGetHardwareState{});
+            msgEndpoint->sendMsg(LayoutsGetLayoutsReq{});
+            msgEndpoint->sendMsg(SystemGetHardwareState{});
             connected = true;
             return true;
         }
@@ -204,19 +215,16 @@ bool FrmMain::on_timeout(int) {
 
     } catch(std::exception &e) {
         if(connected) {
+            m_Button_Emegerency.set_sensitive(false);
             m_Label_Connectivity_HW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
             m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zum Server");
             m_Label_Connectivity_SW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
             m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zum Server");
-            Gtk::MessageDialog dialog(
-                *this,
-                "msg-handler exception:",
-                false,
-                Gtk::MESSAGE_ERROR,
-                Gtk::BUTTONS_OK
-            );
-            dialog.set_secondary_text(e.what());
-            dialog.run();
+            m_InfoBar.set_message_type(Gtk::MESSAGE_ERROR);
+            std::stringstream ss;
+            ss << "<b>msg-handler exception:</b>\n" << e.what();
+            m_Label_InfoBarMessage.set_markup(ss.str());
+            m_InfoBar.show();
             connected = false;
         }
     }
@@ -298,19 +306,7 @@ void FrmMain::setSystemNotice(const GuiSystemNotice &data) {
             m_InfoBar.set_message_type(Gtk::MESSAGE_ERROR);
             break;
     }
-
-    std::string caption = data.caption;
-    std::string text = data.text;
-
-    std::replace(caption.begin(), caption.end(), '<', '"');
-    std::replace(caption.begin(), caption.end(), '>', '"');
-    std::replace(text.begin(), text.end(), '<', '"');
-    std::replace(text.begin(), text.end(), '>', '"');
-
-    std::stringstream ss;
-    ss << "<b>" << caption << "!</b>\n" << text;
-
-    m_Label_InfoBarMessage.set_markup(ss.str());
+    m_Label_InfoBarMessage.set_markup(getDisplayMessage(data.caption, data.text));
     m_InfoBar.show();
 }
 
@@ -382,12 +378,14 @@ void FrmMain::setLockStateUnlocked(const LayoutsLayoutUnlocked &data) {
 
 void FrmMain::setCurrentLayout(const LayoutGetLayoutRes &data) {
     for(auto iter : data.layoutData.symbols) {
-        layoutWidget.addSymbol(
-            iter.xPos,
-            iter.yPos,
-            iter.symbol
-        );
+        layoutWidget.addSymbol(iter.xPos, iter.yPos, iter.symbol);
     }
+}
+
+void FrmMain::displayError(const ClientError &data) {
+    m_InfoBar.set_message_type(Gtk::MESSAGE_WARNING);
+    m_Label_InfoBarMessage.set_markup(getDisplayMessage(data.errorId, data.additionalMsg));
+    m_InfoBar.show();
 }
 
 void FrmMain::addSymbol(Symbol symbol) {

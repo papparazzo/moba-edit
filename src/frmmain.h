@@ -41,6 +41,7 @@
 #include "moba/endpoint.h"
 #include "moba/layouthandler.h"
 #include "moba/layoutshandler.h"
+#include "moba/clienthandler.h"
 
 class FrmMain : public Gtk::Window {
     public:
@@ -84,6 +85,8 @@ class FrmMain : public Gtk::Window {
 
         Gtk::Paned m_VPaned_Container{Gtk::ORIENTATION_HORIZONTAL};
 
+        std::string getDisplayMessage(std::string caption, std::string text);
+
         void initAboutDialog();
 
         // Signal handlers:
@@ -106,4 +109,5 @@ class FrmMain : public Gtk::Window {
         void setTrackLayout(const LayoutsLayoutCreated &data);
         void setLockStateUnlocked(const LayoutsLayoutUnlocked &data);
         void setCurrentLayout(const LayoutGetLayoutRes &data);
+        void displayError(const ClientError &data);
 };
