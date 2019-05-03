@@ -40,7 +40,6 @@
 #include "moba/symbol.h"
 #include "moba/endpoint.h"
 #include "moba/layouthandler.h"
-#include "moba/layoutshandler.h"
 #include "moba/clienthandler.h"
 
 class FrmMain : public Gtk::Window {
@@ -104,10 +103,10 @@ class FrmMain : public Gtk::Window {
         // msg-response
         void setSystemNotice(const GuiSystemNotice &data);
         void setHardwareState(const SystemHardwareStateChanged &data);
-        void setTrackLayouts(const LayoutsGetLayoutsRes &data);
-        void deleteTrackLayout(const LayoutsLayoutDeleted &data);
-        void setTrackLayout(const LayoutsLayoutCreated &data);
-        void setLockStateUnlocked(const LayoutsLayoutUnlocked &data);
+        void setTrackLayouts(const LayoutGetLayoutsRes &data);
+        void deleteTrackLayout(const LayoutLayoutDeleted &data);
+        void setTrackLayout(const LayoutLayoutCreated &data);
+        void setLockStateUnlocked(const LayoutLayoutUnlocked &data);
         void setCurrentLayout(const LayoutGetLayoutRes &data);
         void displayError(const ClientError &data);
 };

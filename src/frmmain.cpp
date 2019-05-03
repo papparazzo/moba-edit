@@ -123,10 +123,10 @@ FrmMain::FrmMain(EndpointPtr mhp) :
 
     registry.registerHandler<GuiSystemNotice>(std::bind(&FrmMain::setSystemNotice, this, std::placeholders::_1));
     registry.registerHandler<SystemHardwareStateChanged>(std::bind(&FrmMain::setHardwareState, this, std::placeholders::_1));
-    registry.registerHandler<LayoutsGetLayoutsRes>(std::bind(&FrmMain::setTrackLayouts, this, std::placeholders::_1));
-    registry.registerHandler<LayoutsLayoutDeleted>(std::bind(&FrmMain::deleteTrackLayout, this, std::placeholders::_1));
-    registry.registerHandler<LayoutsLayoutUnlocked>(std::bind(&FrmMain::setLockStateUnlocked, this, std::placeholders::_1));
-    registry.registerHandler<LayoutsLayoutCreated>(std::bind(&FrmMain::setTrackLayout, this, std::placeholders::_1));
+    registry.registerHandler<LayoutGetLayoutsRes>(std::bind(&FrmMain::setTrackLayouts, this, std::placeholders::_1));
+    registry.registerHandler<LayoutLayoutDeleted>(std::bind(&FrmMain::deleteTrackLayout, this, std::placeholders::_1));
+    registry.registerHandler<LayoutLayoutUnlocked>(std::bind(&FrmMain::setLockStateUnlocked, this, std::placeholders::_1));
+    registry.registerHandler<LayoutLayoutCreated>(std::bind(&FrmMain::setTrackLayout, this, std::placeholders::_1));
     registry.registerHandler<LayoutGetLayoutRes>(std::bind(&FrmMain::setCurrentLayout, this, std::placeholders::_1));
     registry.registerHandler<ClientError>(std::bind(&FrmMain::displayError, this, std::placeholders::_1));
     show_all_children();
@@ -206,7 +206,7 @@ bool FrmMain::on_timeout(int) {
             m_Label_Connectivity_SW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
             m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
             msgEndpoint->sendMsg(SystemGetHardwareState{});
-            msgEndpoint->sendMsg(LayoutsGetLayoutsReq{});
+            msgEndpoint->sendMsg(LayoutGetLayoutsReq{});
             msgEndpoint->sendMsg(SystemGetHardwareState{});
             connected = true;
             return true;
@@ -350,7 +350,7 @@ void FrmMain::setHardwareState(const SystemHardwareStateChanged &data) {
     }
 }
 
-void FrmMain::setTrackLayouts(const LayoutsGetLayoutsRes &data) {
+void FrmMain::setTrackLayouts(const LayoutGetLayoutsRes &data) {
     for(auto iter : data.layouts) {
         frmSelect.addTracklayout(
             iter.id, iter.created, iter.modified, iter.name, iter.locked, iter.description
@@ -358,11 +358,11 @@ void FrmMain::setTrackLayouts(const LayoutsGetLayoutsRes &data) {
     }
 }
 
-void FrmMain::deleteTrackLayout(const LayoutsLayoutDeleted &data) {
+void FrmMain::deleteTrackLayout(const LayoutLayoutDeleted &data) {
     frmSelect.deleteTracklayout(data.layoutId);
 }
 
-void FrmMain::setTrackLayout(const LayoutsLayoutCreated &data) {
+void FrmMain::setTrackLayout(const LayoutLayoutCreated &data) {
     frmSelect.addTracklayout(
         data.tracklayout.id,
         data.tracklayout.created,
@@ -372,7 +372,7 @@ void FrmMain::setTrackLayout(const LayoutsLayoutCreated &data) {
         data.tracklayout.description
     );
 }
-void FrmMain::setLockStateUnlocked(const LayoutsLayoutUnlocked &data) {
+void FrmMain::setLockStateUnlocked(const LayoutLayoutUnlocked &data) {
     frmSelect.setLockStatus(data.layoutId, false);
 }
 
