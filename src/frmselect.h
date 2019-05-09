@@ -57,6 +57,8 @@ class FrmSelect : public Gtk::Dialog {
         Gtk::Label                   m_Label_Description;
         Gtk::ScrolledWindow          m_ScrolledWindow_Descripton;
 
+        int                          currentLayout;
+
         class ModelColumnsTracklayouts : public Gtk::TreeModel::ColumnRecord {
             public:
                 ModelColumnsTracklayouts() {
@@ -81,5 +83,8 @@ class FrmSelect : public Gtk::Dialog {
         EndpointPtr msgEndpoint;
 
         void initListbox();
+
         void on_selection_changed();
+        void on_button_loadTracklayout();
+        void on_button_cancel();
 };

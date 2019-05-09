@@ -31,8 +31,13 @@ FrmSelect::FrmSelect(EndpointPtr mhp) : msgEndpoint(mhp) {
     set_position(Gtk::WIN_POS_CENTER);
 
     //get_content_area();
-    add_button("Gleisplan laden", BUTTON_ID_LOAD)->set_sensitive(false);
-    add_button("Abbrechen", BUTTON_ID_CANCEL);
+    auto m_Button_Load = add_button("Gleisplan laden", BUTTON_ID_LOAD);
+    auto m_Button_Cancel = add_button("Abbrechen", BUTTON_ID_CANCEL);
+
+    m_Button_Load->set_sensitive(false);
+
+    m_Button_Load->signal_clicked().connect(sigc::mem_fun(*this, &FrmSelect::on_button_loadTracklayout));
+    m_Button_Cancel->signal_clicked().connect(sigc::mem_fun(*this, &FrmSelect::on_button_cancel));
 
     initListbox();
     show_all_children();
@@ -128,7 +133,16 @@ void FrmSelect::on_selection_changed() {
         return;
     }
     Gtk::TreeModel::Row row = *iter;
-    msgEndpoint->sendMsg(LayoutGetLayoutReq{(int)row[m_Columns_Tracklayouts.m_col_id]});
+    currentLayout = (int)row[m_Columns_Tracklayouts.m_col_id];
     m_Label_Description.set_text((std::string)row[m_Columns_Tracklayouts.m_col_data]);
     get_widget_for_response(BUTTON_ID_LOAD)->set_sensitive(true);
+}
+
+void FrmSelect::on_button_loadTracklayout() {
+    msgEndpoint->sendMsg(LayoutGetLayoutReq{currentLayout});
+    hide();
+}
+
+void FrmSelect::on_button_cancel() {
+    hide();
 }
