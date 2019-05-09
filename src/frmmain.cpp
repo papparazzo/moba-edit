@@ -372,6 +372,7 @@ void FrmMain::setTrackLayout(const LayoutLayoutCreated &data) {
         data.tracklayout.description
     );
 }
+
 void FrmMain::setLockStateUnlocked(const LayoutLayoutUnlocked &data) {
     frmSelect.setLockStatus(data.layoutId, false);
 }
