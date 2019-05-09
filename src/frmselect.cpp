@@ -106,6 +106,10 @@ void FrmSelect::setLockStatus(int id, bool locked) {
     }
 }
 
+void FrmSelect::reset() {
+    m_refTreeModel_Tracklayouts->clear();
+}
+
 void FrmSelect::addTracklayout(int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, const std::string &description) {
     auto iter = m_refTreeModel_Tracklayouts->append();
     auto row = *iter;

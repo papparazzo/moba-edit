@@ -42,6 +42,8 @@ class FrmSelect : public Gtk::Dialog {
         void deleteTracklayout(int id);
         void setLockStatus(int id, bool locked);
 
+        void reset();
+
     protected:
         const static int BUTTON_ID_LOAD = 1;
         const static int BUTTON_ID_CANCEL = 2;
