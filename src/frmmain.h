@@ -36,6 +36,7 @@
 #include "layoutwidget.h"
 #include "toolboxwidget.h"
 #include "frmselect.h"
+#include "frmnew.h"
 
 #include "moba/symbol.h"
 #include "moba/endpoint.h"
@@ -82,6 +83,9 @@ class FrmMain : public Gtk::Window {
         // load tracklayout
         FrmSelect frmSelect;
 
+        // create new one
+        FrmNew frmNew;
+
         Gtk::Paned m_VPaned_Container{Gtk::ORIENTATION_HORIZONTAL};
 
         std::string getDisplayMessage(std::string caption, std::string text);
@@ -98,6 +102,7 @@ class FrmMain : public Gtk::Window {
         void on_button_loadTracklayout();
         void on_button_deleteTracklayout();
         void on_button_saveTracklayout();
+        void on_button_newTracklayout();
 
         bool on_key_press_event(GdkEventKey *key_event);
 

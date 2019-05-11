@@ -60,7 +60,7 @@ FrmMain::FrmMain(EndpointPtr mhp) :
     m_VBox_Toolbox(Gtk::ORIENTATION_VERTICAL, 6), m_Button_New("Neu..."), m_Button_Load("Laden..."),
     m_Button_Delete("Löschen..."), m_Button_Save{"Speichern.."},
     m_Label_Connectivity_HW(" \xe2\x96\x84"), m_Label_Connectivity_SW(" \xe2\x96\x84"),
-    m_Button_About("About..."), frmSelect(mhp) {
+    m_Button_About("About..."), frmSelect(mhp), frmNew(mhp){
     sigc::slot<bool> my_slot = sigc::bind(sigc::mem_fun(*this, &FrmMain::on_timeout), 1);
     sigc::connection conn = Glib::signal_timeout().connect(my_slot, 25); // 25 ms
 
@@ -119,6 +119,7 @@ FrmMain::FrmMain(EndpointPtr mhp) :
     m_Button_Load.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_loadTracklayout));
     m_Button_Delete.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_deleteTracklayout));
     m_Button_Save.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_saveTracklayout));
+    m_Button_New.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_newTracklayout));
 
     initAboutDialog();
 
@@ -148,6 +149,12 @@ void FrmMain::on_button_deleteTracklayout() {
 
 void FrmMain::on_button_saveTracklayout() {
 
+}
+
+void FrmMain::on_button_newTracklayout() {
+    frmNew.set_transient_for(*this);
+    frmNew.show();
+    frmNew.present();
 }
 
 std::string FrmMain::getDisplayMessage(std::string caption, std::string text) {
