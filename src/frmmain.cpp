@@ -368,7 +368,7 @@ void FrmMain::setHardwareState(const SystemHardwareStateChanged &data) {
 void FrmMain::setTrackLayouts(const LayoutGetLayoutsRes &data) {
     for(auto iter : data.layouts) {
         frmSelect.addTracklayout(
-            iter.id, iter.created, iter.modified, iter.name, iter.locked, iter.description
+            iter.id, iter.created, iter.modified, iter.name, iter.locked, iter.active, iter.description
         );
     }
 }
@@ -384,6 +384,7 @@ void FrmMain::setTrackLayout(const LayoutLayoutCreated &data) {
         data.tracklayout.modified,
         data.tracklayout.name,
         data.tracklayout.locked,
+        data.tracklayout.active,
         data.tracklayout.description
     );
 }

@@ -38,12 +38,15 @@ class FrmSelect : public Gtk::Dialog {
         };
 
         FrmSelect(EndpointPtr mhp);
-        virtual ~FrmSelect() {
+        virtual ~FrmSelect();
 
-        }
+        void addTracklayout(
+            int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, bool active, const std::string &description
+        );
 
-        void addTracklayout(int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, const std::string &description);
-        void updateTracklayout(int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, const std::string &description);
+        void updateTracklayout(
+            int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, const std::string &description
+        );
         void deleteTracklayout(int id);
         void setLockStatus(int id, bool locked);
 
@@ -77,6 +80,7 @@ class FrmSelect : public Gtk::Dialog {
                     add(m_col_modified);
                     add(m_col_name);
                     add(m_col_locked);
+                    add(m_col_active);
                     add(m_col_data);
                 }
 
@@ -85,6 +89,7 @@ class FrmSelect : public Gtk::Dialog {
                 Gtk::TreeModelColumn<Glib::ustring> m_col_modified;
                 Gtk::TreeModelColumn<Glib::ustring> m_col_name;
                 Gtk::TreeModelColumn<bool>          m_col_locked;
+                Gtk::TreeModelColumn<bool>          m_col_active;
                 Gtk::TreeModelColumn<std::string>   m_col_data;
         };
 

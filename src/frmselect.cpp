@@ -43,6 +43,10 @@ FrmSelect::FrmSelect(EndpointPtr mhp) : msgEndpoint(mhp) {
     show_all_children();
 }
 
+FrmSelect::~FrmSelect() {
+
+}
+
 void FrmSelect::initListbox() {
 
     get_content_area()->pack_start(m_VPaned_Tracklayouts);
@@ -59,6 +63,7 @@ void FrmSelect::initListbox() {
     m_TreeView_Tracklayouts.append_column("Erstellt am", m_Columns_Tracklayouts.m_col_created);
     m_TreeView_Tracklayouts.append_column("Geändert am", m_Columns_Tracklayouts.m_col_modified);
     m_TreeView_Tracklayouts.append_column("Gesperrt",    m_Columns_Tracklayouts.m_col_locked);
+    m_TreeView_Tracklayouts.append_column("Aktiv",       m_Columns_Tracklayouts.m_col_active);
     m_TreeView_Tracklayouts.append_column("Name",        m_Columns_Tracklayouts.m_col_name);
 
     m_VPaned_Tracklayouts.add2(m_ScrolledWindow_Descripton);
@@ -68,7 +73,6 @@ void FrmSelect::initListbox() {
 
     Glib::RefPtr<Gtk::TreeSelection> refTreeSelection = m_TreeView_Tracklayouts.get_selection();
     refTreeSelection->signal_changed().connect(sigc::mem_fun(*this, &FrmSelect::on_selection_changed));
-
 }
 
 void FrmSelect::updateTracklayout(int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, const std::string &description) {
@@ -127,7 +131,9 @@ void FrmSelect::show(FrmSelect::Mode mode) {
     Gtk::Dialog::show();
 }
 
-void FrmSelect::addTracklayout(int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, const std::string &description) {
+void FrmSelect::addTracklayout(
+    int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, bool active, const std::string &description
+) {
     auto iter = m_refTreeModel_Tracklayouts->append();
     auto row = *iter;
     row[m_Columns_Tracklayouts.m_col_id      ] = id;
@@ -135,6 +141,7 @@ void FrmSelect::addTracklayout(int id, const std::string &created, const std::st
     row[m_Columns_Tracklayouts.m_col_modified] = modified;
     row[m_Columns_Tracklayouts.m_col_name    ] = name;
     row[m_Columns_Tracklayouts.m_col_locked  ] = locked;
+    row[m_Columns_Tracklayouts.m_col_active  ] = active;
     row[m_Columns_Tracklayouts.m_col_data    ] = description;
 }
 
