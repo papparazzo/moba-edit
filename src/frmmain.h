@@ -96,6 +96,7 @@ class FrmMain : public Gtk::Window {
         void on_infobar_response(int response);
 
         void on_button_loadTracklayout();
+        void on_button_deleteTracklayout();
         void on_button_saveTracklayout();
 
         bool on_key_press_event(GdkEventKey *key_event);

@@ -117,6 +117,7 @@ FrmMain::FrmMain(EndpointPtr mhp) :
     m_Button_Emegerency.set_label("Nothalt");
 
     m_Button_Load.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_loadTracklayout));
+    m_Button_Delete.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_deleteTracklayout));
     m_Button_Save.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_saveTracklayout));
 
     initAboutDialog();
@@ -135,7 +136,13 @@ FrmMain::FrmMain(EndpointPtr mhp) :
 
 void FrmMain::on_button_loadTracklayout() {
     frmSelect.set_transient_for(*this);
-    frmSelect.show();
+    frmSelect.show(FrmSelect::LOAD);
+    frmSelect.present();
+}
+
+void FrmMain::on_button_deleteTracklayout() {
+    frmSelect.set_transient_for(*this);
+    frmSelect.show(FrmSelect::DELETE);
     frmSelect.present();
 }
 
