@@ -32,6 +32,11 @@
 
 class FrmSelect : public Gtk::Dialog {
     public:
+        enum Mode {
+            LOAD,
+            DELETE
+        };
+
         FrmSelect(EndpointPtr mhp);
         virtual ~FrmSelect() {
 
@@ -43,6 +48,8 @@ class FrmSelect : public Gtk::Dialog {
         void setLockStatus(int id, bool locked);
 
         void reset();
+
+        void show(Mode mode);
 
     protected:
         const static int BUTTON_ID_LOAD = 1;
@@ -58,6 +65,9 @@ class FrmSelect : public Gtk::Dialog {
         Gtk::ScrolledWindow          m_ScrolledWindow_Descripton;
 
         int                          currentLayout;
+        Mode                         mode;
+
+        Gtk::Button*                 m_Button_Action;
 
         class ModelColumnsTracklayouts : public Gtk::TreeModel::ColumnRecord {
             public:

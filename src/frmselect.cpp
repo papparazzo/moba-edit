@@ -31,12 +31,12 @@ FrmSelect::FrmSelect(EndpointPtr mhp) : msgEndpoint(mhp) {
     set_position(Gtk::WIN_POS_CENTER);
 
     //get_content_area();
-    auto m_Button_Load = add_button("Gleisplan laden", BUTTON_ID_LOAD);
+    m_Button_Action = add_button("Gleisplan laden", BUTTON_ID_LOAD);
     auto m_Button_Cancel = add_button("Abbrechen", BUTTON_ID_CANCEL);
 
-    m_Button_Load->set_sensitive(false);
+    m_Button_Action->set_sensitive(false);
 
-    m_Button_Load->signal_clicked().connect(sigc::mem_fun(*this, &FrmSelect::on_button_loadTracklayout));
+    m_Button_Action->signal_clicked().connect(sigc::mem_fun(*this, &FrmSelect::on_button_loadTracklayout));
     m_Button_Cancel->signal_clicked().connect(sigc::mem_fun(*this, &FrmSelect::on_button_cancel));
 
     initListbox();
@@ -115,6 +115,18 @@ void FrmSelect::reset() {
     m_refTreeModel_Tracklayouts->clear();
 }
 
+void FrmSelect::show(FrmSelect::Mode mode) {
+    this->mode = mode;
+    if(mode == FrmSelect::DELETE) {
+        set_title("Gleisplan löschen");
+        m_Button_Action->set_label("Gleisplan löschen");
+    } else {
+        set_title("Gleisplan laden");
+        m_Button_Action->set_label("Gleisplan laden");
+    }
+    Gtk::Dialog::show();
+}
+
 void FrmSelect::addTracklayout(int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, const std::string &description) {
     auto iter = m_refTreeModel_Tracklayouts->append();
     auto row = *iter;
@@ -139,8 +151,19 @@ void FrmSelect::on_selection_changed() {
 }
 
 void FrmSelect::on_button_loadTracklayout() {
-    msgEndpoint->sendMsg(LayoutGetLayoutReq{currentLayout});
-    hide();
+    if(mode == FrmSelect::LOAD) {
+        msgEndpoint->sendMsg(LayoutGetLayoutReq{currentLayout});
+        hide();
+        return;
+    }
+
+    Gtk::MessageDialog dialog(*this, "Gleisplan löschen", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
+    dialog.set_secondary_text("Soll der ausgewählte Gleisplan gelöscht werden?");
+
+    if(dialog.run() == Gtk::RESPONSE_YES) {
+        msgEndpoint->sendMsg(LayoutDeleteLayout{currentLayout});
+        return;
+    }
 }
 
 void FrmSelect::on_button_cancel() {
