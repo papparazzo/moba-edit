@@ -7,6 +7,7 @@ moba_edit_SOURCES = \
     frmmain.cpp \
     layoutwidget.cpp \
     frmselect.cpp \
+    frmnew.cpp \
     toolboxwidget.cpp
 
 moba_edit_LDADD = \
