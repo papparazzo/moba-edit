@@ -148,6 +148,9 @@ void FrmMain::on_button_deleteTracklayout() {
 }
 
 void FrmMain::on_button_saveTracklayout() {
+    //layoutWidget.symbols
+
+
 
 }
 
