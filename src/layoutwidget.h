@@ -56,6 +56,8 @@ class LayoutWidget : public Gtk::DrawingArea {
 
     void refresh();
 
+    std::unordered_map<IntPair, Symbol, IntPairHash> symbols;
+
 protected:
     int cursor_x;
     int cursor_y;
@@ -74,11 +76,9 @@ protected:
         }
     };
 
-    std::unordered_map<IntPair, Symbol, IntPairHash> symbols;
-
     const int SYMBOL_SIZE = 23;
 
-    std::unordered_map<int, Glib::RefPtr<Gdk::Pixbuf> > images;
+    std::unordered_map<int, Glib::RefPtr<Gdk::Pixbuf>> images;
     Glib::RefPtr<Gdk::Pixbuf> getImage(size_t i);
 
 };
