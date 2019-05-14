@@ -56,16 +56,6 @@ class LayoutWidget : public Gtk::DrawingArea {
 
     void refresh();
 
-    std::unordered_map<IntPair, Symbol, IntPairHash> symbols;
-
-protected:
-    int cursor_x;
-    int cursor_y;
-
-    //Override default signal handler:
-    bool on_button_press_event(GdkEventButton * event);
-    bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
-
     // Thanks to https://stackoverflow.com/a/45395204
     using IntPair = std::pair<int, int>;
 
@@ -75,6 +65,17 @@ protected:
             return size_t(p.first) << 32 | p.second;
         }
     };
+
+    // Hier besser Message-Struct
+    std::unordered_map<IntPair, Symbol, IntPairHash> symbols;
+
+protected:
+    int cursor_x;
+    int cursor_y;
+
+    //Override default signal handler:
+    bool on_button_press_event(GdkEventButton * event);
+    bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
     const int SYMBOL_SIZE = 23;
 
