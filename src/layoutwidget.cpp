@@ -30,6 +30,11 @@ LayoutWidget::LayoutWidget() : cursor_x{0}, cursor_y{0} {
     add_events(Gdk::BUTTON_PRESS_MASK);
 }
 
+void LayoutWidget::setSymbols(SymbolsPtr symbols) {
+    this->symbols = symbols;
+    refresh();
+}
+
 void LayoutWidget::clear() {
     symbols.clear();
     refresh();
@@ -87,7 +92,7 @@ void LayoutWidget::addSymbol(Symbol s) {
 }
 
 void LayoutWidget::removeSymbol(size_t x, size_t y, bool suppressRefresh) {
-    symbols.erase({x, y});
+    symbols.erase(x, y);
     if(!suppressRefresh) {
         refresh();
     }

@@ -23,11 +23,10 @@
 #include <gtkmm/drawingarea.h>
 #include <gdkmm/pixbuf.h>
 
-#include <unordered_map>
-#include <utility>
-
 #include "moba/position.h"
 #include "moba/symbol.h"
+
+#include "symbols.h"
 
 class LayoutWidget : public Gtk::DrawingArea {
     public:
@@ -35,6 +34,8 @@ class LayoutWidget : public Gtk::DrawingArea {
     virtual ~LayoutWidget() noexcept {
 
     }
+
+    void setSymbols(SymbolsPtr symbols);
 
     void clear();
 
@@ -56,20 +57,9 @@ class LayoutWidget : public Gtk::DrawingArea {
 
     void refresh();
 
-    // Thanks to https://stackoverflow.com/a/45395204
-    using IntPair = std::pair<int, int>;
-
-    struct IntPairHash {
-        static_assert(sizeof(int) * 2 == sizeof(size_t));
-        std::size_t operator()(const IntPair &p) const noexcept {
-            return size_t(p.first) << 32 | p.second;
-        }
-    };
-
-    // Hier besser Message-Struct
-    std::unordered_map<IntPair, Symbol, IntPairHash> symbols;
-
 protected:
+    SymbolsPtr symbols;
+
     int cursor_x;
     int cursor_y;
 
