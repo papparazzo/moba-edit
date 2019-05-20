@@ -36,7 +36,7 @@ void LayoutWidget::setSymbols(SymbolsPtr symbols) {
 }
 
 void LayoutWidget::clear() {
-    symbols.clear();
+    symbols->clear();
     refresh();
 }
 
@@ -59,7 +59,7 @@ bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     cr->set_source_rgb(0.0, 0.0, 0.0);
     cr->paint();
 
-    for(const auto& symbol : symbols) {
+    for(const auto& symbol : *symbols) {
         auto image = getImage(static_cast<int>(symbol.second.getType()));
 
         Gdk::Cairo::set_source_pixbuf(cr, image, symbol.first.first * SYMBOL_SIZE, symbol.first.second * SYMBOL_SIZE);
@@ -81,7 +81,7 @@ bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 }
 
 void LayoutWidget::addSymbol(size_t x, size_t y, Symbol s, bool suppressRefresh) {
-    symbols[{x, y}] = std::move(s);
+    (*symbols)[{x, y}] = std::move(s);
     if(!suppressRefresh) {
         refresh();
     }
@@ -92,7 +92,7 @@ void LayoutWidget::addSymbol(Symbol s) {
 }
 
 void LayoutWidget::removeSymbol(size_t x, size_t y, bool suppressRefresh) {
-    symbols.erase(x, y);
+    symbols->erase({x, y});
     if(!suppressRefresh) {
         refresh();
     }
