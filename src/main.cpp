@@ -21,20 +21,19 @@
 #include <iostream>
 
 #include <gtkmm/application.h>
-
-#include <moba/helper.h>
+#include <moba-common/helper.h>
 
 #include "frmmain.h"
 #include "config.h"
-
-#include "layoutwidget.h"
 #include "moba/endpoint.h"
 #include "moba/socket.h"
 
+#include "layoutwidget.h"
+
 namespace {
-    moba::AppData appData = {
+    moba::common::AppData appData = {
         PACKAGE_NAME,
-        moba::Version(PACKAGE_VERSION),
+        moba::common::Version(PACKAGE_VERSION),
         __DATE__,
         __TIME__,
         "::1",
@@ -43,11 +42,10 @@ namespace {
 }
 
 int main(int argc, char *argv[]) {
-    moba::setCoreFileSizeToULimit();
+    moba::common::setCoreFileSizeToULimit();
 
-    auto groups = Groups::CLIENT | Groups::SERVER | Groups::SYSTEM | Groups::LAYOUT;
     auto socket = std::make_shared<Socket>(appData.host, appData.port);
-    auto endpoint = std::make_shared<Endpoint>(socket, appData.appName, appData.version, groups);
+    auto endpoint = EndpointPtr{new Endpoint{socket, appData.appName, appData.version, {Message::SERVER, Message::SYSTEM, Message::LAYOUT}}};
     auto app = Gtk::Application::create(argc, argv, "org.moba.edit");
 
     FrmMain frmMain{endpoint};
