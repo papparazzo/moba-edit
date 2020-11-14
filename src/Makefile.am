@@ -11,8 +11,8 @@ moba_edit_SOURCES = \
     toolboxwidget.cpp
 
 moba_edit_LDADD = \
-    -lMoBaCommon $(GTKMM_LIBS) \
-    $(srcdir)/../modules/lib-tracklayout/src/libtracklayout.a \
+    -lmobacommon $(GTKMM_LIBS) \
+    $(srcdir)/../modules/lib-tracklayout/src/moba/libtracklayout.a \
     $(srcdir)/../modules/lib-msghandling/src/moba/libmsghandling.a
 
 LDFLAGS += -L/usr/local/lib
@@ -21,6 +21,6 @@ AM_CPPFLAGS = \
     $(GTKMM_CFLAGS) \
     -I$(srcdir)/../modules/lib-tracklayout/src \
     -I$(srcdir)/../modules/lib-msghandling/src \
-    -g3 -g -ggdb -O3 -Wall
+    -g3 -ggdb -O3 -Wall
 
 CLEANFILES = *~
