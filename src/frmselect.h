@@ -52,6 +52,7 @@ class FrmSelect : public Gtk::Dialog {
 
         void reset();
 
+        Glib::ustring getNameById(int id);
         void show(Mode mode);
 
     protected:

@@ -27,7 +27,6 @@
 #include <utility>
 
 #include "moba/position.h"
-//#include "moba/symbol.h"
 #include "moba/shared.h"
 
 class LayoutWidget : public Gtk::DrawingArea {
@@ -50,6 +49,11 @@ class LayoutWidget : public Gtk::DrawingArea {
     }
     void setCursorRel(Position pos) {
         setCursorRel(pos.x, pos.y);
+    }
+
+    void setActive(bool active) {
+        isActive = active;
+        refresh();
     }
 
     void addSymbol(size_t x, size_t y, std::uint8_t s, bool suppressRefresh = false);
@@ -75,4 +79,5 @@ protected:
     std::unordered_map<int, Glib::RefPtr<Gdk::Pixbuf>> images;
     Glib::RefPtr<Gdk::Pixbuf> getImage(size_t i);
 
+    bool isActive;
 };

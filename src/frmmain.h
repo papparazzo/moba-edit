@@ -111,11 +111,10 @@ class FrmMain : public Gtk::Window {
         void setSystemNotice(const GuiSystemNotice &data);
         void setHardwareState(const SystemHardwareStateChanged &data);
         void setTrackLayouts(const LayoutGetLayoutsRes &data);
-        void deleteTrackLayout(const LayoutLayoutDeleted &data);
         void setTrackLayout(const LayoutLayoutCreated &data);
-        void setLockStateUnlocked(const LayoutLayoutUnlocked &data);
         void setCurrentLayout(const LayoutGetLayoutRes &data);
         void displayError(const ClientError &data);
         void setSensitive(bool sensitive);
         void setHasChanged();
+        void setHasSaved();
 };

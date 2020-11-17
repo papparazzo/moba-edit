@@ -119,6 +119,17 @@ void FrmSelect::reset() {
     m_refTreeModel_Tracklayouts->clear();
 }
 
+Glib::ustring FrmSelect::getNameById(int id) {
+    auto children = m_refTreeModel_Tracklayouts->children();
+    for(auto iter = children.begin(); iter != children.end(); ++iter) {
+        auto row = *iter;
+        if(row[m_Columns_Tracklayouts.m_col_id] == id) {
+            return row[m_Columns_Tracklayouts.m_col_name];
+        }
+    }
+    return Glib::ustring("");
+}
+
 void FrmSelect::show(FrmSelect::Mode mode) {
     this->mode = mode;
     if(mode == FrmSelect::DELETE) {
@@ -149,12 +160,18 @@ void FrmSelect::on_selection_changed() {
     Glib::RefPtr<Gtk::TreeSelection> selection = m_TreeView_Tracklayouts.get_selection();
     Gtk::TreeModel::iterator iter = selection->get_selected();
     if(!iter) {
+        m_Button_Action->set_sensitive(false);
         return;
     }
     Gtk::TreeModel::Row row = *iter;
     currentLayout = (int)row[m_Columns_Tracklayouts.m_col_id];
     m_Label_Description.set_text((std::string)row[m_Columns_Tracklayouts.m_col_data]);
     get_widget_for_response(BUTTON_ID_LOAD)->set_sensitive(true);
+    if((bool)row[m_Columns_Tracklayouts.m_col_locked]) {
+        m_Button_Action->set_sensitive(false);
+    } else {
+        m_Button_Action->set_sensitive(true);
+    }
 }
 
 void FrmSelect::on_button_loadTracklayout() {

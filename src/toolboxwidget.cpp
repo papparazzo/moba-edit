@@ -74,12 +74,16 @@ bool ToolboxWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
            x = 0;
         }
 
-        if(iter->symbol.areOpenJunctionsSet(Direction::TOP | Direction:: TOP_LEFT)) {
-            Gdk::Cairo::set_source_pixbuf(cr, iter->image, x_offset + x * SYMBOL_WIDTH, y_offset + y * SYMBOL_WIDTH);
+        Gdk::Cairo::set_source_pixbuf(cr, iter->image, x_offset + x * SYMBOL_WIDTH, y_offset + y * SYMBOL_WIDTH);
+        cr->rectangle(x_offset + x * SYMBOL_WIDTH, y_offset + y * SYMBOL_WIDTH, iter->image->get_width(), iter->image->get_height());
+        cr->fill();
+/*
+        if(!iter->symbol.areOpenJunctionsSet(Direction::TOP | Direction::BOTTOM)) {
+            cr->set_source_rgba(1, 0, 0, 0.3);
             cr->rectangle(x_offset + x * SYMBOL_WIDTH, y_offset + y * SYMBOL_WIDTH, iter->image->get_width(), iter->image->get_height());
             cr->fill();
         }
-
+*/
         x++;
     }
 

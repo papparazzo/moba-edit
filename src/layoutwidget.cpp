@@ -26,12 +26,13 @@
 
 #include "layoutwidget.h"
 
-LayoutWidget::LayoutWidget() : cursor_x{0}, cursor_y{0} {
+LayoutWidget::LayoutWidget() : cursor_x{0}, cursor_y{0}, isActive{false} {
     add_events(Gdk::BUTTON_PRESS_MASK);
     symbols = std::make_shared<Symbols>();
 }
 
 void LayoutWidget::setSymbols(SymbolsPtr symbolMap) {
+    isActive = true;
     symbols = symbolMap;
     refresh();
 }
@@ -61,6 +62,10 @@ void LayoutWidget::setCursorRel(int x, int y) {
 }
 
 bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
+    if(!isActive) {
+        return true;
+    }
+
     cr->set_source_rgb(0.0, 0.0, 0.0);
     cr->paint();
 
@@ -76,8 +81,8 @@ bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     cr->set_source_rgb(0.8, 0.0, 0.0);
 
     cr->move_to(cursor_x * SYMBOL_SIZE, cursor_y * SYMBOL_SIZE);
-    cr->line_to(cursor_x * SYMBOL_SIZE, (cursor_y +1) * SYMBOL_SIZE);
-    cr->line_to((cursor_x +1) * SYMBOL_SIZE, (cursor_y +1) * SYMBOL_SIZE);
+    cr->line_to(cursor_x * SYMBOL_SIZE, (cursor_y + 1) * SYMBOL_SIZE);
+    cr->line_to((cursor_x +1) * SYMBOL_SIZE, (cursor_y + 1) * SYMBOL_SIZE);
     cr->line_to((cursor_x +1) * SYMBOL_SIZE, cursor_y * SYMBOL_SIZE);
     cr->line_to(cursor_x * SYMBOL_SIZE, cursor_y * SYMBOL_SIZE);
     cr->stroke();

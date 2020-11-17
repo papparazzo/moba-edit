@@ -84,6 +84,7 @@ FrmMain::FrmMain(EndpointPtr mhp) :
     m_VPaned_Container.add1(layoutWidget);
 
     toolboxWidget.addCallbackHandler(std::bind(&FrmMain::addSymbol, this, std::placeholders::_1));
+    toolboxWidget.set_sensitive(false);
 
     m_VBox_Toolbox.pack_start(toolboxWidget);
     m_VBox_Toolbox.pack_end(m_Button_New, Gtk::PACK_SHRINK);
@@ -122,13 +123,15 @@ FrmMain::FrmMain(EndpointPtr mhp) :
     m_Button_New.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_newTracklayout));
 
     setSensitive(false);
+    m_Button_Emegerency.set_sensitive(false);
     initAboutDialog();
 
     registry.registerHandler<GuiSystemNotice>(std::bind(&FrmMain::setSystemNotice, this, std::placeholders::_1));
     registry.registerHandler<SystemHardwareStateChanged>(std::bind(&FrmMain::setHardwareState, this, std::placeholders::_1));
     registry.registerHandler<LayoutGetLayoutsRes>(std::bind(&FrmMain::setTrackLayouts, this, std::placeholders::_1));
-    registry.registerHandler<LayoutLayoutDeleted>(std::bind(&FrmMain::deleteTrackLayout, this, std::placeholders::_1));
-    registry.registerHandler<LayoutLayoutUnlocked>(std::bind(&FrmMain::setLockStateUnlocked, this, std::placeholders::_1));
+    registry.registerHandler<LayoutLayoutDeleted>([this](const LayoutLayoutDeleted &d){frmSelect.deleteTracklayout(d.layoutId);});
+    registry.registerHandler<LayoutLayoutUnlocked>([this](const LayoutLayoutUnlocked &d){frmSelect.setLockStatus(d.layoutId, false);});
+    registry.registerHandler<LayoutLayoutLocked>([this](const LayoutLayoutLocked &d){frmSelect.setLockStatus(d.layoutId, true);});
     registry.registerHandler<LayoutLayoutCreated>(std::bind(&FrmMain::setTrackLayout, this, std::placeholders::_1));
     registry.registerHandler<LayoutGetLayoutRes>(std::bind(&FrmMain::setCurrentLayout, this, std::placeholders::_1));
     registry.registerHandler<ClientError>(std::bind(&FrmMain::displayError, this, std::placeholders::_1));
@@ -157,6 +160,7 @@ void FrmMain::on_button_deleteTracklayout() {
 }
 
 void FrmMain::on_button_saveTracklayout() {
+    setHasSaved();
     LayoutSaveLayout l;
     l.specificLayoutData.symbols = layoutWidget.getSymbols();
     l.specificLayoutData.id = selectedTrackLayoutId;
@@ -398,13 +402,14 @@ void FrmMain::setTrackLayouts(const LayoutGetLayoutsRes &data) {
     }
 }
 
-void FrmMain::deleteTrackLayout(const LayoutLayoutDeleted &data) {
-    frmSelect.deleteTracklayout(data.layoutId);
-}
-
 void FrmMain::setTrackLayout(const LayoutLayoutCreated &data) {
+    if(selectedTrackLayoutId != -1) {
+        msgEndpoint->sendMsg(LayoutUnlockLayout{selectedTrackLayoutId});
+    }
+
     selectedTrackLayoutId = data.tracklayout.id;
     layoutWidget.clear();
+    layoutWidget.setActive(true);
 
     frmSelect.addTracklayout(
         data.tracklayout.id,
@@ -415,15 +420,19 @@ void FrmMain::setTrackLayout(const LayoutLayoutCreated &data) {
         data.tracklayout.active,
         data.tracklayout.description
     );
-}
-
-void FrmMain::setLockStateUnlocked(const LayoutLayoutUnlocked &data) {
-    frmSelect.setLockStatus(data.layoutId, false);
+    toolboxWidget.set_sensitive(true);
+    setHasSaved();
 }
 
 void FrmMain::setCurrentLayout(const LayoutGetLayoutRes &data) {
+    frmSelect.setLockStatus(data.specificLayoutData.id, true);
+    if(selectedTrackLayoutId != -1) {
+        msgEndpoint->sendMsg(LayoutUnlockLayout{selectedTrackLayoutId});
+    }
+
     selectedTrackLayoutId = data.specificLayoutData.id;
-    m_Button_Save.set_sensitive(true);
+    toolboxWidget.set_sensitive(true);
+    setHasSaved();
     layoutWidget.setSymbols(data.specificLayoutData.symbols);
 }
 
@@ -434,10 +443,16 @@ void FrmMain::displayError(const ClientError &data) {
 }
 
 void FrmMain::setSensitive(bool sensitive) {
+    toolboxWidget.set_sensitive(sensitive);
+    layoutWidget.set_sensitive(sensitive);
     m_Button_Load.set_sensitive(sensitive);
     m_Button_Delete.set_sensitive(sensitive);
     m_Button_New.set_sensitive(sensitive);
-    m_Button_Save.set_sensitive(selectedTrackLayoutId != -1 && sensitive);
+    if(sensitive) {
+        m_Button_Save.set_sensitive(selectedTrackLayoutId != -1 && hasChanged);
+    } else {
+        m_Button_Save.set_sensitive(false);
+    }
 }
 
 void FrmMain::addSymbol(std::uint8_t symbol) {
@@ -452,4 +467,12 @@ void FrmMain::addSymbol(std::uint8_t symbol) {
 
 void FrmMain::setHasChanged() {
     hasChanged = true;
+    m_Button_Save.set_sensitive(true);
+    set_title(Glib::ustring(PACKAGE_NAME) + " [" + frmSelect.getNameById(selectedTrackLayoutId) + "]*");
+}
+
+void FrmMain::setHasSaved() {
+    hasChanged = false;
+    m_Button_Save.set_sensitive(false);
+    set_title(Glib::ustring(PACKAGE_NAME) + " [" + frmSelect.getNameById(selectedTrackLayoutId) + "]");
 }
