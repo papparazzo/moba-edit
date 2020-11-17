@@ -75,7 +75,7 @@ void FrmSelect::initListbox() {
     refTreeSelection->signal_changed().connect(sigc::mem_fun(*this, &FrmSelect::on_selection_changed));
 }
 
-void FrmSelect::updateTracklayout(int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, const std::string &description) {
+void FrmSelect::updateTracklayout(int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, bool active, const std::string &description) {
     auto children = m_refTreeModel_Tracklayouts->children();
     for(auto iter = children.begin(); iter != children.end(); ++iter) {
         auto row = *iter;
@@ -87,6 +87,7 @@ void FrmSelect::updateTracklayout(int id, const std::string &created, const std:
         row[m_Columns_Tracklayouts.m_col_modified] = modified;
         row[m_Columns_Tracklayouts.m_col_name    ] = name;
         row[m_Columns_Tracklayouts.m_col_locked  ] = locked;
+        row[m_Columns_Tracklayouts.m_col_active  ] = active;
         row[m_Columns_Tracklayouts.m_col_data    ] = description;
         return;
     }

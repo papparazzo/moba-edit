@@ -45,7 +45,7 @@ class FrmSelect : public Gtk::Dialog {
         );
 
         void updateTracklayout(
-            int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, const std::string &description
+            int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, bool active, const std::string &description
         );
         void deleteTracklayout(int id);
         void setLockStatus(int id, bool locked);
