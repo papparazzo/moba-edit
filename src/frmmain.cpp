@@ -60,7 +60,7 @@ FrmMain::FrmMain(EndpointPtr mhp) :
     m_VBox_Toolbox(Gtk::ORIENTATION_VERTICAL, 6), m_Button_New("Neu..."), m_Button_Load("Laden..."),
     m_Button_Delete("Löschen..."), m_Button_Save{"Speichern.."},
     m_Label_Connectivity_HW(" \xe2\x96\x84"), m_Label_Connectivity_SW(" \xe2\x96\x84"),
-    m_Button_About("About..."), frmSelect(mhp), frmNew(mhp){
+    m_Button_About("About..."), frmSelect(mhp), frmNew(mhp), selectedTrackLayoutId(-1), hasChanged(false) {
     sigc::slot<bool> my_slot = sigc::bind(sigc::mem_fun(*this, &FrmMain::on_timeout), 1);
     sigc::connection conn = Glib::signal_timeout().connect(my_slot, 25); // 25 ms
 
@@ -121,6 +121,7 @@ FrmMain::FrmMain(EndpointPtr mhp) :
     m_Button_Save.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_saveTracklayout));
     m_Button_New.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_newTracklayout));
 
+    setSensitive(false);
     initAboutDialog();
 
     registry.registerHandler<GuiSystemNotice>(std::bind(&FrmMain::setSystemNotice, this, std::placeholders::_1));
@@ -136,6 +137,14 @@ FrmMain::FrmMain(EndpointPtr mhp) :
 }
 
 void FrmMain::on_button_loadTracklayout() {
+    if(hasChanged) {
+        Gtk::MessageDialog dialog(*this, "noch nicht gespeicherte Änderungen", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
+        dialog.set_secondary_text("Soll ein anderer Gleisplan ausgewählt werden? Nicht gespeicherte Änderungen gehen dabei verloren!");
+        if(dialog.run() == Gtk::RESPONSE_NO) {
+            return;
+        }
+    }
+
     frmSelect.set_transient_for(*this);
     frmSelect.show(FrmSelect::LOAD);
     frmSelect.present();
@@ -148,13 +157,20 @@ void FrmMain::on_button_deleteTracklayout() {
 }
 
 void FrmMain::on_button_saveTracklayout() {
-    //layoutWidget.symbols
-
-
-
+    LayoutSaveLayout l;
+    l.specificLayoutData.symbols = layoutWidget.getSymbols();
+    l.specificLayoutData.id = selectedTrackLayoutId;
+    msgEndpoint->sendMsg(l);
 }
 
 void FrmMain::on_button_newTracklayout() {
+    if(hasChanged) {
+        Gtk::MessageDialog dialog(*this, "noch nicht gespeicherte Änderungen", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
+        dialog.set_secondary_text("Soll ein neuer Gleisplan angelegt werden? Nicht gespeicherte Änderungen gehen dabei verloren!");
+        if(dialog.run() == Gtk::RESPONSE_NO) {
+            return;
+        }
+    }
     frmNew.set_transient_for(*this);
     frmNew.show();
     frmNew.present();
@@ -225,6 +241,8 @@ bool FrmMain::on_timeout(int) {
             msgEndpoint->sendMsg(SystemGetHardwareState{});
             msgEndpoint->sendMsg(LayoutGetLayoutsReq{});
             msgEndpoint->sendMsg(SystemGetHardwareState{});
+            setSensitive(true);
+
             connected = true;
             return true;
         }
@@ -243,6 +261,8 @@ bool FrmMain::on_timeout(int) {
             ss << "<b>msg-handler exception:</b>\n" << e.what();
             m_Label_InfoBarMessage.set_markup(ss.str());
             m_InfoBar.show();
+            setSensitive(false);
+
             connected = false;
         }
     }
@@ -257,11 +277,13 @@ void FrmMain::on_infobar_response(int) {
 bool FrmMain::on_key_press_event(GdkEventKey* key_event) {
     switch(key_event->keyval) {
         case GDK_KEY_Delete:
+            setHasChanged();
             layoutWidget.removeSymbol();
             layoutWidget.setCursorRel(1, 0);
             break;
 
         case GDK_KEY_BackSpace:
+            setHasChanged();
             layoutWidget.removeSymbol();
             layoutWidget.setCursorRel(-1, 0);
             break;
@@ -381,6 +403,9 @@ void FrmMain::deleteTrackLayout(const LayoutLayoutDeleted &data) {
 }
 
 void FrmMain::setTrackLayout(const LayoutLayoutCreated &data) {
+    selectedTrackLayoutId = data.tracklayout.id;
+    layoutWidget.clear();
+
     frmSelect.addTracklayout(
         data.tracklayout.id,
         data.tracklayout.created,
@@ -397,9 +422,9 @@ void FrmMain::setLockStateUnlocked(const LayoutLayoutUnlocked &data) {
 }
 
 void FrmMain::setCurrentLayout(const LayoutGetLayoutRes &data) {
-    for(auto iter : data.layoutData.symbols) {
-        layoutWidget.addSymbol(iter.xPos, iter.yPos, iter.symbol);
-    }
+    selectedTrackLayoutId = data.specificLayoutData.id;
+    m_Button_Save.set_sensitive(true);
+    layoutWidget.setSymbols(data.specificLayoutData.symbols);
 }
 
 void FrmMain::displayError(const ClientError &data) {
@@ -408,9 +433,23 @@ void FrmMain::displayError(const ClientError &data) {
     m_InfoBar.show();
 }
 
-void FrmMain::addSymbol(Symbol symbol) {
+void FrmMain::setSensitive(bool sensitive) {
+    m_Button_Load.set_sensitive(sensitive);
+    m_Button_Delete.set_sensitive(sensitive);
+    m_Button_New.set_sensitive(sensitive);
+    m_Button_Save.set_sensitive(selectedTrackLayoutId != -1 && sensitive);
+}
+
+void FrmMain::addSymbol(std::uint8_t symbol) {
+    setHasChanged();
     layoutWidget.addSymbol(symbol);
 
-    Position pos{symbol.getNextJunktion()};
+    Symbol s = Symbol{symbol};
+
+    Position pos{s.getNextJunktion()};
     layoutWidget.setCursorRel(pos);
+}
+
+void FrmMain::setHasChanged() {
+    hasChanged = true;
 }

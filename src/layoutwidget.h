@@ -23,10 +23,12 @@
 #include <gtkmm/drawingarea.h>
 #include <gdkmm/pixbuf.h>
 
-#include "moba/position.h"
-#include "moba/symbol.h"
+#include <unordered_map>
+#include <utility>
 
-#include "symbols.h"
+#include "moba/position.h"
+//#include "moba/symbol.h"
+#include "moba/shared.h"
 
 class LayoutWidget : public Gtk::DrawingArea {
     public:
@@ -36,6 +38,7 @@ class LayoutWidget : public Gtk::DrawingArea {
     }
 
     void setSymbols(SymbolsPtr symbols);
+    SymbolsPtr getSymbols();
 
     void clear();
 
@@ -49,17 +52,17 @@ class LayoutWidget : public Gtk::DrawingArea {
         setCursorRel(pos.x, pos.y);
     }
 
-    void addSymbol(size_t x, size_t y, Symbol s, bool suppressRefresh = false);
-    void addSymbol(Symbol s);
+    void addSymbol(size_t x, size_t y, std::uint8_t s, bool suppressRefresh = false);
+    void addSymbol(std::uint8_t s);
 
     void removeSymbol(size_t x, size_t y, bool suppressRefresh = false);
     void removeSymbol();
 
     void refresh();
 
-protected:
     SymbolsPtr symbols;
 
+protected:
     int cursor_x;
     int cursor_y;
 

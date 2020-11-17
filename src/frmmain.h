@@ -23,11 +23,9 @@
 
 #include <chrono>
 
-#include <moba/jsonabstractitem.h>
-
 #include "moba/registry.h"
-#include "moba/guihandler.h"
-#include "moba/systemhandler.h"
+#include "moba/guimessage.h"
+#include "moba/systemmessage.h"
 
 #include <gtkmm/window.h>
 #include <gtkmm/comboboxtext.h>
@@ -41,7 +39,7 @@
 #include "moba/symbol.h"
 #include "moba/endpoint.h"
 #include "moba/layouthandler.h"
-#include "moba/clienthandler.h"
+#include "moba/clientmessage.h"
 
 class FrmMain : public Gtk::Window {
     public:
@@ -49,7 +47,7 @@ class FrmMain : public Gtk::Window {
         virtual ~FrmMain() {
         }
 
-        void addSymbol(Symbol symbol);
+        void addSymbol(std::uint8_t symbol);
 
     protected:
         EndpointPtr msgEndpoint;
@@ -86,6 +84,9 @@ class FrmMain : public Gtk::Window {
         // create new one
         FrmNew frmNew;
 
+        int selectedTrackLayoutId;
+        bool hasChanged;
+
         Gtk::Paned m_VPaned_Container{Gtk::ORIENTATION_HORIZONTAL};
 
         std::string getDisplayMessage(std::string caption, std::string text);
@@ -115,4 +116,6 @@ class FrmMain : public Gtk::Window {
         void setLockStateUnlocked(const LayoutLayoutUnlocked &data);
         void setCurrentLayout(const LayoutGetLayoutRes &data);
         void displayError(const ClientError &data);
+        void setSensitive(bool sensitive);
+        void setHasChanged();
 };

@@ -35,7 +35,7 @@ class ToolboxWidget : public Gtk::DrawingArea {
 
         }
 
-        void addCallbackHandler(std::function<void(Symbol)> callback) {
+        void addCallbackHandler(std::function<void(std::uint8_t)> callback) {
             this->callback = callback;
         }
 
@@ -61,6 +61,6 @@ class ToolboxWidget : public Gtk::DrawingArea {
 
         void loadSymbol(int symbol);
 
-        std::function<void(Symbol)> callback;
+        std::function<void(std::uint8_t)> callback;
 };
 

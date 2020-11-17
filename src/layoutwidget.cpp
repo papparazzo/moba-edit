@@ -28,11 +28,16 @@
 
 LayoutWidget::LayoutWidget() : cursor_x{0}, cursor_y{0} {
     add_events(Gdk::BUTTON_PRESS_MASK);
+    symbols = std::make_shared<Symbols>();
 }
 
-void LayoutWidget::setSymbols(SymbolsPtr symbols) {
-    this->symbols = symbols;
+void LayoutWidget::setSymbols(SymbolsPtr symbolMap) {
+    symbols = symbolMap;
     refresh();
+}
+
+SymbolsPtr LayoutWidget::getSymbols() {
+    return symbols;
 }
 
 void LayoutWidget::clear() {
@@ -60,7 +65,7 @@ bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     cr->paint();
 
     for(const auto& symbol : *symbols) {
-        auto image = getImage(static_cast<int>(symbol.second.getType()));
+        auto image = getImage(static_cast<int>(symbol.second.symbol));
 
         Gdk::Cairo::set_source_pixbuf(cr, image, symbol.first.first * SYMBOL_SIZE, symbol.first.second * SYMBOL_SIZE);
         cr->rectangle(symbol.first.first * SYMBOL_SIZE, symbol.first.second * SYMBOL_SIZE, image->get_width(), image->get_height());
@@ -80,14 +85,14 @@ bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     return true;
 }
 
-void LayoutWidget::addSymbol(size_t x, size_t y, Symbol s, bool suppressRefresh) {
-    (*symbols)[{x, y}] = std::move(s);
+void LayoutWidget::addSymbol(size_t x, size_t y, std::uint8_t s, bool suppressRefresh) {
+    (*symbols)[{x, y}] = TrackLayoutSymbol{s};
     if(!suppressRefresh) {
         refresh();
     }
 }
 
-void LayoutWidget::addSymbol(Symbol s) {
+void LayoutWidget::addSymbol(std::uint8_t s) {
     addSymbol(cursor_x, cursor_y, s);
 }
 
