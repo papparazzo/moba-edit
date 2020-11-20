@@ -76,6 +76,10 @@ void FrmSelect::initListbox() {
 }
 
 void FrmSelect::updateTracklayout(int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, bool active, const std::string &description) {
+    if(active) {
+        deactivateLayout();
+    }
+
     auto children = m_refTreeModel_Tracklayouts->children();
     for(auto iter = children.begin(); iter != children.end(); ++iter) {
         auto row = *iter;
@@ -116,6 +120,18 @@ void FrmSelect::setLockStatus(int id, bool locked) {
     }
 }
 
+void FrmSelect::deactivateLayout() {
+    auto children = m_refTreeModel_Tracklayouts->children();
+    for(auto iter = children.begin(); iter != children.end(); ++iter) {
+        auto row = *iter;
+        if(!row[m_Columns_Tracklayouts.m_col_active]) {
+            continue;
+        }
+        row[m_Columns_Tracklayouts.m_col_active] = false;
+        return;
+    }
+}
+
 void FrmSelect::reset() {
     m_refTreeModel_Tracklayouts->clear();
 }
@@ -146,6 +162,10 @@ void FrmSelect::show(FrmSelect::Mode mode) {
 void FrmSelect::addTracklayout(
     int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, bool active, const std::string &description
 ) {
+    if(active) {
+        deactivateLayout();
+    }
+
     auto iter = m_refTreeModel_Tracklayouts->append();
     auto row = *iter;
     row[m_Columns_Tracklayouts.m_col_id      ] = id;

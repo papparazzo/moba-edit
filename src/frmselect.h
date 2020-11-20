@@ -49,6 +49,7 @@ class FrmSelect : public Gtk::Dialog {
         );
         void deleteTracklayout(int id);
         void setLockStatus(int id, bool locked);
+        void deactivateLayout();
 
         void reset();
 
