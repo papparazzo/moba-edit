@@ -133,6 +133,7 @@ FrmMain::FrmMain(EndpointPtr mhp) :
     registry.registerHandler<LayoutLayoutUnlocked>([this](const LayoutLayoutUnlocked &d){frmSelect.setLockStatus(d.layoutId, false);});
     registry.registerHandler<LayoutLayoutLocked>([this](const LayoutLayoutLocked &d){frmSelect.setLockStatus(d.layoutId, true);});
     registry.registerHandler<LayoutLayoutCreated>(std::bind(&FrmMain::setTrackLayout, this, std::placeholders::_1));
+    registry.registerHandler<LayoutLayoutUpdated>(std::bind(&FrmMain::updateTrackLayout, this, std::placeholders::_1));
     registry.registerHandler<LayoutGetLayoutRes>(std::bind(&FrmMain::setCurrentLayout, this, std::placeholders::_1));
     registry.registerHandler<ClientError>(std::bind(&FrmMain::displayError, this, std::placeholders::_1));
     show_all_children();
@@ -266,7 +267,6 @@ bool FrmMain::on_timeout(int) {
             m_Label_InfoBarMessage.set_markup(ss.str());
             m_InfoBar.show();
             setSensitive(false);
-
             connected = false;
         }
     }
@@ -403,14 +403,6 @@ void FrmMain::setTrackLayouts(const LayoutGetLayoutsRes &data) {
 }
 
 void FrmMain::setTrackLayout(const LayoutLayoutCreated &data) {
-    if(selectedTrackLayoutId != -1) {
-        msgEndpoint->sendMsg(LayoutUnlockLayout{selectedTrackLayoutId});
-    }
-
-    selectedTrackLayoutId = data.tracklayout.id;
-    layoutWidget.clear();
-    layoutWidget.setActive(true);
-
     frmSelect.addTracklayout(
         data.tracklayout.id,
         data.tracklayout.created,
@@ -420,8 +412,33 @@ void FrmMain::setTrackLayout(const LayoutLayoutCreated &data) {
         data.tracklayout.active,
         data.tracklayout.description
     );
+
+    if(data.tracklayout.locked != msgEndpoint->getAppId()) {
+        return;
+    }
+
+    if(selectedTrackLayoutId != -1) {
+        msgEndpoint->sendMsg(LayoutUnlockLayout{selectedTrackLayoutId});
+    }
+
+    selectedTrackLayoutId = data.tracklayout.id;
+    layoutWidget.clear();
+    layoutWidget.setActive(true);
+
     toolboxWidget.set_sensitive(true);
     setHasSaved();
+}
+
+void FrmMain::updateTrackLayout(const LayoutLayoutUpdated &data) {
+    frmSelect.updateTracklayout(
+        data.tracklayout.id,
+        data.tracklayout.created,
+        data.tracklayout.modified,
+        data.tracklayout.name,
+        data.tracklayout.locked,
+        data.tracklayout.active,
+        data.tracklayout.description
+    );
 }
 
 void FrmMain::setCurrentLayout(const LayoutGetLayoutRes &data) {
