@@ -50,7 +50,7 @@ class FrmMain : public Gtk::Window {
         void addSymbol(std::uint8_t symbol);
 
     protected:
-        EndpointPtr msgEndpoint;
+        EndpointPtr endpoint;
         Registry registry;
 
         LayoutWidget layoutWidget;
