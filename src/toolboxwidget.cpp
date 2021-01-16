@@ -40,7 +40,7 @@ ToolboxWidget::ToolboxWidget() {
         loadSymbol(i);
     }
 
-    for(auto i : {39, 51, 57, 78, 102, 114, 147, 153, 201, 204,228, 256}) {
+    for(auto i : {39, 51, 57, 78, 102, 114, 147, 153, 201, 204, 228, 256}) {
         loadSymbol(i);
     }
 
