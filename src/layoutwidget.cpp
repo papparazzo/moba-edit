@@ -55,6 +55,10 @@ void LayoutWidget::setCursorAbs(int x, int y) {
     }
     cursor_x = x;
     cursor_y = y;
+
+    std::stringstream ss;
+    ss << "x: " << x << ", y: " << y;
+    set_tooltip_text(ss.str());
 }
 
 void LayoutWidget::setCursorRel(int x, int y) {
