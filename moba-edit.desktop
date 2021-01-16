@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=MoBa-Edit
+Exec=moba-tester
+Comment=Editor
+Icon=moba-edit
+Terminal=0
+Categories=Editor
+Encoding=UTF-8
+
