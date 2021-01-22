@@ -24,8 +24,8 @@
 #include <chrono>
 
 #include "moba/registry.h"
-#include "moba/guimessage.h"
-#include "moba/systemmessage.h"
+#include "moba/guimessages.h"
+#include "moba/systemmessages.h"
 
 #include <gtkmm/window.h>
 #include <gtkmm/comboboxtext.h>
@@ -38,8 +38,8 @@
 
 #include "moba/symbol.h"
 #include "moba/endpoint.h"
-#include "moba/layouthandler.h"
-#include "moba/clientmessage.h"
+#include "moba/layoutmessages.h"
+#include "moba/clientmessages.h"
 
 class FrmMain : public Gtk::Window {
     public:
