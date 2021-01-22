@@ -478,7 +478,7 @@ void FrmMain::addSymbol(std::uint8_t symbol) {
 
     Symbol s = Symbol{symbol};
 
-    Position pos{s.getNextJunktion()};
+    Position pos{s.getNextJunction()};
     layoutWidget.setCursorRel(pos);
 }
 
