@@ -3,4 +3,3 @@ CLEANFILES = *~
 
 desktopdir = $(datadir)/applications
 dist_desktop_DATA = moba-edit.desktop
-
