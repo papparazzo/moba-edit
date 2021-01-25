@@ -2,7 +2,7 @@
 Version=1.0
 Type=Application
 Name=MoBa-Edit
-Exec=moba-tester
+Exec=moba-edit
 Comment=Editor
 Icon=moba-edit
 Terminal=0
