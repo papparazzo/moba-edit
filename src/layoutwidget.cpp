@@ -58,6 +58,11 @@ void LayoutWidget::setCursorAbs(int x, int y) {
 
     std::stringstream ss;
     ss << "x: " << x << ", y: " << y;
+
+    auto s = symbols->find({x, y});
+    if(s != symbols->end()) {
+        ss << " #" << s->second.id;
+    }
     set_tooltip_text(ss.str());
 }
 
