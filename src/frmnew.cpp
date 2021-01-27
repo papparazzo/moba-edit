@@ -21,7 +21,7 @@
 #include "frmnew.h"
 
 #include <string>
-#include "moba/layouthandler.h"
+#include "moba/layoutmessages.h"
 
 FrmNew::FrmNew(EndpointPtr mhp) : msgEndpoint(mhp) {
 

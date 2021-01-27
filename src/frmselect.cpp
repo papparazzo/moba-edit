@@ -21,7 +21,7 @@
 #include "frmselect.h"
 
 #include <string>
-#include "moba/layouthandler.h"
+#include "moba/layoutmessages.h"
 
 FrmSelect::FrmSelect(EndpointPtr mhp) : msgEndpoint(mhp) {
 
