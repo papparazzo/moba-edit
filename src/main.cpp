@@ -31,9 +31,9 @@
 #include "layoutwidget.h"
 
 namespace {
-    moba::common::AppData appData = {
+    moba::AppData appData = {
         PACKAGE_NAME,
-        moba::common::Version(PACKAGE_VERSION),
+        moba::Version(PACKAGE_VERSION),
         __DATE__,
         __TIME__,
         "::1",
@@ -42,8 +42,6 @@ namespace {
 }
 
 int main(int argc, char *argv[]) {
-    moba::common::setCoreFileSizeToULimit();
-
     auto socket = std::make_shared<Socket>(appData.host, appData.port);
     auto endpoint = EndpointPtr{new Endpoint{socket, appData.appName, appData.version, {Message::SERVER, Message::SYSTEM, Message::LAYOUT}}};
     auto app = Gtk::Application::create(argc, argv, "org.moba.edit");
