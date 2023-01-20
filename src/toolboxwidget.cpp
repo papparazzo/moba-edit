@@ -69,7 +69,7 @@ bool ToolboxWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     symbolsPerRow = this->get_width() / SYMBOL_WIDTH;
 
     for(auto iter = symbols.begin(); iter != symbols.end(); ++iter) {
-        if (!(x % symbolsPerRow)) {
+        if(!(x % symbolsPerRow)) {
            y++;
            x = 0;
         }
