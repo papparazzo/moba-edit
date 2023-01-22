@@ -129,9 +129,9 @@ FrmMain::FrmMain(EndpointPtr mhp) :
     registry.registerHandler<GuiSystemNotice>(std::bind(&FrmMain::setSystemNotice, this, std::placeholders::_1));
     registry.registerHandler<SystemHardwareStateChanged>(std::bind(&FrmMain::setHardwareState, this, std::placeholders::_1));
     registry.registerHandler<LayoutGetLayoutsRes>(std::bind(&FrmMain::setTrackLayouts, this, std::placeholders::_1));
-    registry.registerHandler<LayoutLayoutDeleted>([this](const LayoutLayoutDeleted &d){frmSelect.deleteTracklayout(d.layoutId);});
-    registry.registerHandler<LayoutLayoutUnlocked>([this](const LayoutLayoutUnlocked &d){frmSelect.setLockStatus(d.layoutId, false);});
-    registry.registerHandler<LayoutLayoutLocked>([this](const LayoutLayoutLocked &d){frmSelect.setLockStatus(d.layoutId, true);});
+    registry.registerHandler<LayoutLayoutDeleted>([this](const LayoutLayoutDeleted &d) {frmSelect.deleteTracklayout(d.layoutId);});
+    registry.registerHandler<LayoutLayoutUnlocked>([this](const LayoutLayoutUnlocked &d) {frmSelect.setLockStatus(d.layoutId, false);});
+    registry.registerHandler<LayoutLayoutLocked>([this](const LayoutLayoutLocked &d) {frmSelect.setLockStatus(d.layoutId, true);});
     registry.registerHandler<LayoutLayoutCreated>(std::bind(&FrmMain::setTrackLayout, this, std::placeholders::_1));
     registry.registerHandler<LayoutLayoutUpdated>(std::bind(&FrmMain::updateTrackLayout, this, std::placeholders::_1));
     registry.registerHandler<LayoutGetLayoutRes>(std::bind(&FrmMain::setCurrentLayout, this, std::placeholders::_1));
