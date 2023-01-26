@@ -27,7 +27,7 @@
 
 #include "moba/symbol.h"
 
-class ToolboxWidget : public Gtk::DrawingArea {
+class ToolboxWidget: public Gtk::DrawingArea {
     public:
         ToolboxWidget();
 
