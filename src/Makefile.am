@@ -3,11 +3,12 @@ bin_PROGRAMS = \
     moba-edit
 
 moba_edit_SOURCES = \
-    main.cpp \
     frmmain.cpp \
-    layoutwidget.cpp \
-    frmselect.cpp \
     frmnew.cpp \
+    frmselect.cpp \
+    infoboxwidget.cpp \
+    layoutwidget.cpp \
+    main.cpp \
     toolboxwidget.cpp
 
 moba_edit_LDADD = \
