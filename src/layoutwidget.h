@@ -29,8 +29,8 @@
 #include "moba/position.h"
 #include "moba/shared.h"
 
-class LayoutWidget : public Gtk::DrawingArea {
-    public:
+class LayoutWidget: public Gtk::DrawingArea {
+public:
     LayoutWidget();
     virtual ~LayoutWidget() noexcept {
 

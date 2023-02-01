@@ -28,39 +28,39 @@
 #include "moba/symbol.h"
 
 class ToolboxWidget: public Gtk::DrawingArea {
-    public:
-        ToolboxWidget();
+public:
+    ToolboxWidget();
 
-        virtual ~ToolboxWidget() {
+    virtual ~ToolboxWidget() {
 
-        }
+    }
 
-        void addCallbackHandler(std::function<void(std::uint8_t)> callback) {
-            this->callback = callback;
-        }
+    void addCallbackHandler(std::function<void(std::uint8_t)> callback) {
+        this->callback = callback;
+    }
 
-    private:
+private:
 
-        void refresh();
-        //Override default signal handler:
-        bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+    void refresh();
+    //Override default signal handler:
+    bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
-        const int SYMBOL_WIDTH = 30;
+    const int SYMBOL_WIDTH = 30;
 
-        struct Element {
-            Glib::RefPtr<Gdk::Pixbuf> image;
-            Symbol symbol;
-        };
+    struct Element {
+        Glib::RefPtr<Gdk::Pixbuf> image;
+        Symbol symbol;
+    };
 
-        std::vector<Element> symbols;
+    std::vector<Element> symbols;
 
-        int symbolsPerRow;
+    int symbolsPerRow;
 
-        // Override mouse events
-        bool on_button_press_event(GdkEventButton * event);
+    // Override mouse events
+    bool on_button_press_event(GdkEventButton * event);
 
-        void loadSymbol(int symbol);
+    void loadSymbol(int symbol);
 
-        std::function<void(std::uint8_t)> callback;
+    std::function<void(std::uint8_t)> callback;
 };
 

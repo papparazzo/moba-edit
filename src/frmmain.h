@@ -42,82 +42,82 @@
 #include "moba/layoutmessages.h"
 #include "moba/clientmessages.h"
 
-class FrmMain : public Gtk::Window {
-    public:
-        FrmMain(EndpointPtr mhp);
-        virtual ~FrmMain() {
-        }
+class FrmMain: public Gtk::Window {
+public:
+    FrmMain(EndpointPtr mhp);
+    virtual ~FrmMain() {
+    }
 
-        void addSymbol(std::uint8_t symbol);
+    void addSymbol(std::uint8_t symbol);
 
-    protected:
-        EndpointPtr endpoint;
-        Registry registry;
+protected:
+    EndpointPtr endpoint;
+    Registry registry;
 
-        LayoutWidget layoutWidget;
-        ToolboxWidget toolboxWidget;
-        InfoBoxWidget infoboxWidget;
+    LayoutWidget  layoutWidget;
+    ToolboxWidget toolboxWidget;
+    InfoBoxWidget infoboxWidget;
 
-        Gtk::ButtonBox m_ButtonBox;
-        Gtk::Button m_Button_Emegerency;
-        Gtk::Box m_VBox;
-        Gtk::Box m_HBox;
+    Gtk::ButtonBox m_ButtonBox;
+    Gtk::Button    m_Button_Emegerency;
+    Gtk::Box       m_VBox;
+    Gtk::Box       m_HBox;
 
-        Gtk::Box m_VBox_Toolbox;
-        Gtk::Button m_Button_New;
-        Gtk::Button m_Button_Load;
-        Gtk::Button m_Button_Delete;
-        Gtk::Button m_Button_Save;
+    Gtk::Box    m_VBox_Toolbox;
+    Gtk::Button m_Button_New;
+    Gtk::Button m_Button_Load;
+    Gtk::Button m_Button_Delete;
+    Gtk::Button m_Button_Save;
 
-        Gtk::Label m_Label_Connectivity_HW;
-        Gtk::Label m_Label_Connectivity_SW;
+    Gtk::Label m_Label_Connectivity_HW;
+    Gtk::Label m_Label_Connectivity_SW;
 
-        // about
-        Gtk::Button m_Button_About;
-        Gtk::AboutDialog m_Dialog;
+    // about
+    Gtk::Button m_Button_About;
+    Gtk::AboutDialog m_Dialog;
 
-        // info-bar
-        Gtk::InfoBar m_InfoBar;
-        Gtk::Label m_Label_InfoBarMessage;
+    // info-bar
+    Gtk::InfoBar m_InfoBar;
+    Gtk::Label m_Label_InfoBarMessage;
 
-        // load tracklayout
-        FrmSelect frmSelect;
+    // load tracklayout
+    FrmSelect frmSelect;
 
-        // create new one
-        FrmNew frmNew;
+    // create new one
+    FrmNew frmNew;
 
-        int selectedTrackLayoutId;
-        bool hasChanged;
+    int selectedTrackLayoutId;
+    bool hasChanged;
 
-        Gtk::Paned m_VPaned_Container{Gtk::ORIENTATION_HORIZONTAL};
+    Gtk::Paned m_VPaned_Container{Gtk::ORIENTATION_HORIZONTAL};
 
-        std::string getDisplayMessage(std::string caption, std::string text);
+    std::string getDisplayMessage(std::string caption, std::string text);
 
-        void initAboutDialog();
+    void initAboutDialog();
 
-        // Signal handlers:
-        bool on_timeout(int timer_number);
-        void on_button_about_clicked();
-        void on_button_emegency_clicked();
-        void on_about_dialog_response(int response_id);
-        void on_infobar_response(int response);
+    // Signal handlers:
+    bool on_timeout(int timer_number);
+    void on_button_about_clicked();
+    void on_button_emegency_clicked();
+    void on_about_dialog_response(int response_id);
+    void on_infobar_response(int response);
 
-        void on_button_loadTracklayout();
-        void on_button_deleteTracklayout();
-        void on_button_saveTracklayout();
-        void on_button_newTracklayout();
+    void on_button_loadTracklayout();
+    void on_button_deleteTracklayout();
+    void on_button_saveTracklayout();
+    void on_button_newTracklayout();
 
-        bool on_key_press_event(GdkEventKey *key_event);
+    bool on_key_press_event(GdkEventKey *key_event);
 
-        // msg-response
-        void setSystemNotice(const GuiSystemNotice &data);
-        void setHardwareState(const SystemHardwareStateChanged &data);
-        void setTrackLayouts(const LayoutGetLayoutsRes &data);
-        void setTrackLayout(const LayoutLayoutCreated &data);
-        void updateTrackLayout(const LayoutLayoutUpdated &data);
-        void setCurrentLayout(const LayoutGetLayoutRes &data);
-        void displayError(const ClientError &data);
-        void setSensitive(bool sensitive);
-        void setHasChanged();
-        void setHasSaved();
+    // msg-response
+    void setSystemNotice(const GuiSystemNotice &data);
+    void setHardwareState(const SystemHardwareStateChanged &data);
+    void setTrackLayouts(const LayoutGetLayoutsRes &data);
+    void setTrackLayout(const LayoutLayoutCreated &data);
+    void updateTrackLayout(const LayoutLayoutUpdated &data);
+    void setCurrentLayout(const LayoutGetLayoutRes &data);
+    void displayError(const ClientError &data);
+    void setSensitive(bool sensitive);
+    void setHasChanged();
+    void setHasSaved();
 };

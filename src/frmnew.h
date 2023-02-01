@@ -30,36 +30,36 @@
 
 #include <string>
 
-class FrmNew : public Gtk::Dialog {
-    public:
-        FrmNew(EndpointPtr mhp);
-        virtual ~FrmNew();
+class FrmNew: public Gtk::Dialog {
+public:
+    FrmNew(EndpointPtr mhp);
+    virtual ~FrmNew();
 
-        void reset();
+    void reset();
 
-    protected:
-        const static int BUTTON_ID_LOAD = 1;
-        const static int BUTTON_ID_CANCEL = 2;
+protected:
+    const static int BUTTON_ID_LOAD = 1;
+    const static int BUTTON_ID_CANCEL = 2;
 
-        Gtk::Box m_VBox{Gtk::ORIENTATION_VERTICAL, 6};
-        Gtk::Box m_HBox_Name{Gtk::ORIENTATION_HORIZONTAL, 6};
-        Gtk::Box m_HBox_Description{Gtk::ORIENTATION_HORIZONTAL, 6};
-        Gtk::Box m_HBox_Active{Gtk::ORIENTATION_HORIZONTAL, 6};
+    Gtk::Box m_VBox{Gtk::ORIENTATION_VERTICAL, 6};
+    Gtk::Box m_HBox_Name{Gtk::ORIENTATION_HORIZONTAL, 6};
+    Gtk::Box m_HBox_Description{Gtk::ORIENTATION_HORIZONTAL, 6};
+    Gtk::Box m_HBox_Active{Gtk::ORIENTATION_HORIZONTAL, 6};
 
-        Gtk::Label m_Label_Name;
-        Gtk::Entry m_Entry_Name;
+    Gtk::Label m_Label_Name;
+    Gtk::Entry m_Entry_Name;
 
-        Gtk::Label m_Label_Description;
-        Gtk::Entry m_Entry_Description;
+    Gtk::Label m_Label_Description;
+    Gtk::Entry m_Entry_Description;
 
-        Gtk::Label m_Label_Active;
-        Gtk::CheckButton m_Check_Active;
+    Gtk::Label       m_Label_Active;
+    Gtk::CheckButton m_Check_Active;
 
-        EndpointPtr msgEndpoint;
+    EndpointPtr msgEndpoint;
 
-        void initForm();
-        void clearAndHide();
+    void initForm();
+    void clearAndHide();
 
-        void on_button_createTracklayout();
-        void on_button_cancel();
+    void on_button_createTracklayout();
+    void on_button_cancel();
 };
