@@ -35,6 +35,7 @@
 #include "toolboxwidget.h"
 #include "frmselect.h"
 #include "frmnew.h"
+#include "infoboxwidget.h"
 
 #include "moba/symbol.h"
 #include "moba/endpoint.h"
@@ -55,6 +56,7 @@ class FrmMain : public Gtk::Window {
 
         LayoutWidget layoutWidget;
         ToolboxWidget toolboxWidget;
+        InfoBoxWidget infoboxWidget;
 
         Gtk::ButtonBox m_ButtonBox;
         Gtk::Button m_Button_Emegerency;

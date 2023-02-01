@@ -91,6 +91,7 @@ FrmMain::FrmMain(EndpointPtr mhp) :
     m_VBox_Toolbox.pack_end(m_Button_Load, Gtk::PACK_SHRINK);
     m_VBox_Toolbox.pack_end(m_Button_Delete, Gtk::PACK_SHRINK);
     m_VBox_Toolbox.pack_end(m_Button_Save, Gtk::PACK_SHRINK);
+    m_VBox_Toolbox.pack_end(infoboxWidget, Gtk::PACK_SHRINK);
 
     m_VPaned_Container.add2(m_VBox_Toolbox);
     m_VPaned_Container.set_position(450);
