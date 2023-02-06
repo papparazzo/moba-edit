@@ -1,3 +1,6 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
 AC_PREREQ([2.69])
 AC_INIT([moba-edit], [0.1.0-0000], [pappi-@gmx.de])
 
@@ -8,7 +11,7 @@ AC_CONFIG_SUBDIRS([modules/lib-tracklayout])
 
 AC_CONFIG_AUX_DIR([.])
 
-AM_INIT_AUTOMAKE([foreign])
+AM_INIT_AUTOMAKE([-Wall foreign])
 
 # Checks for programs.
 AC_PROG_CXX
@@ -23,6 +26,7 @@ AC_CONFIG_FILES([
     Makefile
     src/Makefile
     pixmaps/Makefile
+    resources/Makefile
 ])
 
 AC_OUTPUT
