@@ -81,7 +81,13 @@ bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     for(const auto& symbol : *symbols) {
         auto image = getImage(static_cast<int>(symbol.second.symbol));
 
-        Gdk::Cairo::set_source_pixbuf(cr, image, symbol.first.first * SYMBOL_SIZE, symbol.first.second * SYMBOL_SIZE);
+        Gdk::Cairo::set_source_pixbuf(
+            cr,
+            image,
+            symbol.first.first * SYMBOL_SIZE,
+            symbol.first.second * SYMBOL_SIZE
+        );
+
         cr->rectangle(symbol.first.first * SYMBOL_SIZE, symbol.first.second * SYMBOL_SIZE, image->get_width(), image->get_height());
         cr->fill();
     }
