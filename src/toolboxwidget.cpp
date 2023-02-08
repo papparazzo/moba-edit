@@ -51,7 +51,7 @@ ToolboxWidget::ToolboxWidget() {
 
 void ToolboxWidget::loadSymbol(int symbol) {
     std::stringstream ss;
-    ss << "./resources/" << symbol << ".bmp";
+    ss << DATADIR << "/" << symbol << ".bmp";
     Element element;
 
     element.image = Gdk::Pixbuf::create_from_file(ss.str());

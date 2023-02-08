@@ -137,7 +137,7 @@ Glib::RefPtr<Gdk::Pixbuf> LayoutWidget::getImage(size_t i) {
     }
 
     std::stringstream ss;
-    ss << "./resources/" << i << ".bmp";
+    ss << DATADIR << "/" << i << ".bmp";
     auto image = Gdk::Pixbuf::create_from_file(ss.str());
     images[i] = image;
     return image;
