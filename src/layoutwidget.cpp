@@ -31,6 +31,16 @@ LayoutWidget::LayoutWidget() : cursor_x{0}, cursor_y{0}, isActive{false} {
     symbols = std::make_shared<Symbols>();
 }
 
+void LayoutWidget::setBlocks(BlockContactDataMapPtr blockContactMap) {
+    isActive = true;
+    blockContacts = blockContactMap;
+    refresh();
+}
+
+BlockContactDataMapPtr LayoutWidget::getBlocks() {
+    return blockContacts;
+}
+
 void LayoutWidget::setSymbols(SymbolsPtr symbolMap) {
     isActive = true;
     symbols = symbolMap;

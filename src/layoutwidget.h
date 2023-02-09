@@ -28,6 +28,7 @@
 
 #include "moba/position.h"
 #include "moba/shared.h"
+#include "derivedmessages.h"
 
 class LayoutWidget: public Gtk::DrawingArea {
 public:
@@ -35,6 +36,9 @@ public:
     virtual ~LayoutWidget() noexcept {
 
     }
+
+    void setBlocks(BlockContactDataMapPtr blockContactMap);
+    BlockContactDataMapPtr getBlocks();
 
     void setSymbols(SymbolsPtr symbols);
     SymbolsPtr getSymbols();
@@ -64,9 +68,10 @@ public:
 
     void refresh();
 
-    SymbolsPtr symbols;
-
 protected:
+    SymbolsPtr symbols;
+    BlockContactDataMapPtr blockContacts;
+
     int cursor_x;
     int cursor_y;
 
