@@ -63,6 +63,13 @@ void LayoutWidget::setCursorAbs(int x, int y) {
     if(s != symbols->end()) {
         ss << " #" << s->second.id;
     }
+
+    if(blockContacts) {
+        auto b = blockContacts->find({x, y});
+        if(b != blockContacts->end()) {
+            ss << " [" << b->second->id << "]";
+        }
+    }
     set_tooltip_text(ss.str());
 }
 
@@ -90,6 +97,13 @@ bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 
         cr->rectangle(symbol.first.first * SYMBOL_SIZE, symbol.first.second * SYMBOL_SIZE, image->get_width(), image->get_height());
         cr->fill();
+
+        if(blockContacts && blockContacts->find(symbol.first) != blockContacts->end()) {
+            cr->set_source_rgba(1, 0, 0, 0.3);
+            cr->rectangle(symbol.first.first * SYMBOL_SIZE, symbol.first.second * SYMBOL_SIZE, image->get_width(), image->get_height());
+            cr->fill();
+        }
+
     }
 
     cr->set_line_width(1.0);
