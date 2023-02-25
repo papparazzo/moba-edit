@@ -130,11 +130,11 @@ FrmMain::FrmMain(EndpointPtr mhp) :
     registry.registerHandler<GuiSystemNotice>(std::bind(&FrmMain::setSystemNotice, this, std::placeholders::_1));
     registry.registerHandler<SystemHardwareStateChanged>(std::bind(&FrmMain::setHardwareState, this, std::placeholders::_1));
     registry.registerHandler<LayoutGetLayoutsRes>(std::bind(&FrmMain::setTrackLayouts, this, std::placeholders::_1));
-    registry.registerHandler<LayoutLayoutDeleted>([this](const LayoutLayoutDeleted &d) {frmSelect.deleteTracklayout(d.layoutId);});
-    registry.registerHandler<LayoutLayoutUnlocked>([this](const LayoutLayoutUnlocked &d) {frmSelect.setLockStatus(d.layoutId, false);});
-    registry.registerHandler<LayoutLayoutLocked>([this](const LayoutLayoutLocked &d) {frmSelect.setLockStatus(d.layoutId, true);});
-    registry.registerHandler<LayoutLayoutCreated>(std::bind(&FrmMain::setTrackLayout, this, std::placeholders::_1));
-    registry.registerHandler<LayoutLayoutUpdated>(std::bind(&FrmMain::updateTrackLayout, this, std::placeholders::_1));
+    registry.registerHandler<LayoutDeleteLayout>([this](const LayoutDeleteLayout &d) {frmSelect.deleteTracklayout(d.layoutId);});
+    registry.registerHandler<LayoutUnlockLayout>([this](const LayoutUnlockLayout &d) {frmSelect.setLockStatus(d.layoutId, false);});
+    registry.registerHandler<LayoutLockLayout>([this](const LayoutLockLayout &d) {frmSelect.setLockStatus(d.layoutId, true);});
+    registry.registerHandler<LayoutCreateLayout>(std::bind(&FrmMain::setTrackLayout, this, std::placeholders::_1));
+    registry.registerHandler<LayoutUpdateLayout>(std::bind(&FrmMain::updateTrackLayout, this, std::placeholders::_1));
     registry.registerHandler<LayoutGetLayoutRes>(std::bind(&FrmMain::setCurrentLayout, this, std::placeholders::_1));
     registry.registerHandler<ClientError>(std::bind(&FrmMain::displayError, this, std::placeholders::_1));
     show_all_children();
@@ -403,7 +403,7 @@ void FrmMain::setTrackLayouts(const LayoutGetLayoutsRes &data) {
     }
 }
 
-void FrmMain::setTrackLayout(const LayoutLayoutCreated &data) {
+void FrmMain::setTrackLayout(const LayoutCreateLayout &data) {
     frmSelect.addTracklayout(
         data.tracklayout.id,
         data.tracklayout.created,
@@ -430,7 +430,7 @@ void FrmMain::setTrackLayout(const LayoutLayoutCreated &data) {
     setHasSaved();
 }
 
-void FrmMain::updateTrackLayout(const LayoutLayoutUpdated &data) {
+void FrmMain::updateTrackLayout(const LayoutUpdateLayout &data) {
     frmSelect.updateTracklayout(
         data.tracklayout.id,
         data.tracklayout.created,

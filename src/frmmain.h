@@ -36,6 +36,7 @@
 #include "frmselect.h"
 #include "frmnew.h"
 #include "infoboxwidget.h"
+#include "derivedmessages.h"
 
 #include "moba/symbol.h"
 #include "moba/endpoint.h"
@@ -113,8 +114,8 @@ protected:
     void setSystemNotice(const GuiSystemNotice &data);
     void setHardwareState(const SystemHardwareStateChanged &data);
     void setTrackLayouts(const LayoutGetLayoutsRes &data);
-    void setTrackLayout(const LayoutLayoutCreated &data);
-    void updateTrackLayout(const LayoutLayoutUpdated &data);
+    void setTrackLayout(const LayoutCreateLayout &data);
+    void updateTrackLayout(const LayoutUpdateLayout &data);
     void setCurrentLayout(const LayoutGetLayoutRes &data);
     void displayError(const ClientError &data);
     void setSensitive(bool sensitive);
