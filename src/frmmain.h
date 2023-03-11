@@ -119,6 +119,7 @@ protected:
     void setCurrentLayout(const LayoutGetLayoutRes &data);
     void displayError(const ClientError &data);
     void setSensitive(bool sensitive);
+    void setBlockList(const ControlGetBlockListRes &data);
     void setHasChanged();
     void setHasSaved();
 };
