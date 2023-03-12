@@ -37,7 +37,7 @@
 
 namespace {
     const char license[] =
-        "Project:    moba-edit\n"
+        "Project:    " PACKAGE_NAME "\n"
         "\n"
         "Copyright (C) 2018 Stefan Paproth <pappi-@gmx.de>\n"
         "\n"
@@ -55,7 +55,7 @@ namespace {
         "along with this program. If not, see <http://www.gnu.org/licenses/agpl.txt>.";
 }
 
-FrmMain::FrmMain(EndpointPtr mhp) :
+FrmMain::FrmMain(EndpointPtr mhp):
     msgEndpoint(mhp), m_VBox(Gtk::ORIENTATION_VERTICAL, 6), m_HBox(Gtk::ORIENTATION_HORIZONTAL, 6),
     m_VBox_Toolbox(Gtk::ORIENTATION_VERTICAL, 6), m_Button_New("Neu..."), m_Button_Load("Laden..."),
     m_Button_Delete("Löschen..."), m_Button_Save{"Speichern.."},
@@ -215,8 +215,7 @@ void FrmMain::initAboutDialog() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Call-back-methodes
-
+// <editor-fold defaultstate="collapsed" desc="call-back-methodes">
 void FrmMain::on_button_about_clicked() {
     m_Dialog.show();
     m_Dialog.present();
