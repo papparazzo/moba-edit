@@ -52,7 +52,7 @@ public:
     void addSymbol(std::uint8_t symbol);
 
 protected:
-    EndpointPtr endpoint;
+    EndpointPtr msgEndpoint;
     Registry registry;
 
     LayoutWidget  layoutWidget;

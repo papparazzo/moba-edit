@@ -56,7 +56,7 @@ namespace {
 }
 
 FrmMain::FrmMain(EndpointPtr mhp) :
-    endpoint(mhp), m_VBox(Gtk::ORIENTATION_VERTICAL, 6), m_HBox(Gtk::ORIENTATION_HORIZONTAL, 6),
+    msgEndpoint(mhp), m_VBox(Gtk::ORIENTATION_VERTICAL, 6), m_HBox(Gtk::ORIENTATION_HORIZONTAL, 6),
     m_VBox_Toolbox(Gtk::ORIENTATION_VERTICAL, 6), m_Button_New("Neu..."), m_Button_Load("Laden..."),
     m_Button_Delete("Löschen..."), m_Button_Save{"Speichern.."},
     m_Label_Connectivity_HW(" \xe2\x96\x84"), m_Label_Connectivity_SW(" \xe2\x96\x84"),
@@ -166,7 +166,7 @@ void FrmMain::on_button_saveTracklayout() {
     LayoutSaveLayout l;
     l.specificLayoutData.symbols = layoutWidget.getSymbols();
     l.specificLayoutData.id = selectedTrackLayoutId;
-    endpoint->sendMsg(l);
+    msgEndpoint->sendMsg(l);
 }
 
 void FrmMain::on_button_newTracklayout() {
@@ -224,9 +224,9 @@ void FrmMain::on_button_about_clicked() {
 
 void FrmMain::on_button_emergency_clicked() {
     if(m_Button_Emergency.get_label() == "Nothalt") {
-        endpoint->sendMsg(SystemTriggerEmergencyStop{});
+        msgEndpoint->sendMsg(SystemTriggerEmergencyStop{});
     } else {
-        endpoint->sendMsg(SystemReleaseEmergencyStop{});
+        msgEndpoint->sendMsg(SystemReleaseEmergencyStop{});
     }
 }
 
@@ -239,20 +239,20 @@ bool FrmMain::on_timeout(int) {
 
     try {
         if(!connected) {
-            endpoint->connect();
+            msgEndpoint->connect();
             m_Label_Connectivity_HW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
             m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
             m_Label_Connectivity_SW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
             m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
-            endpoint->sendMsg(SystemGetHardwareState{});
-            endpoint->sendMsg(LayoutGetLayoutsReq{});
-            endpoint->sendMsg(SystemGetHardwareState{});
+            msgEndpoint->sendMsg(SystemGetHardwareState{});
+            msgEndpoint->sendMsg(LayoutGetLayoutsReq{});
+            msgEndpoint->sendMsg(SystemGetHardwareState{});
             setSensitive(true);
 
             connected = true;
             return true;
         }
-        registry.handleMsg(endpoint->recieveMsg());
+        registry.handleMsg(msgEndpoint->recieveMsg());
 
     } catch(std::exception &e) {
         if(connected) {
@@ -414,12 +414,12 @@ void FrmMain::setTrackLayout(const LayoutCreateLayout &data) {
         data.tracklayout.description
     );
 
-    if(data.tracklayout.locked != endpoint->getAppId()) {
+    if(data.tracklayout.locked != msgEndpoint->getAppId()) {
         return;
     }
 
     if(selectedTrackLayoutId != -1) {
-        endpoint->sendMsg(LayoutUnlockLayout{selectedTrackLayoutId});
+        msgEndpoint->sendMsg(LayoutUnlockLayout{selectedTrackLayoutId});
     }
 
     selectedTrackLayoutId = data.tracklayout.id;
@@ -445,7 +445,7 @@ void FrmMain::updateTrackLayout(const LayoutUpdateLayout &data) {
 void FrmMain::setCurrentLayout(const LayoutGetLayoutRes &data) {
     frmSelect.setLockStatus(data.specificLayoutData.id, true);
     if(selectedTrackLayoutId != -1) {
-        endpoint->sendMsg(LayoutUnlockLayout{selectedTrackLayoutId});
+        msgEndpoint->sendMsg(LayoutUnlockLayout{selectedTrackLayoutId});
     }
 
     selectedTrackLayoutId = data.specificLayoutData.id;
