@@ -60,7 +60,7 @@ protected:
     InfoBoxWidget infoboxWidget;
 
     Gtk::ButtonBox m_ButtonBox;
-    Gtk::Button    m_Button_Emegerency;
+    Gtk::Button    m_Button_Emergency;
     Gtk::Box       m_VBox;
     Gtk::Box       m_HBox;
 
@@ -99,7 +99,7 @@ protected:
     // Signal handlers:
     bool on_timeout(int timer_number);
     void on_button_about_clicked();
-    void on_button_emegency_clicked();
+    void on_button_emergency_clicked();
     void on_about_dialog_response(int response_id);
     void on_infobar_response(int response);
 

@@ -114,9 +114,9 @@ FrmMain::FrmMain(EndpointPtr mhp) :
     m_ButtonBox.set_layout(Gtk::BUTTONBOX_END);
     m_Button_About.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_about_clicked));
 
-    m_ButtonBox.pack_start(m_Button_Emegerency, Gtk::PACK_EXPAND_WIDGET, 5);
-    m_Button_Emegerency.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_emegency_clicked));
-    m_Button_Emegerency.set_label("Nothalt");
+    m_ButtonBox.pack_start(m_Button_Emergency, Gtk::PACK_EXPAND_WIDGET, 5);
+    m_Button_Emergency.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_emergency_clicked));
+    m_Button_Emergency.set_label("Nothalt");
 
     m_Button_Load.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_loadTracklayout));
     m_Button_Delete.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_deleteTracklayout));
@@ -124,7 +124,7 @@ FrmMain::FrmMain(EndpointPtr mhp) :
     m_Button_New.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_newTracklayout));
 
     setSensitive(false);
-    m_Button_Emegerency.set_sensitive(false);
+    m_Button_Emergency.set_sensitive(false);
     initAboutDialog();
 
     registry.registerHandler<GuiSystemNotice>(std::bind(&FrmMain::setSystemNotice, this, std::placeholders::_1));
@@ -222,8 +222,8 @@ void FrmMain::on_button_about_clicked() {
     m_Dialog.present();
 }
 
-void FrmMain::on_button_emegency_clicked() {
-    if(m_Button_Emegerency.get_label() == "Nothalt") {
+void FrmMain::on_button_emergency_clicked() {
+    if(m_Button_Emergency.get_label() == "Nothalt") {
         endpoint->sendMsg(SystemTriggerEmergencyStop{});
     } else {
         endpoint->sendMsg(SystemReleaseEmergencyStop{});
@@ -257,7 +257,7 @@ bool FrmMain::on_timeout(int) {
     } catch(std::exception &e) {
         if(connected) {
             frmSelect.reset();
-            m_Button_Emegerency.set_sensitive(false);
+            m_Button_Emergency.set_sensitive(false);
             m_Label_Connectivity_HW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
             m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zum Server");
             m_Label_Connectivity_SW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
@@ -361,25 +361,25 @@ void FrmMain::setHardwareState(const SystemHardwareStateChanged &data) {
         m_Label_Connectivity_SW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
         m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
         m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
-        m_Button_Emegerency.set_sensitive(false);
+        m_Button_Emergency.set_sensitive(false);
         return;
     }
-    m_Button_Emegerency.set_sensitive(true);
+    m_Button_Emergency.set_sensitive(true);
     if(data.hardwareState == SystemHardwareStateChanged::HardwareState::EMERGENCY_STOP) {
         m_Label_Connectivity_HW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
         m_Label_Connectivity_SW.override_color(Gdk::RGBA("gold"), Gtk::STATE_FLAG_NORMAL);
         m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Nohalt ausgelöst");
         m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Nohalt ausgelöst");
-        m_Button_Emegerency.set_label("Freigabe");
+        m_Button_Emergency.set_label("Freigabe");
         return;
     }
-    m_Button_Emegerency.set_label("Nothalt");
+    m_Button_Emergency.set_label("Nothalt");
     if(data.hardwareState == SystemHardwareStateChanged::HardwareState::STANDBY) {
         m_Label_Connectivity_HW.override_color(Gdk::RGBA("gold"), Gtk::STATE_FLAG_NORMAL);
         m_Label_Connectivity_SW.override_color(Gdk::RGBA("gold"), Gtk::STATE_FLAG_NORMAL);
         m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Energiesparmodus");
         m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Energiesparmodus");
-        m_Button_Emegerency.set_sensitive(false);
+        m_Button_Emergency.set_sensitive(false);
         return;
     }
     if(data.hardwareState == SystemHardwareStateChanged::HardwareState::MANUEL) {
