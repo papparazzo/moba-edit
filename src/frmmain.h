@@ -94,6 +94,8 @@ protected:
 
     std::string getDisplayMessage(std::string caption, std::string text);
 
+    void setNotice(Gtk::MessageType noticeType, std::string caption, std::string text);
+
     void initAboutDialog();
 
     // Signal handlers:
@@ -112,12 +114,12 @@ protected:
 
     // msg-response
     void setSystemNotice(const GuiSystemNotice &data);
+    void setErrorNotice(const ClientError &data);
     void setHardwareState(const SystemHardwareStateChanged &data);
     void setTrackLayouts(const LayoutGetLayoutsRes &data);
     void setTrackLayout(const LayoutCreateLayout &data);
     void updateTrackLayout(const LayoutUpdateLayout &data);
     void setCurrentLayout(const LayoutGetLayoutRes &data);
-    void displayError(const ClientError &data);
     void setSensitive(bool sensitive);
     void setBlockList(const ControlGetBlockListRes &data);
     void setHasChanged();
