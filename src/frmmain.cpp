@@ -500,3 +500,4 @@ void FrmMain::setHasSaved() {
     m_Button_Save.set_sensitive(false);
     set_title(Glib::ustring(PACKAGE_NAME) + " [" + frmSelect.getNameById(selectedTrackLayoutId) + "]");
 }
+// </editor-fold>
