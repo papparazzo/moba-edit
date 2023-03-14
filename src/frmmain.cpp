@@ -136,7 +136,7 @@ FrmMain::FrmMain(EndpointPtr mhp):
     registry.registerHandler<LayoutCreateLayout>(std::bind(&FrmMain::setTrackLayout, this, std::placeholders::_1));
     registry.registerHandler<LayoutUpdateLayout>(std::bind(&FrmMain::updateTrackLayout, this, std::placeholders::_1));
     registry.registerHandler<LayoutGetLayoutRes>(std::bind(&FrmMain::setCurrentLayout, this, std::placeholders::_1));
-    registry.registerHandler<ClientError>(std::bind(&FrmMain::displayError, this, std::placeholders::_1));
+    registry.registerHandler<ClientError>(std::bind(&FrmMain::setErrorNotice, this, std::placeholders::_1));
     show_all_children();
     m_InfoBar.hide();
 }
@@ -336,22 +336,35 @@ bool FrmMain::on_key_press_event(GdkEventKey* key_event) {
     return true;
 }
 
+void FrmMain::setNotice(Gtk::MessageType noticeType, std::string caption, std::string text) {
+   // m_Notice_Logger.setNotice(noticeType, caption, text);
+
+    m_Label_InfoBarMessage.set_markup(getDisplayMessage(caption, text));
+    m_InfoBar.set_message_type(noticeType);
+    m_InfoBar.show();
+}
+
+void FrmMain::setErrorNotice(const ClientError &data) {
+    setNotice(Gtk::MESSAGE_ERROR, data.errorId, data.additionalMsg);
+}
+
 void FrmMain::setSystemNotice(const GuiSystemNotice &data) {
+    Gtk::MessageType mt;
     switch(data.noticeType) {
-        case GuiSystemNotice::NoticeType::INFO:
-            m_InfoBar.set_message_type(Gtk::MESSAGE_INFO);
+        case GuiSystemNotice::NoticeType::ERROR:
+            mt = Gtk::MESSAGE_ERROR;
             break;
 
         case GuiSystemNotice::NoticeType::WARNING:
-            m_InfoBar.set_message_type(Gtk::MESSAGE_WARNING);
+            mt = Gtk::MESSAGE_WARNING;
             break;
 
-        case GuiSystemNotice::NoticeType::ERROR:
-            m_InfoBar.set_message_type(Gtk::MESSAGE_ERROR);
+        case GuiSystemNotice::NoticeType::INFO:
+        default:
+            mt = Gtk::MESSAGE_INFO;
             break;
     }
-    m_Label_InfoBarMessage.set_markup(getDisplayMessage(data.caption, data.text));
-    m_InfoBar.show();
+    setNotice(mt, data.caption, data.text);
 }
 
 void FrmMain::setHardwareState(const SystemHardwareStateChanged &data) {
@@ -451,12 +464,6 @@ void FrmMain::setCurrentLayout(const LayoutGetLayoutRes &data) {
     toolboxWidget.set_sensitive(true);
     setHasSaved();
     layoutWidget.setSymbols(data.specificLayoutData.symbols);
-}
-
-void FrmMain::displayError(const ClientError &data) {
-    m_InfoBar.set_message_type(Gtk::MESSAGE_WARNING);
-    m_Label_InfoBarMessage.set_markup(getDisplayMessage(data.errorId, data.additionalMsg));
-    m_InfoBar.show();
 }
 
 void FrmMain::setSensitive(bool sensitive) {
