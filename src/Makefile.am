@@ -3,6 +3,7 @@ bin_PROGRAMS = \
     moba-edit
 
 moba_edit_SOURCES = \
+    frmbase.cpp \
     frmmain.cpp \
     frmnew.cpp \
     frmselect.cpp \
