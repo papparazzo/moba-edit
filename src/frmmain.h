@@ -24,8 +24,6 @@
 #include <chrono>
 
 #include "moba/registry.h"
-#include "moba/guimessages.h"
-#include "moba/systemmessages.h"
 
 #include <gtkmm/window.h>
 #include <gtkmm/comboboxtext.h>
@@ -39,11 +37,13 @@
 #include "derivedmessages.h"
 
 #include "moba/symbol.h"
-#include "moba/endpoint.h"
-#include "moba/layoutmessages.h"
-#include "moba/clientmessages.h"
 
-class FrmMain: public Gtk::Window {
+#include "moba/layoutmessages.h"
+
+
+#include "frmbase.h"
+
+class FrmMain: public FrmBase {
 public:
     FrmMain(EndpointPtr mhp);
     virtual ~FrmMain() {
@@ -52,34 +52,18 @@ public:
     void addSymbol(std::uint8_t symbol);
 
 protected:
-    EndpointPtr msgEndpoint;
+
     Registry registry;
 
     LayoutWidget  layoutWidget;
     ToolboxWidget toolboxWidget;
     InfoBoxWidget infoboxWidget;
 
-    Gtk::ButtonBox m_ButtonBox;
-    Gtk::Button    m_Button_Emergency;
-    Gtk::Box       m_VBox;
-    Gtk::Box       m_HBox;
-
     Gtk::Box    m_VBox_Toolbox;
     Gtk::Button m_Button_New;
     Gtk::Button m_Button_Load;
     Gtk::Button m_Button_Delete;
     Gtk::Button m_Button_Save;
-
-    Gtk::Label m_Label_Connectivity_HW;
-    Gtk::Label m_Label_Connectivity_SW;
-
-    // about
-    Gtk::Button m_Button_About;
-    Gtk::AboutDialog m_Dialog;
-
-    // info-bar
-    Gtk::InfoBar m_InfoBar;
-    Gtk::Label m_Label_InfoBarMessage;
 
     // load tracklayout
     FrmSelect frmSelect;
@@ -92,18 +76,8 @@ protected:
 
     Gtk::Paned m_VPaned_Container{Gtk::ORIENTATION_HORIZONTAL};
 
-    std::string getDisplayMessage(std::string caption, std::string text);
-
-    void setNotice(Gtk::MessageType noticeType, std::string caption, std::string text);
-
-    void initAboutDialog();
-
     // Signal handlers:
     bool on_timeout(int timer_number);
-    void on_button_about_clicked();
-    void on_button_emergency_clicked();
-    void on_about_dialog_response(int response_id);
-    void on_infobar_response(int response);
 
     void on_button_loadTracklayout();
     void on_button_deleteTracklayout();
@@ -113,8 +87,6 @@ protected:
     bool on_key_press_event(GdkEventKey *key_event);
 
     // msg-response
-    void setSystemNotice(const GuiSystemNotice &data);
-    void setErrorNotice(const ClientError &data);
     void setHardwareState(const SystemHardwareStateChanged &data);
     void setTrackLayouts(const LayoutGetLayoutsRes &data);
     void setTrackLayout(const LayoutCreateLayout &data);
