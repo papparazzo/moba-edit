@@ -47,7 +47,6 @@ FrmBase::FrmBase(EndpointPtr mhp):
     m_Label_Connectivity_HW(" \xe2\x96\x84"), m_Label_Connectivity_SW(" \xe2\x96\x84"),
     m_VBox(Gtk::ORIENTATION_VERTICAL, 6), m_HBox(Gtk::ORIENTATION_HORIZONTAL, 6)
 {
-
     // Add the message label to the InfoBar:
     auto infoBarContainer = dynamic_cast<Gtk::Container*>(m_InfoBar.get_content_area());
     if(infoBarContainer) {
@@ -80,6 +79,14 @@ FrmBase::FrmBase(EndpointPtr mhp):
     m_Button_Emergency.signal_clicked().connect(sigc::mem_fun(*this, &FrmBase::on_button_emergency_clicked));
     m_Button_Emergency.set_label("Nothalt");
 
+    setSensitive(false);
+    m_Button_Emergency.set_sensitive(false);
+    initAboutDialog();
+
+    registry.registerHandler<GuiSystemNotice>(std::bind(&FrmBase::setSystemNotice, this, std::placeholders::_1));
+    registry.registerHandler<ClientError>(std::bind(&FrmBase::setErrorNotice, this, std::placeholders::_1));
+    registry.registerHandler<SystemHardwareStateChanged>(std::bind(&FrmMain::setHardwareState, this, std::placeholders::_1));
+    m_InfoBar.hide();
 }
 
 std::string FrmBase::getDisplayMessage(std::string caption, std::string text) {
@@ -116,10 +123,6 @@ void FrmBase::initAboutDialog() {
     m_Button_About.grab_focus();
 }
 
-void FrmBase::on_about_dialog_response(int) {
-    m_Dialog.hide();
-}
-
 void FrmBase::setNotice(Gtk::MessageType noticeType, std::string caption, std::string text) {
    // m_Notice_Logger.setNotice(noticeType, caption, text);
 
@@ -151,6 +154,88 @@ void FrmBase::setSystemNotice(const GuiSystemNotice &data) {
     setNotice(mt, data.caption, data.text);
 }
 
+void FrmBase::setHardwareState(const SystemHardwareStateChanged &data) {
+    if(data.hardwareState == SystemHardwareStateChanged::HardwareState::ERROR) {
+        m_Label_Connectivity_HW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
+        m_Label_Connectivity_SW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
+        m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
+        m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
+        m_Button_Emergency.set_sensitive(false);
+        return;
+    }
+    m_Button_Emergency.set_sensitive(true);
+    if(data.hardwareState == SystemHardwareStateChanged::HardwareState::EMERGENCY_STOP) {
+        m_Label_Connectivity_HW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
+        m_Label_Connectivity_SW.override_color(Gdk::RGBA("gold"), Gtk::STATE_FLAG_NORMAL);
+        m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Nohalt ausgelöst");
+        m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Nohalt ausgelöst");
+        m_Button_Emergency.set_label("Freigabe");
+        return;
+    }
+    m_Button_Emergency.set_label("Nothalt");
+    if(data.hardwareState == SystemHardwareStateChanged::HardwareState::STANDBY) {
+        m_Label_Connectivity_HW.override_color(Gdk::RGBA("gold"), Gtk::STATE_FLAG_NORMAL);
+        m_Label_Connectivity_SW.override_color(Gdk::RGBA("gold"), Gtk::STATE_FLAG_NORMAL);
+        m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Energiesparmodus");
+        m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Energiesparmodus");
+        m_Button_Emergency.set_sensitive(false);
+        return;
+    }
+    if(data.hardwareState == SystemHardwareStateChanged::HardwareState::MANUEL) {
+        m_Label_Connectivity_HW.override_color(Gdk::RGBA("green"), Gtk::STATE_FLAG_NORMAL);
+        m_Label_Connectivity_SW.override_color(Gdk::RGBA("gold"), Gtk::STATE_FLAG_NORMAL);
+        m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> manuell");
+        m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> manuell");
+    } else if(data.hardwareState == SystemHardwareStateChanged::HardwareState::AUTOMATIC) {
+        m_Label_Connectivity_HW.override_color(Gdk::RGBA("green"), Gtk::STATE_FLAG_NORMAL);
+        m_Label_Connectivity_SW.override_color(Gdk::RGBA("green"), Gtk::STATE_FLAG_NORMAL);
+        m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> automatisch");
+        m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> automatisch");
+    }
+}
+
+void FrmBase::on_about_dialog_response(int) {
+    m_Dialog.hide();
+}
+
+bool FrmBase::on_timeout(int) {
+    static bool connected = false;
+
+    try {
+        if(!connected) {
+            msgEndpoint->connect();
+            m_Label_Connectivity_HW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
+            m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
+            m_Label_Connectivity_SW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
+            m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
+            msgEndpoint->sendMsg(SystemGetHardwareState{});
+            msgEndpoint->sendMsg(LayoutGetLayoutsReq{});
+            msgEndpoint->sendMsg(SystemGetHardwareState{});
+            setSensitive(true);
+
+            connected = true;
+            return true;
+        }
+        registry.handleMsg(msgEndpoint->recieveMsg());
+
+    } catch(std::exception &e) {
+        if(connected) {
+            m_Button_Emergency.set_sensitive(false);
+            m_Label_Connectivity_HW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
+            m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zum Server");
+            m_Label_Connectivity_SW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
+            m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zum Server");
+            m_InfoBar.set_message_type(Gtk::MESSAGE_ERROR);
+            std::stringstream ss;
+            ss << "<b>msg-handler exception:</b>\n" << e.what();
+            m_Label_InfoBarMessage.set_markup(ss.str());
+            m_InfoBar.show();
+            setSensitive(false);
+            connected = false;
+        }
+    }
+    return true;
+}
 
 void FrmBase::on_button_about_clicked() {
     m_Dialog.show();

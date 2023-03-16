@@ -21,6 +21,7 @@
 #pragma once
 
 #include "moba/endpoint.h"
+#include "moba/registry.h"
 
 #include "moba/guimessages.h"
 #include "moba/clientmessages.h"
@@ -36,6 +37,8 @@ public:
 
 protected:
     EndpointPtr msgEndpoint;
+
+    Registry registry;
 
     // about
     Gtk::Button m_Button_About;
@@ -66,11 +69,14 @@ protected:
     void setSystemNotice(const GuiSystemNotice &data);
     void setErrorNotice(const ClientError &data);
 
+    virtual void setSensitive(bool) {};
+    void setHardwareState(const SystemHardwareStateChanged &data);
+
     // Signal handlers:
     void on_about_dialog_response(int response_id);
     void on_button_about_clicked();
     void on_button_emergency_clicked();
     void on_infobar_response(int response);
-
+    bool on_timeout(int timer_number);
 };
 
