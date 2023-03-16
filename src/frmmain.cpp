@@ -72,12 +72,6 @@ FrmMain::FrmMain(EndpointPtr mhp): FrmBase{mhp},
     m_Button_Save.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_saveTracklayout));
     m_Button_New.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_newTracklayout));
 
-    setSensitive(false);
-    m_Button_Emergency.set_sensitive(false);
-    initAboutDialog();
-
-    registry.registerHandler<GuiSystemNotice>(std::bind(&FrmMain::setSystemNotice, this, std::placeholders::_1));
-    registry.registerHandler<SystemHardwareStateChanged>(std::bind(&FrmMain::setHardwareState, this, std::placeholders::_1));
     registry.registerHandler<LayoutGetLayoutsRes>(std::bind(&FrmMain::setTrackLayouts, this, std::placeholders::_1));
     registry.registerHandler<LayoutDeleteLayout>([this](const LayoutDeleteLayout &d) {frmSelect.deleteTracklayout(d.layoutId);});
     registry.registerHandler<LayoutUnlockLayout>([this](const LayoutUnlockLayout &d) {frmSelect.setLockStatus(d.layoutId, false);});
@@ -85,9 +79,7 @@ FrmMain::FrmMain(EndpointPtr mhp): FrmBase{mhp},
     registry.registerHandler<LayoutCreateLayout>(std::bind(&FrmMain::setTrackLayout, this, std::placeholders::_1));
     registry.registerHandler<LayoutUpdateLayout>(std::bind(&FrmMain::updateTrackLayout, this, std::placeholders::_1));
     registry.registerHandler<LayoutGetLayoutRes>(std::bind(&FrmMain::setCurrentLayout, this, std::placeholders::_1));
-    registry.registerHandler<ClientError>(std::bind(&FrmMain::setErrorNotice, this, std::placeholders::_1));
     show_all_children();
-    m_InfoBar.hide();
 }
 
 void FrmMain::on_button_loadTracklayout() {
@@ -133,46 +125,6 @@ void FrmMain::on_button_newTracklayout() {
 
 ////////////////////////////////////////////////////////////////////////////////
 // <editor-fold defaultstate="collapsed" desc="call-back-methodes">
-bool FrmMain::on_timeout(int) {
-    static bool connected = false;
-
-    try {
-        if(!connected) {
-            msgEndpoint->connect();
-            m_Label_Connectivity_HW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
-            m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
-            m_Label_Connectivity_SW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
-            m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
-            msgEndpoint->sendMsg(SystemGetHardwareState{});
-            msgEndpoint->sendMsg(LayoutGetLayoutsReq{});
-            msgEndpoint->sendMsg(SystemGetHardwareState{});
-            setSensitive(true);
-
-            connected = true;
-            return true;
-        }
-        registry.handleMsg(msgEndpoint->recieveMsg());
-
-    } catch(std::exception &e) {
-        if(connected) {
-            frmSelect.reset();
-            m_Button_Emergency.set_sensitive(false);
-            m_Label_Connectivity_HW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
-            m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zum Server");
-            m_Label_Connectivity_SW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
-            m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zum Server");
-            m_InfoBar.set_message_type(Gtk::MESSAGE_ERROR);
-            std::stringstream ss;
-            ss << "<b>msg-handler exception:</b>\n" << e.what();
-            m_Label_InfoBarMessage.set_markup(ss.str());
-            m_InfoBar.show();
-            setSensitive(false);
-            connected = false;
-        }
-    }
-    return true;
-}
-
 bool FrmMain::on_key_press_event(GdkEventKey* key_event) {
     switch(key_event->keyval) {
         case GDK_KEY_Delete:
@@ -229,46 +181,6 @@ bool FrmMain::on_key_press_event(GdkEventKey* key_event) {
     }
     layoutWidget.refresh();
     return true;
-}
-
-void FrmMain::setHardwareState(const SystemHardwareStateChanged &data) {
-    if(data.hardwareState == SystemHardwareStateChanged::HardwareState::ERROR) {
-        m_Label_Connectivity_HW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
-        m_Label_Connectivity_SW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
-        m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
-        m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
-        m_Button_Emergency.set_sensitive(false);
-        return;
-    }
-    m_Button_Emergency.set_sensitive(true);
-    if(data.hardwareState == SystemHardwareStateChanged::HardwareState::EMERGENCY_STOP) {
-        m_Label_Connectivity_HW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
-        m_Label_Connectivity_SW.override_color(Gdk::RGBA("gold"), Gtk::STATE_FLAG_NORMAL);
-        m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Nohalt ausgelöst");
-        m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Nohalt ausgelöst");
-        m_Button_Emergency.set_label("Freigabe");
-        return;
-    }
-    m_Button_Emergency.set_label("Nothalt");
-    if(data.hardwareState == SystemHardwareStateChanged::HardwareState::STANDBY) {
-        m_Label_Connectivity_HW.override_color(Gdk::RGBA("gold"), Gtk::STATE_FLAG_NORMAL);
-        m_Label_Connectivity_SW.override_color(Gdk::RGBA("gold"), Gtk::STATE_FLAG_NORMAL);
-        m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Energiesparmodus");
-        m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Energiesparmodus");
-        m_Button_Emergency.set_sensitive(false);
-        return;
-    }
-    if(data.hardwareState == SystemHardwareStateChanged::HardwareState::MANUEL) {
-        m_Label_Connectivity_HW.override_color(Gdk::RGBA("green"), Gtk::STATE_FLAG_NORMAL);
-        m_Label_Connectivity_SW.override_color(Gdk::RGBA("gold"), Gtk::STATE_FLAG_NORMAL);
-        m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> manuell");
-        m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> manuell");
-    } else if(data.hardwareState == SystemHardwareStateChanged::HardwareState::AUTOMATIC) {
-        m_Label_Connectivity_HW.override_color(Gdk::RGBA("green"), Gtk::STATE_FLAG_NORMAL);
-        m_Label_Connectivity_SW.override_color(Gdk::RGBA("green"), Gtk::STATE_FLAG_NORMAL);
-        m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> automatisch");
-        m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> automatisch");
-    }
 }
 
 void FrmMain::setTrackLayouts(const LayoutGetLayoutsRes &data) {
@@ -340,6 +252,7 @@ void FrmMain::setSensitive(bool sensitive) {
         m_Button_Save.set_sensitive(selectedTrackLayoutId != -1 && hasChanged);
     } else {
         m_Button_Save.set_sensitive(false);
+        frmSelect.reset();
     }
 }
 

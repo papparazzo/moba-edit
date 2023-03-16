@@ -23,8 +23,6 @@
 
 #include <chrono>
 
-#include "moba/registry.h"
-
 #include <gtkmm/window.h>
 #include <gtkmm/comboboxtext.h>
 #include <gtkmm/liststore.h>
@@ -53,8 +51,6 @@ public:
 
 protected:
 
-    Registry registry;
-
     LayoutWidget  layoutWidget;
     ToolboxWidget toolboxWidget;
     InfoBoxWidget infoboxWidget;
@@ -77,8 +73,6 @@ protected:
     Gtk::Paned m_VPaned_Container{Gtk::ORIENTATION_HORIZONTAL};
 
     // Signal handlers:
-    bool on_timeout(int timer_number);
-
     void on_button_loadTracklayout();
     void on_button_deleteTracklayout();
     void on_button_saveTracklayout();
@@ -87,7 +81,6 @@ protected:
     bool on_key_press_event(GdkEventKey *key_event);
 
     // msg-response
-    void setHardwareState(const SystemHardwareStateChanged &data);
     void setTrackLayouts(const LayoutGetLayoutsRes &data);
     void setTrackLayout(const LayoutCreateLayout &data);
     void updateTrackLayout(const LayoutUpdateLayout &data);
