@@ -42,11 +42,7 @@ namespace {
         "along with this program. If not, see <http://www.gnu.org/licenses/agpl.txt>.";
 }
 
-FrmBase::FrmBase(EndpointPtr mhp):
-    msgEndpoint(mhp), m_Button_About("About..."),
-    m_Label_Connectivity_HW(" \xe2\x96\x84"), m_Label_Connectivity_SW(" \xe2\x96\x84"),
-    m_VBox(Gtk::ORIENTATION_VERTICAL, 6), m_HBox(Gtk::ORIENTATION_HORIZONTAL, 6)
-{
+FrmBase::FrmBase(EndpointPtr mhp): msgEndpoint(mhp) {
     // Add the message label to the InfoBar:
     auto infoBarContainer = dynamic_cast<Gtk::Container*>(m_InfoBar.get_content_area());
     if(infoBarContainer) {
@@ -85,19 +81,11 @@ FrmBase::FrmBase(EndpointPtr mhp):
 
     registry.registerHandler<GuiSystemNotice>(std::bind(&FrmBase::setSystemNotice, this, std::placeholders::_1));
     registry.registerHandler<ClientError>(std::bind(&FrmBase::setErrorNotice, this, std::placeholders::_1));
-    registry.registerHandler<SystemHardwareStateChanged>(std::bind(&FrmMain::setHardwareState, this, std::placeholders::_1));
+    registry.registerHandler<SystemHardwareStateChanged>(std::bind(&FrmBase::setHardwareState, this, std::placeholders::_1));
     m_InfoBar.hide();
 }
 
-std::string FrmBase::getDisplayMessage(std::string caption, std::string text) {
-    std::replace(caption.begin(), caption.end(), '<', '"');
-    std::replace(caption.begin(), caption.end(), '>', '"');
-    std::replace(text.begin(), text.end(), '<', '"');
-    std::replace(text.begin(), text.end(), '>', '"');
-
-    std::stringstream ss;
-    ss << "<b>" << caption << "!</b>\n" << text;
-    return std::move(ss.str());
+FrmBase::~FrmBase() {
 }
 
 void FrmBase::initAboutDialog() {
@@ -121,6 +109,17 @@ void FrmBase::initAboutDialog() {
     m_Dialog.signal_response().connect(sigc::mem_fun(*this, &FrmBase::on_about_dialog_response));
 
     m_Button_About.grab_focus();
+}
+
+std::string FrmBase::getDisplayMessage(std::string caption, std::string text) {
+    std::replace(caption.begin(), caption.end(), '<', '"');
+    std::replace(caption.begin(), caption.end(), '>', '"');
+    std::replace(text.begin(), text.end(), '<', '"');
+    std::replace(text.begin(), text.end(), '>', '"');
+
+    std::stringstream ss;
+    ss << "<b>" << caption << "!</b>\n" << text;
+    return std::move(ss.str());
 }
 
 void FrmBase::setNotice(Gtk::MessageType noticeType, std::string caption, std::string text) {
@@ -208,9 +207,7 @@ bool FrmBase::on_timeout(int) {
             m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
             m_Label_Connectivity_SW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
             m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
-            msgEndpoint->sendMsg(SystemGetHardwareState{});
-            msgEndpoint->sendMsg(LayoutGetLayoutsReq{});
-            msgEndpoint->sendMsg(SystemGetHardwareState{});
+            initialSend();
             setSensitive(true);
 
             connected = true;
