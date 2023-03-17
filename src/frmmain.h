@@ -89,4 +89,5 @@ protected:
     void setBlockList(const ControlGetBlockListRes &data);
     void setHasChanged();
     void setHasSaved();
+    void initialSend();
 };
