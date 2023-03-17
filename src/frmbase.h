@@ -32,8 +32,7 @@
 class FrmBase: public Gtk::Window {
 public:
     FrmBase(EndpointPtr mhp);
-    virtual ~FrmBase() {
-    }
+    virtual ~FrmBase();
 
 protected:
     EndpointPtr msgEndpoint;
@@ -41,23 +40,22 @@ protected:
     Registry registry;
 
     // about
-    Gtk::Button m_Button_About;
+    Gtk::Button      m_Button_About{"About..."};
     Gtk::AboutDialog m_Dialog;
 
     // info-bar
-    Gtk::InfoBar m_InfoBar;
-    Gtk::Label m_Label_InfoBarMessage;
+    Gtk::InfoBar     m_InfoBar;
+    Gtk::Label       m_Label_InfoBarMessage;
 
-    Gtk::Button    m_Button_Emergency;
+    Gtk::Button      m_Button_Emergency{"Nothalt"};
 
     // status label
-    Gtk::Label m_Label_Connectivity_HW;
-    Gtk::Label m_Label_Connectivity_SW;
+    Gtk::Label       m_Label_Connectivity_HW{" \xe2\x96\x84"};
+    Gtk::Label       m_Label_Connectivity_SW{" \xe2\x96\x84"};
 
-    Gtk::ButtonBox m_ButtonBox;
-
-    Gtk::Box       m_VBox;
-    Gtk::Box       m_HBox;
+    Gtk::ButtonBox   m_ButtonBox;
+    Gtk::Box         m_VBox{Gtk::ORIENTATION_VERTICAL, 6};
+    Gtk::Box         m_HBox{Gtk::ORIENTATION_HORIZONTAL, 6};
 
     std::string getDisplayMessage(std::string caption, std::string text);
 
@@ -69,7 +67,8 @@ protected:
     void setSystemNotice(const GuiSystemNotice &data);
     void setErrorNotice(const ClientError &data);
 
-    virtual void setSensitive(bool) {};
+    virtual void setSensitive(bool) {}
+    virtual void initialSend() {}
     void setHardwareState(const SystemHardwareStateChanged &data);
 
     // Signal handlers:
