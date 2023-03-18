@@ -59,8 +59,6 @@ protected:
 
     std::string getDisplayMessage(std::string caption, std::string text);
 
-    void setNotice(Gtk::MessageType noticeType, std::string caption, std::string text);
-
     void initAboutDialog();
 
     // msg-response
@@ -69,7 +67,9 @@ protected:
 
     virtual void setSensitive(bool) {}
     virtual void initialSend() {}
+
     void setHardwareState(const SystemHardwareStateChanged &data);
+    void setNotice(Gtk::MessageType noticeType, std::string caption, std::string text);
 
     // Signal handlers:
     void on_about_dialog_response(int response_id);
