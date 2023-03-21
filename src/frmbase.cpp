@@ -66,6 +66,8 @@ FrmBase::FrmBase(EndpointPtr mhp): msgEndpoint(mhp) {
     m_InfoBar.signal_response().connect(sigc::mem_fun(*this, &FrmBase::on_infobar_response));
     m_InfoBar.add_button("_OK", 0);
 
+    m_VBox.pack_start(m_InfoBar, Gtk::PACK_SHRINK);
+
     // about-dialog
     m_ButtonBox.pack_start(m_Button_About, Gtk::PACK_EXPAND_WIDGET, 5);
     m_ButtonBox.set_layout(Gtk::BUTTONBOX_END);
@@ -123,7 +125,7 @@ std::string FrmBase::getDisplayMessage(std::string caption, std::string text) {
 }
 
 void FrmBase::setNotice(Gtk::MessageType noticeType, std::string caption, std::string text) {
-   // m_Notice_Logger.setNotice(noticeType, caption, text);
+    //m_Notice_Logger.setNotice(noticeType, caption, text);
 
     m_Label_InfoBarMessage.set_markup(getDisplayMessage(caption, text));
     m_InfoBar.set_message_type(noticeType);
