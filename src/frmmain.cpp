@@ -47,8 +47,6 @@ FrmMain::FrmMain(EndpointPtr mhp): FrmBase{mhp},
     set_size_request(600, 400);
     set_position(Gtk::WIN_POS_CENTER);
 
-    add(m_VBox);
-
     m_VBox.pack_start(m_VPaned_Container);
     m_VPaned_Container.add1(layoutWidget);
 
@@ -64,8 +62,6 @@ FrmMain::FrmMain(EndpointPtr mhp): FrmBase{mhp},
 
     m_VPaned_Container.add2(m_VBox_Toolbox);
     m_VPaned_Container.set_position(450);
-
-    m_VBox.pack_start(m_HBox, Gtk::PACK_SHRINK);
 
     m_Button_Load.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_loadTracklayout));
     m_Button_Delete.signal_clicked().connect(sigc::mem_fun(*this, &FrmMain::on_button_deleteTracklayout));
