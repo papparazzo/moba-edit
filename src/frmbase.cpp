@@ -49,7 +49,10 @@ FrmBase::FrmBase(EndpointPtr mhp): msgEndpoint(mhp) {
         infoBarContainer->add(m_Label_InfoBarMessage);
     }
 
+    add(m_VBox);    
+    
     m_VBox.pack_start(m_InfoBar, Gtk::PACK_SHRINK);
+    m_VBox.pack_end(m_HBox, Gtk::PACK_SHRINK);
     m_HBox.pack_end(m_ButtonBox, Gtk::PACK_SHRINK);
 
     m_HBox.pack_start(m_Label_Connectivity_SW, Gtk::PACK_SHRINK);
