@@ -241,6 +241,7 @@ void FrmBase::setHardwareState(const SystemHardwareStateChanged &data) {
         m_Button_Emergency.set_sensitive(false);
         return;
     }
+    
     if(data.hardwareState == SystemHardwareStateChanged::HardwareState::MANUEL) {
         m_Label_Connectivity_HW.override_color(Gdk::RGBA("green"), Gtk::STATE_FLAG_NORMAL);
         m_Label_Connectivity_SW.override_color(Gdk::RGBA("gold"), Gtk::STATE_FLAG_NORMAL);
@@ -252,4 +253,8 @@ void FrmBase::setHardwareState(const SystemHardwareStateChanged &data) {
         m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> automatisch");
         m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> automatisch");
     }
+    if(data.hardwareState == SystemHardwareStateChanged::HardwareState::AUTOMATIC) {
+        systemState = SystemState::AUTOMATIC;
+    }
+    setSystemState(systemState);
 }
