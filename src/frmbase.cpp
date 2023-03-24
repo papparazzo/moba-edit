@@ -50,23 +50,20 @@ FrmBase::FrmBase(EndpointPtr mhp): msgEndpoint(mhp) {
     }
 
     m_VBox.pack_start(m_InfoBar, Gtk::PACK_SHRINK);
-
     m_HBox.pack_end(m_ButtonBox, Gtk::PACK_SHRINK);
-
-    m_HBox.pack_start(m_Label_Connectivity_HW, Gtk::PACK_SHRINK);
-    m_Label_Connectivity_HW.set_justify(Gtk::JUSTIFY_LEFT);
-    m_Label_Connectivity_HW.override_color(Gdk::RGBA("Gray"), Gtk::STATE_FLAG_NORMAL);
-    m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> unbekannt");
 
     m_HBox.pack_start(m_Label_Connectivity_SW, Gtk::PACK_SHRINK);
     m_Label_Connectivity_SW.set_justify(Gtk::JUSTIFY_LEFT);
-    m_Label_Connectivity_SW.override_color(Gdk::RGBA("Gray"), Gtk::STATE_FLAG_NORMAL);
+    m_Label_Connectivity_SW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
     m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> unbekannt");
+
+    m_HBox.pack_start(m_Label_Connectivity_HW, Gtk::PACK_SHRINK);
+    m_Label_Connectivity_HW.set_justify(Gtk::JUSTIFY_LEFT);
+    m_Label_Connectivity_HW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
+    m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> unbekannt");
 
     m_InfoBar.signal_response().connect(sigc::mem_fun(*this, &FrmBase::on_infobar_response));
     m_InfoBar.add_button("_OK", 0);
-
-    m_VBox.pack_start(m_InfoBar, Gtk::PACK_SHRINK);
 
     // about-dialog
     m_ButtonBox.pack_start(m_Button_About, Gtk::PACK_EXPAND_WIDGET, 5);
@@ -75,7 +72,6 @@ FrmBase::FrmBase(EndpointPtr mhp): msgEndpoint(mhp) {
 
     m_ButtonBox.pack_start(m_Button_Emergency, Gtk::PACK_EXPAND_WIDGET, 5);
     m_Button_Emergency.signal_clicked().connect(sigc::mem_fun(*this, &FrmBase::on_button_emergency_clicked));
-    m_Button_Emergency.set_label("Nothalt");
 
     setSensitive(false);
     m_Button_Emergency.set_sensitive(false);
@@ -125,7 +121,7 @@ std::string FrmBase::getDisplayMessage(std::string caption, std::string text) {
 }
 
 void FrmBase::setNotice(Gtk::MessageType noticeType, std::string caption, std::string text) {
-    //m_Notice_Logger.setNotice(noticeType, caption, text);
+    listNotice(noticeType, caption, text);
 
     m_Label_InfoBarMessage.set_markup(getDisplayMessage(caption, text));
     m_InfoBar.set_message_type(noticeType);
@@ -153,6 +149,69 @@ void FrmBase::setSystemNotice(const GuiSystemNotice &data) {
             break;
     }
     setNotice(mt, data.caption, data.text);
+}
+
+void FrmBase::on_about_dialog_response(int) {
+    m_Dialog.hide();
+}
+
+bool FrmBase::on_timeout(int) {
+    static bool connected = false;
+
+    try {
+        if(!connected) {
+            msgEndpoint->connect();
+            systemState = SystemState::ERROR;
+
+            m_Label_Connectivity_HW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
+            m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
+            m_Label_Connectivity_SW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
+            m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
+            initialSend();
+            setSensitive(true);
+
+            connected = true;
+            return true;
+        }
+        registry.handleMsg(msgEndpoint->recieveMsg());
+
+    } catch(std::exception &e) {
+        if(connected) {
+            m_Button_Emergency.set_sensitive(false);
+            m_Label_Connectivity_HW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
+            m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zum Server");
+            m_Label_Connectivity_SW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
+            m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zum Server");
+
+            systemState = SystemState::NO_CONNECT;
+            m_InfoBar.set_message_type(Gtk::MESSAGE_ERROR);
+            std::stringstream ss;
+            ss << "<b>msg-handler exception:</b>\n" << e.what();
+            m_Label_InfoBarMessage.set_markup(ss.str());
+            m_InfoBar.show();
+            setSensitive(false);
+            connected = false;
+        }
+    }
+    return true;
+}
+
+void FrmBase::on_button_about_clicked() {
+    m_Dialog.show();
+    m_Dialog.present();
+}
+
+void FrmBase::on_button_emergency_clicked() {
+    if(m_Button_Emergency.get_label() == "Nothalt") {
+        msgEndpoint->sendMsg(SystemTriggerEmergencyStop{});
+    } else {
+        msgEndpoint->sendMsg(SystemReleaseEmergencyStop{});
+    }
+}
+
+void FrmBase::on_infobar_response(int) {
+    m_Label_InfoBarMessage.set_text("");
+    m_InfoBar.hide();
 }
 
 void FrmBase::setHardwareState(const SystemHardwareStateChanged &data) {
@@ -194,63 +253,3 @@ void FrmBase::setHardwareState(const SystemHardwareStateChanged &data) {
         m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> automatisch");
     }
 }
-
-void FrmBase::on_about_dialog_response(int) {
-    m_Dialog.hide();
-}
-
-bool FrmBase::on_timeout(int) {
-    static bool connected = false;
-
-    try {
-        if(!connected) {
-            msgEndpoint->connect();
-            m_Label_Connectivity_HW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
-            m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
-            m_Label_Connectivity_SW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
-            m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
-            initialSend();
-            setSensitive(true);
-
-            connected = true;
-            return true;
-        }
-        registry.handleMsg(msgEndpoint->recieveMsg());
-
-    } catch(std::exception &e) {
-        if(connected) {
-            m_Button_Emergency.set_sensitive(false);
-            m_Label_Connectivity_HW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
-            m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zum Server");
-            m_Label_Connectivity_SW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
-            m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zum Server");
-            m_InfoBar.set_message_type(Gtk::MESSAGE_ERROR);
-            std::stringstream ss;
-            ss << "<b>msg-handler exception:</b>\n" << e.what();
-            m_Label_InfoBarMessage.set_markup(ss.str());
-            m_InfoBar.show();
-            setSensitive(false);
-            connected = false;
-        }
-    }
-    return true;
-}
-
-void FrmBase::on_button_about_clicked() {
-    m_Dialog.show();
-    m_Dialog.present();
-}
-
-void FrmBase::on_button_emergency_clicked() {
-    if(m_Button_Emergency.get_label() == "Nothalt") {
-        msgEndpoint->sendMsg(SystemTriggerEmergencyStop{});
-    } else {
-        msgEndpoint->sendMsg(SystemReleaseEmergencyStop{});
-    }
-}
-
-void FrmBase::on_infobar_response(int) {
-    m_Label_InfoBarMessage.set_text("");
-    m_InfoBar.hide();
-}
-
