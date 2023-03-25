@@ -56,10 +56,10 @@ protected:
     InfoBoxWidget infoboxWidget;
 
     Gtk::Box    m_VBox_Toolbox;
-    Gtk::Button m_Button_New;
-    Gtk::Button m_Button_Load;
-    Gtk::Button m_Button_Delete;
-    Gtk::Button m_Button_Save;
+    Gtk::Button m_Button_New{"Neu..."};
+    Gtk::Button m_Button_Load{"Laden..."};
+    Gtk::Button m_Button_Delete{"Löschen..."};
+    Gtk::Button m_Button_Save{"Speichern.."};
 
     // load tracklayout
     FrmSelect frmSelect;

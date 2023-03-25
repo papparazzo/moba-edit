@@ -37,8 +37,8 @@
 
 
 FrmMain::FrmMain(EndpointPtr mhp): FrmBase{mhp},
-    m_VBox_Toolbox(Gtk::ORIENTATION_VERTICAL, 6), m_Button_New("Neu..."), m_Button_Load("Laden..."),
-    m_Button_Delete("Löschen..."), m_Button_Save{"Speichern.."},
+    m_VBox_Toolbox(Gtk::ORIENTATION_VERTICAL, 6),
+    
     frmSelect(mhp), frmNew(mhp), selectedTrackLayoutId(-1), hasChanged(false) {
     sigc::slot<bool> my_slot = sigc::bind(sigc::mem_fun(*this, &FrmMain::on_timeout), 1);
     sigc::connection conn = Glib::signal_timeout().connect(my_slot, 25); // 25 ms
