@@ -35,17 +35,8 @@
 #include "moba/direction.h"
 #include "moba/position.h"
 
-
-FrmMain::FrmMain(EndpointPtr mhp): FrmBase{mhp},
-    m_VBox_Toolbox(Gtk::ORIENTATION_VERTICAL, 6),
-    
-    frmSelect(mhp), frmNew(mhp), selectedTrackLayoutId(-1), hasChanged(false) {
-    sigc::slot<bool> my_slot = sigc::bind(sigc::mem_fun(*this, &FrmMain::on_timeout), 1);
-    sigc::connection conn = Glib::signal_timeout().connect(my_slot, 25); // 25 ms
-
-    set_border_width(10);
+FrmMain::FrmMain(EndpointPtr mhp): FrmBase{mhp}, frmSelect{mhp}, frmNew{mhp} {
     set_size_request(600, 400);
-    set_position(Gtk::WIN_POS_CENTER);
 
     m_VBox.pack_start(m_VPaned_Container);
     m_VPaned_Container.add1(layoutWidget);

@@ -55,7 +55,7 @@ protected:
     ToolboxWidget toolboxWidget;
     InfoBoxWidget infoboxWidget;
 
-    Gtk::Box    m_VBox_Toolbox;
+    Gtk::Box    m_VBox_Toolbox{Gtk::ORIENTATION_VERTICAL, 6};
     Gtk::Button m_Button_New{"Neu..."};
     Gtk::Button m_Button_Load{"Laden..."};
     Gtk::Button m_Button_Delete{"Löschen..."};
@@ -67,8 +67,8 @@ protected:
     // create new one
     FrmNew frmNew;
 
-    int selectedTrackLayoutId;
-    bool hasChanged;
+    int selectedTrackLayoutId{-1};
+    bool hasChanged{false};
 
     Gtk::Paned m_VPaned_Container{Gtk::ORIENTATION_HORIZONTAL};
 
