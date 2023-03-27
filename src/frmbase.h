@@ -72,6 +72,7 @@ protected:
     std::string getDisplayMessage(std::string caption, std::string text);
 
     void initAboutDialog();
+    void finishForm();
 
     // msg-response
     void setNotice(Gtk::MessageType noticeType, std::string caption, std::string text);

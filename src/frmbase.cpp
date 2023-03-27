@@ -43,6 +43,8 @@ namespace {
 }
 
 FrmBase::FrmBase(EndpointPtr mhp): systemState{SystemState::NO_CONNECT}, msgEndpoint{mhp} {
+
+    set_icon_name(PACKAGE_NAME);
     set_title(PACKAGE_NAME);
     set_border_width(10);
     set_position(Gtk::WIN_POS_CENTER);
@@ -91,12 +93,16 @@ FrmBase::FrmBase(EndpointPtr mhp): systemState{SystemState::NO_CONNECT}, msgEndp
     registry.registerHandler<GuiSystemNotice>(std::bind(&FrmBase::setSystemNotice, this, std::placeholders::_1));
     registry.registerHandler<ClientError>(std::bind(&FrmBase::setErrorNotice, this, std::placeholders::_1));
     registry.registerHandler<SystemHardwareStateChanged>(std::bind(&FrmBase::setHardwareState, this, std::placeholders::_1));
-    m_InfoBar.hide();
 }
 
 FrmBase::~FrmBase() {
 }
 
+void FrmBase::finishForm() {
+    show_all_children();
+    m_InfoBar.hide();
+}
+ 
 void FrmBase::initAboutDialog() {
     m_Dialog.set_transient_for(*this);
 
@@ -109,7 +115,7 @@ void FrmBase::initAboutDialog() {
     m_Dialog.set_website("<pappi-@gmx.de>");
     m_Dialog.set_website_label("pappi-@gmx.de");
 
-    m_Dialog.set_logo(Gdk::Pixbuf::create_from_file("/usr/local/share/icons/hicolor/scalable/apps/moba-edit.svg"));
+    m_Dialog.set_logo(Gdk::Pixbuf::create_from_file("/usr/local/share/icons/hicolor/scalable/apps/" PACKAGE_NAME ".svg"));
 
     std::vector<Glib::ustring> list_authors;
     list_authors.push_back("Stefan Paproth");
@@ -168,6 +174,7 @@ void FrmBase::setHardwareState(const SystemHardwareStateChanged &data) {
         m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Keine Verbindung zur Hardware");
         systemState = SystemState::ERROR;
         m_Button_Emergency.set_sensitive(false);
+        setSystemState(systemState);
         return;
     }
     m_Button_Emergency.set_sensitive(true);
@@ -176,6 +183,7 @@ void FrmBase::setHardwareState(const SystemHardwareStateChanged &data) {
         m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Nohalt ausgelöst");
         systemState = SystemState::EMERGENCY_STOP;
         m_Button_Emergency.set_label("Freigabe");
+        setSystemState(systemState);
         return;
     }
     m_Button_Emergency.set_label("Nothalt");
@@ -184,21 +192,16 @@ void FrmBase::setHardwareState(const SystemHardwareStateChanged &data) {
         m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> Energiesparmodus");
         systemState = SystemState::STANDBY;
         m_Button_Emergency.set_sensitive(false);
-        return;
     }
     
     if(data.hardwareState == SystemHardwareStateChanged::HardwareState::MANUEL) {
-        /*
         m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> manuell");
         m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> manuell");
-    } else if(data.hardwareState == SystemHardwareStateChanged::HardwareState::AUTOMATIC) {
-        m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> automatisch");
-        m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> automatisch");
-        */
         systemState = SystemState::MANUEL;
-        return;
     }
     if(data.hardwareState == SystemHardwareStateChanged::HardwareState::AUTOMATIC) {
+        m_Label_Connectivity_HW.set_tooltip_markup("<b>Status:</b> automatisch");
+        m_Label_Connectivity_SW.set_tooltip_markup("<b>Status:</b> automatisch");
         systemState = SystemState::AUTOMATIC;
     }
     setSystemState(systemState);
