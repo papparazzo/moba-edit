@@ -33,7 +33,7 @@
 namespace {
     moba::AppData appData = {
         PACKAGE_NAME,
-        moba::Version(PACKAGE_VERSION),
+        moba::Version{PACKAGE_VERSION},
         __DATE__,
         __TIME__,
         "::1",
@@ -47,8 +47,6 @@ int main(int argc, char *argv[]) {
     auto app = Gtk::Application::create(argc, argv, "org.moba.edit");
 
     FrmMain frmMain{endpoint};
-    frmMain.set_title(appData.appName);
-    frmMain.set_border_width(10);
     frmMain.set_default_size(400, 200);
 
     return app->run(frmMain);
