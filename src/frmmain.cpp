@@ -66,7 +66,7 @@ FrmMain::FrmMain(EndpointPtr mhp): FrmBase{mhp}, frmSelect{mhp}, frmNew{mhp} {
     registry.registerHandler<LayoutCreateLayout>(std::bind(&FrmMain::setTrackLayout, this, std::placeholders::_1));
     registry.registerHandler<LayoutUpdateLayout>(std::bind(&FrmMain::updateTrackLayout, this, std::placeholders::_1));
     registry.registerHandler<LayoutGetLayoutRes>(std::bind(&FrmMain::setCurrentLayout, this, std::placeholders::_1));
-    show_all_children();
+    finishForm();
 }
 
 void FrmMain::on_button_loadTracklayout() {
