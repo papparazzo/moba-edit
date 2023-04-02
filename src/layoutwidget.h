@@ -55,6 +55,18 @@ public:
         setCursorRel(pos.x, pos.y);
     }
 
+    int getCursorX() const {
+        return cursor_x;
+    }
+
+    int getCursorY() const {
+        return cursor_y;
+    }
+    
+    int getCurSymbolId() const {
+        return cur_symbolId;
+    }
+    
     void setActive(bool active) {
         isActive = active;
         refresh();
@@ -72,8 +84,9 @@ protected:
     SymbolsPtr symbols;
     BlockContactDataMapPtr blockContacts;
 
-    int cursor_x;
-    int cursor_y;
+    int cursor_x{0};
+    int cursor_y{0};
+    int cur_symbolId{0};
 
     //Override default signal handler:
     bool on_button_press_event(GdkEventButton * event);

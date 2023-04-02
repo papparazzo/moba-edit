@@ -70,8 +70,11 @@ void LayoutWidget::setCursorAbs(int x, int y) {
     ss << "x: " << x << ", y: " << y;    
     
     auto s = symbols->find({x, y});
-    if(s != symbols->end()) {
+    if(s == symbols->end()) {
+        cur_symbolId = 0;
+    } else {
         ss << " #" << s->second.id;
+        cur_symbolId = s->second.id;
     }
 
     if(blockContacts) {
@@ -182,6 +185,6 @@ bool LayoutWidget::on_button_press_event(GdkEventButton *event) {
         );
         refresh();
     }
-    // The event has been handled.
-    return true;
+    // The event has not been handled.
+    return false;
 }
