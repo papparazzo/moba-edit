@@ -98,7 +98,7 @@ bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     cr->set_source_rgb(0.0, 0.0, 0.0);
     cr->paint();
 
-    for(const auto& symbol : *symbols) {
+    for(const auto& symbol: *symbols) {
         auto image = getImage(static_cast<int>(symbol.second.symbol));
 
         Gdk::Cairo::set_source_pixbuf(
@@ -108,15 +108,24 @@ bool LayoutWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
             symbol.first.second * SYMBOL_SIZE
         );
 
-        cr->rectangle(symbol.first.first * SYMBOL_SIZE, symbol.first.second * SYMBOL_SIZE, image->get_width(), image->get_height());
+        cr->rectangle(
+            symbol.first.first * SYMBOL_SIZE,
+            symbol.first.second * SYMBOL_SIZE,
+            image->get_width(),
+            image->get_height()
+        );
         cr->fill();
 
         if(blockContacts && blockContacts->find(symbol.first) != blockContacts->end()) {
             cr->set_source_rgba(1, 0, 0, 0.3);
-            cr->rectangle(symbol.first.first * SYMBOL_SIZE, symbol.first.second * SYMBOL_SIZE, image->get_width(), image->get_height());
+            cr->rectangle(
+                symbol.first.first * SYMBOL_SIZE, 
+                symbol.first.second * SYMBOL_SIZE, 
+                image->get_width(), 
+                image->get_height()
+            );
             cr->fill();
         }
-
     }
 
     cr->set_line_width(1.0);
