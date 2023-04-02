@@ -67,8 +67,8 @@ void LayoutWidget::setCursorAbs(int x, int y) {
     cursor_y = y;
 
     std::stringstream ss;
-    ss << "x: " << x << ", y: " << y;
-
+    ss << "x: " << x << ", y: " << y;    
+    
     auto s = symbols->find({x, y});
     if(s != symbols->end()) {
         ss << " #" << s->second.id;
@@ -173,8 +173,7 @@ Glib::RefPtr<Gdk::Pixbuf> LayoutWidget::getImage(size_t i) {
     return image;
 }
 
-bool LayoutWidget::on_button_press_event(GdkEventButton *event)
-{
+bool LayoutWidget::on_button_press_event(GdkEventButton *event) {
     // Check if the event is a left(1) button click.
     if((event->type == GDK_BUTTON_PRESS) && (event->button == 1)) {
         setCursorAbs(
