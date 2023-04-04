@@ -50,8 +50,16 @@ void InfoBoxWidget::clear() {
 }
 
 void InfoBoxWidget::setInfobox(int x, int y, int id, int symbol) {
-    lblName[1][0].set_label(std::to_string(symbol));
-    lblName[1][1].set_label(std::to_string(id));
-    lblName[1][2].set_label(std::to_string(x));
-    lblName[1][3].set_label(std::to_string(y));
+    setLabel(0, symbol);
+    setLabel(1, id);
+    setLabel(2, x);
+    setLabel(3, y);
+}
+
+void InfoBoxWidget::setLabel(int pos, int value) {
+    if(value == 0) {
+        lblName[1][pos].set_label("-");
+    } else {
+        lblName[1][pos].set_label(std::to_string(value));        
+    } 
 }
