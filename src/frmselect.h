@@ -41,11 +41,23 @@ public:
     virtual ~FrmSelect();
 
     void addTracklayout(
-        int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, bool active, const std::string &description
+        int id,
+        const std::string &created,
+        const std::string &modified,
+        const std::string &name,
+        bool locked,
+        bool active, 
+        const std::string &description
     );
 
     void updateTracklayout(
-        int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, bool active, const std::string &description
+        int id,
+        const std::string &created, 
+        const std::string &modified,
+        const std::string &name, 
+        bool locked, 
+        bool active, 
+        const std::string &description
     );
     void deleteTracklayout(int id);
     void setLockStatus(int id, bool locked);
@@ -57,7 +69,7 @@ public:
     void show(Mode mode);
 
 protected:
-    const static int BUTTON_ID_LOAD = 1;
+    const static int BUTTON_ID_LOAD   = 1;
     const static int BUTTON_ID_CANCEL = 2;
 
     Gtk::Paned                   m_VPaned_Tracklayouts{Gtk::ORIENTATION_VERTICAL};

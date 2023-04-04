@@ -23,7 +23,7 @@
 #include <string>
 #include "moba/layoutmessages.h"
 
-FrmSelect::FrmSelect(EndpointPtr mhp) : msgEndpoint(mhp) {
+FrmSelect::FrmSelect(EndpointPtr mhp): msgEndpoint{mhp} {
 
     set_title("Gleisplan laden");
     set_border_width(10);
@@ -75,7 +75,15 @@ void FrmSelect::initListbox() {
     refTreeSelection->signal_changed().connect(sigc::mem_fun(*this, &FrmSelect::on_selection_changed));
 }
 
-void FrmSelect::updateTracklayout(int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, bool active, const std::string &description) {
+void FrmSelect::updateTracklayout(
+    int id,
+    const std::string &created, 
+    const std::string &modified,
+    const std::string &name, 
+    bool locked, 
+    bool active, 
+    const std::string &description
+) {
     if(active) {
         deactivateLayout();
     }
@@ -160,7 +168,13 @@ void FrmSelect::show(FrmSelect::Mode mode) {
 }
 
 void FrmSelect::addTracklayout(
-    int id, const std::string &created, const std::string &modified, const std::string &name, bool locked, bool active, const std::string &description
+    int id,
+    const std::string &created, 
+    const std::string &modified,
+    const std::string &name, 
+    bool locked, 
+    bool active,
+    const std::string &description
 ) {
     if(active) {
         deactivateLayout();
@@ -178,7 +192,9 @@ void FrmSelect::addTracklayout(
 }
 
 void FrmSelect::on_selection_changed() {
-    Glib::RefPtr<Gtk::TreeSelection> selection = m_TreeView_Tracklayouts.get_selection();
+    Glib::RefPtr<Gtk::TreeSelection> selection =
+        m_TreeView_Tracklayouts.get_selection();
+    
     Gtk::TreeModel::iterator iter = selection->get_selected();
     if(!iter) {
         m_Button_Action->set_sensitive(false);
@@ -186,7 +202,10 @@ void FrmSelect::on_selection_changed() {
     }
     Gtk::TreeModel::Row row = *iter;
     currentLayout = (int)row[m_Columns_Tracklayouts.m_col_id];
-    m_Label_Description.set_text((std::string)row[m_Columns_Tracklayouts.m_col_data]);
+    m_Label_Description.set_text(
+        (std::string)row[m_Columns_Tracklayouts.m_col_data]
+    );
+    
     get_widget_for_response(BUTTON_ID_LOAD)->set_sensitive(true);
     if((bool)row[m_Columns_Tracklayouts.m_col_locked]) {
         m_Button_Action->set_sensitive(false);
@@ -202,8 +221,16 @@ void FrmSelect::on_button_loadTracklayout() {
         return;
     }
 
-    Gtk::MessageDialog dialog(*this, "Gleisplan löschen", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
-    dialog.set_secondary_text("Soll der ausgewählte Gleisplan gelöscht werden?");
+    Gtk::MessageDialog dialog(
+        *this,
+        "Gleisplan löschen",
+        false, 
+        Gtk::MESSAGE_QUESTION, 
+        Gtk::BUTTONS_YES_NO
+    );
+    dialog.set_secondary_text(
+        "Soll der ausgewählte Gleisplan gelöscht werden?"
+    );
 
     if(dialog.run() == Gtk::RESPONSE_YES) {
         msgEndpoint->sendMsg(LayoutDeleteLayout{currentLayout});
