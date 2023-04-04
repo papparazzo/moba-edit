@@ -66,24 +66,19 @@ void LayoutWidget::setCursorAbs(int x, int y) {
     cursor_x = x;
     cursor_y = y;
 
-    std::stringstream ss;
-    ss << "x: " << x << ", y: " << y;    
-    
     auto s = symbols->find({x, y});
     if(s == symbols->end()) {
         cur_symbolId = 0;
     } else {
-        ss << " #" << s->second.id;
         cur_symbolId = s->second.id;
     }
 
     if(blockContacts) {
         auto b = blockContacts->find({x, y});
         if(b != blockContacts->end()) {
-            ss << " [" << b->second->id << "]";
+//            ss << " [" << b->second->id << "]";
         }
     }
-    set_tooltip_text(ss.str());
 }
 
 void LayoutWidget::setCursorRel(int x, int y) {
