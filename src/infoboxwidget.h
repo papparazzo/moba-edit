@@ -22,7 +22,7 @@
 
 #include <gtkmm.h>
 
-class InfoBoxWidget: public Gtk::HBox {
+class InfoBoxWidget: public Gtk::Box {
 public:
     InfoBoxWidget();
     InfoBoxWidget(const InfoBoxWidget&) = delete;
@@ -34,7 +34,6 @@ public:
     void clear();
 
 private:
-    // server-data
     Gtk::Label lblName[2][4];
     Gtk::VBox  m_VBox_ServerDataKey{Gtk::ORIENTATION_VERTICAL, 6};
     Gtk::VBox  m_VBox_ServerDataValue{Gtk::ORIENTATION_VERTICAL, 6};
