@@ -112,6 +112,21 @@ void FrmMain::on_button_newTracklayout() {
 
 ////////////////////////////////////////////////////////////////////////////////
 // <editor-fold defaultstate="collapsed" desc="call-back-methodes">
+bool FrmMain::on_button_press_event(GdkEventButton *event)
+{
+    // Check if the event is a left(1) button click.
+    if((event->type == GDK_BUTTON_PRESS) && (event->button == 1)) {
+        infoboxWidget.setInfobox(
+            layoutWidget.getCursorX(),
+            layoutWidget.getCursorY(),
+            layoutWidget.getCurSymbolId(),
+            0
+        );
+    }
+    // The event has been handled.
+    return true;
+}
+
 bool FrmMain::on_key_press_event(GdkEventKey* key_event) {
     switch(key_event->keyval) {
         case GDK_KEY_Delete:
@@ -166,6 +181,13 @@ bool FrmMain::on_key_press_event(GdkEventKey* key_event) {
             return Gtk::Window::on_key_press_event(key_event);
 
     }
+    infoboxWidget.setInfobox(
+        layoutWidget.getCursorX(), 
+        layoutWidget.getCursorY(), 
+        layoutWidget.getCurSymbolId(),
+        0
+    );
+    
     layoutWidget.refresh();
     return true;
 }

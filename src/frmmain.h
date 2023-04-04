@@ -79,8 +79,9 @@ protected:
     void on_button_newTracklayout();
 
     bool on_key_press_event(GdkEventKey *key_event);
+    bool on_button_press_event(GdkEventButton *event);
 
-    // msg-response
+    // message-response
     void setTrackLayouts(const LayoutGetLayoutsRes &data);
     void setTrackLayout(const LayoutCreateLayout &data);
     void updateTrackLayout(const LayoutUpdateLayout &data);
