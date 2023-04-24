@@ -69,11 +69,11 @@ FrmBase::FrmBase(EndpointPtr mhp): systemState{SystemState::NO_CONNECT}, msgEndp
 
     m_HBox.pack_start(m_Label_Connectivity_SW, Gtk::PACK_SHRINK);
     m_Label_Connectivity_SW.set_justify(Gtk::JUSTIFY_LEFT);
-    m_Label_Connectivity_SW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
+    m_Label_Connectivity_SW.set_markup("<span foreground=\"gray\"> \xe2\x96\x84</span>");
 
     m_HBox.pack_start(m_Label_Connectivity_HW, Gtk::PACK_SHRINK);
     m_Label_Connectivity_HW.set_justify(Gtk::JUSTIFY_LEFT);
-    m_Label_Connectivity_HW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
+    m_Label_Connectivity_HW.set_markup("<span foreground=\"gray\"> \xe2\x96\x84</span>");
 
     m_InfoBar.signal_response().connect(sigc::mem_fun(*this, &FrmBase::on_infobar_response));
     m_InfoBar.add_button("_OK", 0);
@@ -261,53 +261,53 @@ bool FrmBase::on_timeout_status(int) {
     switch(systemState) {
         case SystemState::NO_CONNECT:
             if(on) {
-                m_Label_Connectivity_SW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
+                m_Label_Connectivity_SW.set_markup("<span foreground=\"red\"> \xe2\x96\x84</span>");
             } else {
-                m_Label_Connectivity_SW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
+                m_Label_Connectivity_SW.set_markup("<span foreground=\"gray\"> \xe2\x96\x84</span>");
             }
-            m_Label_Connectivity_HW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
+            m_Label_Connectivity_HW.set_markup("<span foreground=\"gray\"> \xe2\x96\x84</span>");
             break;
 
         case SystemState::ERROR:
-            m_Label_Connectivity_SW.override_color(Gdk::RGBA("green"), Gtk::STATE_FLAG_NORMAL);
+            m_Label_Connectivity_SW.set_markup("<span foreground=\"green\"> \xe2\x96\x84</span>");
             if(on) {
-                m_Label_Connectivity_HW.override_color(Gdk::RGBA("red"), Gtk::STATE_FLAG_NORMAL);
+                m_Label_Connectivity_HW.set_markup("<span foreground=\"red\"> \xe2\x96\x84</span>");
             } else {
-                m_Label_Connectivity_HW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
+                m_Label_Connectivity_HW.set_markup("<span foreground=\"gray\"> \xe2\x96\x84</span>");
             }
             break;
 
         case SystemState::STANDBY:
-            m_Label_Connectivity_SW.override_color(Gdk::RGBA("green"), Gtk::STATE_FLAG_NORMAL);
+            m_Label_Connectivity_SW.set_markup("<span foreground=\"green\"> \xe2\x96\x84</span>");
             if(on) {
-                m_Label_Connectivity_HW.override_color(Gdk::RGBA("gold"), Gtk::STATE_FLAG_NORMAL);
+                m_Label_Connectivity_HW.set_markup("<span foreground=\"gold\"> \xe2\x96\x84</span>");
             } else {
-                m_Label_Connectivity_HW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
+                m_Label_Connectivity_HW.set_markup("<span foreground=\"gray\"> \xe2\x96\x84</span>");
             }
             break;
 
         case SystemState::EMERGENCY_STOP:
             if(on) {
-                m_Label_Connectivity_HW.override_color(Gdk::RGBA("gold"), Gtk::STATE_FLAG_NORMAL);
-                m_Label_Connectivity_SW.override_color(Gdk::RGBA("gold"), Gtk::STATE_FLAG_NORMAL);
+                m_Label_Connectivity_HW.set_markup("<span foreground=\"gold\"> \xe2\x96\x84</span>");
+                m_Label_Connectivity_SW.set_markup("<span foreground=\"gold\"> \xe2\x96\x84</span>");
             } else {
-                m_Label_Connectivity_HW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
-                m_Label_Connectivity_SW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
+                m_Label_Connectivity_HW.set_markup("<span foreground=\"gray\"> \xe2\x96\x84</span>");
+                m_Label_Connectivity_SW.set_markup("<span foreground=\"gray\"> \xe2\x96\x84</span>");
             }
             break;
 
         case SystemState::MANUEL:
-            m_Label_Connectivity_HW.override_color(Gdk::RGBA("green"), Gtk::STATE_FLAG_NORMAL);
+            m_Label_Connectivity_HW.set_markup("<span foreground=\"green\"> \xe2\x96\x84</span>");
             if(on) {
-                m_Label_Connectivity_SW.override_color(Gdk::RGBA("green"), Gtk::STATE_FLAG_NORMAL);
+                m_Label_Connectivity_SW.set_markup("<span foreground=\"green\"> \xe2\x96\x84</span>");
             } else {
-                m_Label_Connectivity_SW.override_color(Gdk::RGBA("gray"), Gtk::STATE_FLAG_NORMAL);
+                m_Label_Connectivity_SW.set_markup("<span foreground=\"gray\"> \xe2\x96\x84</span>");
             }
             break;
 
         case SystemState::AUTOMATIC:
-            m_Label_Connectivity_HW.override_color(Gdk::RGBA("green"), Gtk::STATE_FLAG_NORMAL);
-            m_Label_Connectivity_SW.override_color(Gdk::RGBA("green"), Gtk::STATE_FLAG_NORMAL);
+            m_Label_Connectivity_HW.set_markup("<span foreground=\"green\"> \xe2\x96\x84</span>");
+            m_Label_Connectivity_SW.set_markup("<span foreground=\"green\"> \xe2\x96\x84</span>");
             break;
     }
     return true;
