@@ -41,7 +41,9 @@ FrmMain::FrmMain(EndpointPtr mhp): FrmBase{mhp}, frmSelect{mhp}, frmNew{mhp} {
     m_VBox.pack_start(m_VPaned_Container);
     m_VPaned_Container.add1(layoutWidget);
 
-    toolboxWidget.addCallbackHandler(std::bind(&FrmMain::addSymbol, this, std::placeholders::_1));
+    toolboxWidget.addCallbackHandler(
+        std::bind(&FrmMain::addSymbol, this, std::placeholders::_1)
+    );
     toolboxWidget.set_sensitive(false);
 
     m_VBox_Toolbox.pack_start(toolboxWidget);
@@ -249,6 +251,7 @@ void FrmMain::setCurrentLayout(const LayoutGetLayoutRes &data) {
     toolboxWidget.set_sensitive(true);
     setHasSaved();
     layoutWidget.setSymbols(data.specificLayoutData.symbols);
+    msgEndpoint->sendMsg(ControlGetBlockListReq{data.specificLayoutData.id});
 }
 
 void FrmMain::setSensitive(bool sensitive) {
@@ -291,5 +294,9 @@ void FrmMain::initialSend() {
     msgEndpoint->sendMsg(SystemGetHardwareState{});
     msgEndpoint->sendMsg(LayoutGetLayoutsReq{});
     msgEndpoint->sendMsg(SystemGetHardwareState{});
+}
+
+void FrmMain::setBlockList(const ControlGetBlockListRes &data) {
+    layoutWidget.setBlocks(data.blockContacts);
 }
 // </editor-fold>
